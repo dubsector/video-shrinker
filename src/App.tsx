@@ -104,9 +104,9 @@ function App() {
         <h1>Video Shrinker</h1>
         <p className="tagline">Shrinks video to whatever size you need, right on your device.</p>
         <ul className="privacy-facts">
-          <li>Your file never leaves this device</li>
-          <li>No accounts, no analytics, no cookies</li>
-          <li>Installable as an app, works offline after the first load</li>
+          <li>Your file never leaves this device.</li>
+          <li>No accounts, no analytics, no cookies.</li>
+          <li>Installable as an app, works offline.</li>
         </ul>
       </header>
 
