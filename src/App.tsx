@@ -30,7 +30,13 @@ function App() {
 
   useEffect(() => {
     canEncodeVideo('hevc', { hardwareAcceleration: 'prefer-hardware', width: 1280, height: 720, bitrate: 4_000_000 })
-      .then(setHevcAvailable)
+      .then((supported) => {
+        setHevcAvailable(supported);
+        // Default to H.265 when this GPU can hardware-encode it: modern
+        // players (including Discord's) handle it fine, and it produces a
+        // meaningfully smaller file at the same quality. Still user-toggleable.
+        if (supported) setPreferHevc(true);
+      })
       .catch(() => setHevcAvailable(false));
   }, []);
 
