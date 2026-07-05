@@ -23,6 +23,23 @@ It's installable as an app. An in-page banner offers to install it directly, or 
 - [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) for the installable/offline bits
 - React + Vite, deployed to GitHub Pages via Actions
 
+## License
+
+video-shrinker's own source is [MIT](LICENSE).
+
+The CPU-fallback encoder (`@ffmpeg/core`, only loaded when a browser can't do
+WebCodecs hardware encoding) is a separately-distributed FFmpeg build compiled
+with `--enable-gpl --enable-libx264 --enable-libx265`, which makes that binary
+**GPL-2.0-or-later**, not MIT/LGPL. It's self-hosted from this repo as a static
+asset. Its corresponding source is the upstream project at the exact version
+in use: [ffmpegwasm/ffmpeg.wasm @ v0.12.10](https://github.com/ffmpegwasm/ffmpeg.wasm/tree/v0.12.10)
+([build config](https://github.com/ffmpegwasm/ffmpeg.wasm/blob/v0.12.10/Dockerfile)).
+
+Everything else shipped to the browser is permissive: React and React-DOM
+(MIT), `@ffmpeg/ffmpeg`'s JS wrapper and `@ffmpeg/types` (MIT), and Mediabunny
+(MPL-2.0). Build-only tooling (Vite, TypeScript, oxlint, the PWA/static-copy
+plugins) isn't distributed with the app and isn't covered here.
+
 ## Development
 
 ```
