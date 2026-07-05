@@ -9,6 +9,7 @@ on:
     # visitor for no user-facing reason.
     paths-ignore:
       - 'README.md'
+      - 'LICENSE'
       - '.github/**'
   workflow_dispatch:
 
