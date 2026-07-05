@@ -28,8 +28,8 @@ jobs:
       # deps (e.g. Rolldown's WASM fallback) are absent and npm ci fails.
       - run: npm install
       - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
