@@ -23,7 +23,10 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci
+      # npm ci requires exact platform-optional-dependency parity with the lock
+      # file; that lock file was generated on Windows, so Linux-only optional
+      # deps (e.g. Rolldown's WASM fallback) are absent and npm ci fails.
+      - run: npm install
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
