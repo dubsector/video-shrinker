@@ -264,3 +264,44 @@ footer {
   font-size: 11px;
   opacity: 0.6;
 }
+
+@media (max-width: 480px) {
+  .app {
+    padding: 28px 16px 20px;
+  }
+
+  header {
+    margin-bottom: 18px;
+  }
+
+  header h1 {
+    font-size: 28px;
+    margin: 8px 0;
+  }
+
+  main {
+    gap: 12px;
+  }
+
+  .privacy-facts {
+    margin-top: 12px;
+    padding: 12px 14px;
+    gap: 5px;
+  }
+
+  .dropzone {
+    padding: 28px 20px;
+  }
+
+  .controls {
+    gap: 12px;
+  }
+
+  .convert-button {
+    padding: 12px;
+  }
+
+  footer {
+    margin-top: 20px;
+  }
+}
