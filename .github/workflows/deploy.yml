@@ -3,6 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    # README-only and workflow-only edits don't change anything the app
+    # serves, so skip them: a redeploy would still bake a new commit hash
+    # into the PWA build and force the "update available" prompt on every
+    # visitor for no user-facing reason.
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
   workflow_dispatch:
 
 permissions:
