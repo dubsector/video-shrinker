@@ -17,11 +17,16 @@ export default defineConfig({
       ],
     }),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      // Registration is done manually via the useRegisterSW() hook
+      // (src/UpdatePrompt.tsx) so updates can be applied on the user's
+      // schedule instead of forcing a reload that could interrupt an
+      // in-progress conversion.
+      injectRegister: null,
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Video Shrinker',
-        short_name: 'Vid Shrinker',
+        short_name: 'Video Shrinker',
         description: 'Shrink video to a target file size, entirely in your browser. No uploads, no third-party APIs.',
         theme_color: '#5865F2',
         background_color: '#ffffff',
