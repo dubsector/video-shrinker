@@ -102,10 +102,7 @@ function App() {
     <div className="app">
       <header>
         <h1>Video Shrinker</h1>
-        <p className="tagline">
-          Shrink a video to a target file size, entirely on your device. Nothing is uploaded — no servers, no
-          third-party APIs.
-        </p>
+        <p className="tagline">Shrinks video to whatever size you need, right in the browser. Nothing gets uploaded.</p>
       </header>
 
       <main>
@@ -225,6 +222,15 @@ function App() {
 
       <footer>
         <p>Runs locally in your browser via WebCodecs / ffmpeg.wasm. Your video is never uploaded.</p>
+        <p className="footer-links">
+          <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <span aria-hidden="true"> · </span>
+          <a href="https://dubsector.dev" target="_blank" rel="noopener noreferrer">
+            dubsector.dev
+          </a>
+        </p>
       </footer>
     </div>
   );
