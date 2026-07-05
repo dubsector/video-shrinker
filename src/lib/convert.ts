@@ -16,7 +16,7 @@ export type ConvertResult = {
 
 export type ConvertOptions = {
   preferHevc: boolean;
-  /** Strips GPS location and all other descriptive metadata from the output. */
+  /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
   onProgress?: (progress: number, phase: ConversionPhase) => void;
 };

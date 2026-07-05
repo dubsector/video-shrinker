@@ -1,11 +1,26 @@
+import { execSync } from 'node:child_process'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { VitePWA } from 'vite-plugin-pwa'
 
+function getCommitHash(): string {
+  // GitHub Actions checks out a detached HEAD, so prefer its own env var
+  // (full SHA) when present; fall back to git locally.
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA.slice(0, 7)
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim()
+  } catch {
+    return 'unknown'
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   base: '/video-shrinker/',
+  define: {
+    __BUILD_INFO__: JSON.stringify({ date: new Date().toISOString(), commit: getCommitHash() }),
+  },
   plugins: [
     react(),
     viteStaticCopy({

@@ -16,7 +16,7 @@ export type WebCodecsConvertOptions = {
   videoBitrate: number;
   audioBitrate: number;
   preferHevc: boolean;
-  /** Strips GPS location and all other descriptive metadata tags from the output. */
+  /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
   onProgress?: (info: ProgressInfo) => void;
 };
@@ -59,10 +59,9 @@ export async function convertWithWebCodecs(
       hardwareAcceleration: 'prefer-hardware',
     },
     audio: audioTrack ? { codec: 'aac', bitrate: options.audioBitrate } : { discard: true },
-    // GPS location (e.g. QuickTime's udta location atom) and other descriptive
-    // tags are normally copied over by Mediabunny by default; an empty object
-    // here replaces them instead, so nothing from the source file's metadata
-    // survives into the output.
+    // Descriptive tags (location, title, artist, etc.) are normally copied
+    // over by Mediabunny by default; an empty object here replaces them
+    // instead, so nothing from the source file's metadata survives.
     tags: options.stripMetadata ? {} : undefined,
   });
 
