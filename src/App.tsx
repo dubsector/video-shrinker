@@ -221,7 +221,11 @@ function App() {
       </main>
 
       <footer>
-        <p>Runs locally in your browser via WebCodecs / ffmpeg.wasm. Your video is never uploaded.</p>
+        <p>
+          Runs locally in your browser via WebCodecs / ffmpeg.wasm.
+          <br />
+          Your video is never uploaded.
+        </p>
         <p className="footer-links">
           <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">
             GitHub
