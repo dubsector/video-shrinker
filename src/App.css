@@ -301,6 +301,7 @@ footer {
 
 .footer-note {
   margin: auto 0;
+  text-wrap: balance;
 }
 
 .footer-links {
