@@ -102,7 +102,12 @@ function App() {
     <div className="app">
       <header>
         <h1>Video Shrinker</h1>
-        <p className="tagline">Shrinks video to whatever size you need, right in the browser. Nothing gets uploaded.</p>
+        <p className="tagline">Shrinks video to whatever size you need, right in the browser.</p>
+        <ul className="privacy-facts">
+          <li>Your file never leaves this device</li>
+          <li>No accounts, no analytics, no cookies</li>
+          <li>Installable as an app, works offline after the first load</li>
+        </ul>
       </header>
 
       <main>
@@ -176,7 +181,7 @@ function App() {
 
           <label className="checkbox">
             <input type="checkbox" checked={stripMetadata} onChange={(e) => setStripMetadata(e.target.checked)} />
-            <span>Strip location &amp; other metadata (recommended)</span>
+            <span>Strip metadata (recommended)</span>
           </label>
         </div>
 
@@ -221,11 +226,7 @@ function App() {
       </main>
 
       <footer>
-        <p>
-          Runs locally in your browser via WebCodecs / ffmpeg.wasm.
-          <br />
-          Your video is never uploaded.
-        </p>
+        <p>Encoding runs via WebCodecs, with an ffmpeg.wasm fallback for older browsers.</p>
         <p className="footer-links">
           <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">
             GitHub
@@ -234,6 +235,9 @@ function App() {
           <a href="https://dubsector.dev" target="_blank" rel="noopener noreferrer">
             dubsector.dev
           </a>
+        </p>
+        <p className="build-info" title={__BUILD_INFO__.date}>
+          Build {__BUILD_INFO__.date.slice(0, 16).replace('T', ' ')} UTC · {__BUILD_INFO__.commit}
         </p>
       </footer>
     </div>

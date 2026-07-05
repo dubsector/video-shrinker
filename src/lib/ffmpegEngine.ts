@@ -26,7 +26,7 @@ export type FfmpegConvertOptions = {
   videoBitrate: number;
   audioBitrate: number;
   hasAudio: boolean;
-  /** Strips GPS location and all other metadata from the output. */
+  /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
   onProgress?: (ratio: number) => void;
 };
@@ -74,8 +74,8 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
     } else {
       args.push('-an');
     }
-    // Strips GPS location and all other format/stream metadata (ffmpeg
-    // otherwise copies it from the input by default).
+    // Strips all format/stream metadata (ffmpeg otherwise copies it from
+    // the input by default).
     if (stripMetadata) args.push('-map_metadata', '-1');
     args.push(outputName);
 
