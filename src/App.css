@@ -1,0 +1,222 @@
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+  box-sizing: border-box;
+}
+
+header {
+  max-width: 640px;
+  margin-bottom: 40px;
+}
+
+.tagline {
+  font-size: 16px;
+  line-height: 145%;
+}
+
+main {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 40px 24px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.dropzone:hover,
+.dropzone.dragging {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+}
+
+.dropzone.has-file {
+  border-style: solid;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.file-info strong {
+  color: var(--text-h);
+  font-size: 16px;
+  word-break: break-all;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.size-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: fit-content;
+}
+
+.size-input input {
+  border: none;
+  background: none;
+  color: var(--text-h);
+  font: inherit;
+  font-size: 16px;
+  width: 80px;
+  outline: none;
+}
+
+.size-input .unit {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset {
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.preset.active {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--text-h);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.convert-button {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  padding: 14px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.convert-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.phase-note {
+  font-size: 13px;
+  color: var(--text);
+  text-align: left;
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progress-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.progress-label {
+  font-size: 14px;
+  min-width: 40px;
+  text-align: right;
+}
+
+.message.error {
+  color: #d33;
+  font-size: 14px;
+  text-align: left;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.download-button {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 500;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: var(--text);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+}
+
+footer {
+  margin-top: 48px;
+  font-size: 13px;
+  opacity: 0.7;
+}
