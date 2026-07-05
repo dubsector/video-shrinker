@@ -1,0 +1,25 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      # npm ci requires exact platform-optional-dependency parity with the lock
+      # file; that lock file was generated on Windows, so Linux-only optional
+      # deps (e.g. Rolldown's WASM fallback) are absent and npm ci fails.
+      - run: npm install
+      - run: npm run lint
+      - run: npx tsc -b
+      - run: npm run build
