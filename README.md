@@ -1,8 +1,7 @@
 # Video Shrinker
 
-[![Deploy to GitHub Pages](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml)
 [![PR Checks](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml)
-[![Live Demo](https://img.shields.io/badge/demo-live-5865F2)](https://dubsector.github.io/video-shrinker/)
+[![Deploy to GitHub Pages](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml)
 
 Shrinks a video to a target file size, entirely in the browser. Nothing gets uploaded. Encoding happens locally via WebCodecs (hardware-accelerated when the browser/GPU support it), with an ffmpeg.wasm fallback for browsers that don't.
 
