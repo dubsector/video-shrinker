@@ -1,14 +1,16 @@
 # Video Shrinker
 
-Shrinks a video to a target file size, entirely in the browser. Nothing gets uploaded — encoding happens locally via WebCodecs (hardware-accelerated when the browser/GPU support it), with an ffmpeg.wasm fallback for browsers that don't.
+[![Deploy to GitHub Pages](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml)
+[![PR Checks](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml)
+[![Live Demo](https://img.shields.io/badge/demo-live-5865F2)](https://dubsector.github.io/video-shrinker/)
 
-https://dubsector.github.io/video-shrinker/
+Shrinks a video to a target file size, entirely in the browser. Nothing gets uploaded. Encoding happens locally via WebCodecs (hardware-accelerated when the browser/GPU support it), with an ffmpeg.wasm fallback for browsers that don't.
 
-It's installable as a PWA — Chrome offers "Install app" / "Add to Home screen," and after the first load it works fully offline.
+It's installable as an app. An in-page banner offers to install it directly, or you can use your browser's own "Install app" / "Add to Home screen" option. After the first load it works fully offline, and when a new version ships, a small banner offers to reload and update on your own schedule instead of forcing it mid-conversion.
 
 ## How it works
 
-- Pick a target size (defaults to 25MB — Discord's non-Nitro upload limit). Duration and target size get turned into a bitrate request for the encoder.
+- Pick a target size (defaults to 25MB, Discord's non-Nitro upload limit). Duration and target size get turned into a bitrate request for the encoder.
 - That request is approximate, not exact: actual output size depends on content complexity and how closely the browser's encoder honors the request. The first pass aims a bit under target; if it overshoots anyway, a second pass re-encodes with a corrected bitrate. Landing under target on the first try is accepted as-is, however far under.
 - H.265 gets used instead of H.264 automatically when the browser reports hardware HEVC encode support, since it's meaningfully smaller at the same quality. There's a toggle if you'd rather force H.264 for compatibility.
 - Metadata (location, title, artist, comments, embedded images) gets stripped by default. Toggleable if you want to keep it.
