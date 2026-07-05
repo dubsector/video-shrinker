@@ -102,7 +102,7 @@ function App() {
     <div className="app">
       <header>
         <h1>Video Shrinker</h1>
-        <p className="tagline">Shrinks video to whatever size you need, right in the browser.</p>
+        <p className="tagline">Shrinks video to whatever size you need, right on your device.</p>
         <ul className="privacy-facts">
           <li>Your file never leaves this device</li>
           <li>No accounts, no analytics, no cookies</li>
@@ -148,14 +148,34 @@ function App() {
         <div className="controls">
           <label className="field">
             <span>Target size</span>
-            <div className="size-input">
-              <input
-                type="number"
-                min={1}
-                value={targetMb}
-                onChange={(e) => setTargetMb(Math.max(1, Number(e.target.value) || 1))}
-              />
-              <span className="unit">MB</span>
+            <div className="size-input-row">
+              <div className="size-input">
+                <input
+                  type="number"
+                  min={1}
+                  value={targetMb}
+                  onChange={(e) => setTargetMb(Math.max(1, Number(e.target.value) || 1))}
+                />
+                <span className="unit">MB</span>
+              </div>
+              <div className="stepper">
+                <button
+                  type="button"
+                  className="step-button"
+                  aria-label="Decrease target size"
+                  onClick={() => setTargetMb((mb) => Math.max(1, mb - 1))}
+                >
+                  −
+                </button>
+                <button
+                  type="button"
+                  className="step-button"
+                  aria-label="Increase target size"
+                  onClick={() => setTargetMb((mb) => mb + 1)}
+                >
+                  +
+                </button>
+              </div>
             </div>
           </label>
 
@@ -226,19 +246,21 @@ function App() {
       </main>
 
       <footer>
-        <p>Encoding runs via WebCodecs, with an ffmpeg.wasm fallback for older browsers.</p>
-        <p className="footer-links">
-          <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-          <span aria-hidden="true"> · </span>
-          <a href="https://dubsector.dev" target="_blank" rel="noopener noreferrer">
-            dubsector.dev
-          </a>
-        </p>
-        <p className="build-info" title={__BUILD_INFO__.date}>
-          Build {__BUILD_INFO__.date.slice(0, 16).replace('T', ' ')} UTC · {__BUILD_INFO__.commit}
-        </p>
+        <p className="footer-note">Encoding runs via WebCodecs, with an ffmpeg.wasm fallback for older browsers.</p>
+        <div className="footer-bottom">
+          <p className="footer-links">
+            <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">
+              GitHub
+            </a>
+            <span aria-hidden="true"> · </span>
+            <a href="https://dubsector.dev" target="_blank" rel="noopener noreferrer">
+              dubsector.dev
+            </a>
+          </p>
+          <p className="build-info" title={__BUILD_INFO__.date}>
+            Build {__BUILD_INFO__.date.slice(0, 16).replace('T', ' ')} UTC · {__BUILD_INFO__.commit}
+          </p>
+        </div>
       </footer>
     </div>
   );
