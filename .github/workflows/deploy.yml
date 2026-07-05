@@ -38,7 +38,33 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.attempt1.outputs.page_url || steps.attempt2.outputs.page_url || steps.attempt3.outputs.page_url }}
     steps:
-      - id: deployment
+      # GitHub's Pages backend occasionally rejects a freshly-created
+      # deployment with a generic "Deployment failed, try again later" a
+      # few seconds after accepting it. Confirmed via run history this
+      # isn't caused by anything in this workflow (e.g. the concurrent
+      # CodeQL scan) — it's transient on GitHub's end, so just retry.
+      - name: Deploy to GitHub Pages (attempt 1)
+        id: attempt1
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      - name: Wait before retry 1
+        if: steps.attempt1.outcome == 'failure'
+        run: sleep 20
+
+      - name: Deploy to GitHub Pages (attempt 2)
+        id: attempt2
+        if: steps.attempt1.outcome == 'failure'
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      - name: Wait before retry 2
+        if: steps.attempt1.outcome == 'failure' && steps.attempt2.outcome == 'failure'
+        run: sleep 40
+
+      - name: Deploy to GitHub Pages (attempt 3)
+        id: attempt3
+        if: steps.attempt1.outcome == 'failure' && steps.attempt2.outcome == 'failure'
         uses: actions/deploy-pages@v5
