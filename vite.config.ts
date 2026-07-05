@@ -1,8 +1,11 @@
 import { execSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { VitePWA } from 'vite-plugin-pwa'
+
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
 
 function getCommitHash(): string {
   // GitHub Actions checks out a detached HEAD, so prefer its own env var
@@ -43,6 +46,9 @@ export default defineConfig({
         name: 'Video Shrinker',
         short_name: 'Video Shrinker',
         description: 'Shrink video to a target file size, entirely in your browser. No uploads, no third-party APIs.',
+        // @ts-expect-error - `version` is a valid manifest field (used for OS app-listing
+        // metadata) but vite-plugin-pwa's types haven't caught up to the spec yet.
+        version: pkg.version,
         theme_color: '#5865F2',
         background_color: '#ffffff',
         display: 'standalone',
