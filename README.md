@@ -6,7 +6,7 @@
 
 Shrinks a video to a target file size, entirely in the browser. Nothing gets uploaded. Encoding happens locally via WebCodecs (hardware-accelerated when the browser/GPU support it), with an ffmpeg.wasm fallback for browsers that don't.
 
-It's installable as an app. An in-page banner offers to install it directly, or you can use your browser's own "Install app" / "Add to Home screen" option. After the first load it works fully offline, and when a new version ships, a small banner offers to reload and update on your own schedule instead of forcing it mid-conversion.
+It's installable as an app. An in-page banner offers to install it directly, or you can use your browser's own "Install app" and/or "Add to Home screen" option. After the first load it works fully offline, and when a new version ships, a small banner offers to reload and update on your own schedule instead of forcing it mid-conversion.
 
 ## How it works
 
