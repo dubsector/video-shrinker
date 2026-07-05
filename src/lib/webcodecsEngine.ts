@@ -26,8 +26,9 @@ export type WebCodecsConvertOptions = {
  * Mediabunny), which decodes/encodes through the browser's native media
  * pipeline and uses hardware acceleration whenever the browser/GPU offers it.
  *
- * Returns `null` when no usable video codec could be encoded in this browser,
- * signaling the caller to fall back to the ffmpeg.wasm engine.
+ * Returns `null` when this browser can't encode the file here (no usable
+ * codec, or the encoder rejects the specific resolution/bitrate at
+ * configure/encode time), signaling the caller to fall back to ffmpeg.wasm.
  */
 export async function convertWithWebCodecs(
   input: Input,
@@ -35,7 +36,16 @@ export async function convertWithWebCodecs(
   audioTrack: InputAudioTrack | null,
   options: WebCodecsConvertOptions,
 ): Promise<WebCodecsResult | null> {
-  const codec = await pickWebCodecsCodec(options.preferHevc);
+  const videoTrack = await input.getPrimaryVideoTrack();
+  if (!videoTrack) throw new Error('This file has no video track to convert.');
+
+  const width = await videoTrack.getDisplayWidth();
+  const height = await videoTrack.getDisplayHeight();
+
+  // Some browsers (e.g. Brave) support hardware AVC encode in general but
+  // reject specific resolution/bitrate/level combinations, so the probe must
+  // match what's actually about to be requested, not a generic placeholder.
+  const codec = await pickWebCodecsCodec(options.preferHevc, { width, height, bitrate: options.videoBitrate });
   if (!codec) return null;
 
   const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
@@ -65,7 +75,15 @@ export async function convertWithWebCodecs(
     options.onProgress?.({ progress, processedSeconds: processedTime, durationSeconds });
   };
 
-  await conversion.execute();
+  try {
+    await conversion.execute();
+  } catch (err) {
+    // isConfigSupported() isn't always a perfect predictor of what the
+    // encoder will actually accept once configured; if it still fails here,
+    // degrade to the CPU fallback instead of surfacing a raw encoder error.
+    console.warn('[video-shrinker] WebCodecs encode failed, falling back to ffmpeg.wasm:', err);
+    return null;
+  }
 
   const buffer = output.target.buffer;
   if (!buffer) throw new Error('Conversion finished without producing output data.');
