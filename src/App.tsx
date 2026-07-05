@@ -246,7 +246,7 @@ function App() {
       </main>
 
       <footer>
-        <p className="footer-note">Encoding runs via WebCodecs, with an ffmpeg.wasm fallback for older browsers.</p>
+        <p className="footer-note">Encoding runs via WebCodecs, with an ffmpeg fallback where it isn't supported.</p>
         <div className="footer-bottom">
           <p className="footer-links">
             <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">
