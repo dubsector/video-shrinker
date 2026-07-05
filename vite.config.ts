@@ -17,13 +17,6 @@ function getCommitHash(): string {
 
 const buildDate = new Date()
 
-// The manifest `version` field only surfaces in OS app listings (e.g.
-// Windows Settings > Apps) — there's no real "release" semantics for a web
-// app that auto-updates via service worker, so just stamp the build date.
-function getBuildVersion(date: Date): string {
-  return `${date.getUTCFullYear() % 100}.${date.getUTCMonth() + 1}.${date.getUTCDate()}`
-}
-
 // https://vite.dev/config/
 export default defineConfig({
   base: '/video-shrinker/',
@@ -52,9 +45,6 @@ export default defineConfig({
         name: 'Video Shrinker',
         short_name: 'Video Shrinker',
         description: 'Shrink video to a target file size, entirely in your browser. No uploads, no third-party APIs.',
-        // @ts-expect-error - `version` is a valid manifest field (used for OS app-listing
-        // metadata) but vite-plugin-pwa's types haven't caught up to the spec yet.
-        version: getBuildVersion(buildDate),
         theme_color: '#5865F2',
         background_color: '#ffffff',
         display: 'standalone',
