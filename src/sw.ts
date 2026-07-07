@@ -1,3 +1,4 @@
+import { clientsClaim } from 'workbox-core'
 import { type PrecacheEntry, cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { registerRoute } from 'workbox-routing'
 import { CacheFirst } from 'workbox-strategies'
@@ -9,6 +10,19 @@ declare const self: ServiceWorkerGlobalScope & {
 
 cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
+
+// registerType is 'prompt', so this worker only activates once the user
+// clicks "Reload to update" (see src/UpdatePrompt.tsx), which posts
+// SKIP_WAITING below. clientsClaim() then hands control of already-open
+// tabs to this worker immediately on activation, firing the
+// `controllerchange` event that useRegisterSW() waits on to reload the
+// page — without it, skipWaiting() alone activates the new worker but
+// never hands off the open tab, so the reload never happens.
+clientsClaim()
+
+self.addEventListener('message', (event: ExtendableMessageEvent) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
+})
 
 registerRoute(
   ({ url }) => /\/ffmpeg-core\/ffmpeg-core\.(js|wasm)$/.test(url.pathname),
