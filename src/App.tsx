@@ -72,6 +72,21 @@ function App() {
     [reset],
   );
 
+  useEffect(() => {
+    if (!location.search.includes('share-target')) return;
+    history.replaceState(null, '', location.pathname);
+    (async () => {
+      const cache = await caches.open('share-target');
+      const response = await cache.match('/share-target-file');
+      if (!response) return;
+      const name = decodeURIComponent(response.headers.get('X-File-Name') ?? 'shared-video');
+      const type = response.headers.get('Content-Type') ?? 'video/mp4';
+      const blob = await response.blob();
+      await cache.delete('/share-target-file');
+      handleFile(new File([blob], name, { type }));
+    })();
+  }, [handleFile]);
+
   const handleConvert = useCallback(async () => {
     if (!file) return;
     setStatus('converting');
