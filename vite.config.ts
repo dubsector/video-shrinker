@@ -40,6 +40,9 @@ export default defineConfig({
       // schedule instead of forcing a reload that could interrupt an
       // in-progress conversion.
       injectRegister: null,
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       includeAssets: ['favicon.svg'],
       manifest: {
         name: 'Video Shrinker',
@@ -53,22 +56,19 @@ export default defineConfig({
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
           { src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
-      },
-      workbox: {
-        // The ffmpeg.wasm binary (~32MB) is only needed by the rare CPU
-        // fallback path, so it's cached at runtime on first use (below)
-        // rather than bloating the initial install with a large precache.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
-        runtimeCaching: [
-          {
-            urlPattern: /\/ffmpeg-core\/ffmpeg-core\.(js|wasm)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'ffmpeg-core',
-              expiration: { maxEntries: 4, maxAgeSeconds: 60 * 60 * 24 * 365 },
-            },
+        share_target: {
+          action: '/video-shrinker/share-target',
+          method: 'POST',
+          enctype: 'multipart/form-data',
+          params: {
+            files: [
+              {
+                name: 'video',
+                accept: ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska', 'video/mpeg', 'video/3gpp'],
+              },
+            ],
           },
-        ],
+        },
       },
     }),
   ],

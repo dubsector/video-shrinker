@@ -1,0 +1,39 @@
+{
+  "packageId": "io.github.dubsector.videoshrinker",
+  "host": "dubsector.github.io",
+  "startUrl": "/video-shrinker/",
+  "manifestUrl": "https://dubsector.github.io/video-shrinker/manifest.webmanifest",
+  "name": "Video Shrinker",
+  "launcherName": "Video Shrinker",
+  "display": "standalone",
+  "themeColor": "#5865F2",
+  "backgroundColor": "#ffffff",
+  "navigationColor": "#5865F2",
+  "navigationColorDark": "#5865F2",
+  "navigationDividerColor": "#5865F2",
+  "navigationDividerColorDark": "#5865F2",
+  "iconUrl": "https://dubsector.github.io/video-shrinker/pwa-512x512.png",
+  "maskableIconUrl": "https://dubsector.github.io/video-shrinker/maskable-icon-512x512.png",
+  "monochromeIconUrl": "https://dubsector.github.io/video-shrinker/pwa-512x512.png",
+  "appVersion": "1",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "",
+    "alias": "video-shrinker"
+  },
+  "enableNotifications": false,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://dubsector.github.io/video-shrinker/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://dubsector.github.io/video-shrinker/",
+  "minSdkVersion": 21,
+  "fingerprints": []
+}
