@@ -9,6 +9,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
     steps:
       - uses: actions/checkout@v5
 
@@ -17,6 +20,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - uses: android-actions/setup-android@v3
+
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -24,32 +29,33 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
+      # bubblewrap prompts interactively for JDK/SDK paths on first run
+      # (Cli.ts's loadOrCreateConfig), which hangs on a non-TTY runner.
+      # Pre-seeding the config with the paths setup-java/setup-android
+      # already installed skips that prompt entirely.
+      - name: Configure Bubblewrap JDK/SDK paths
+        run: |
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
+
       - name: Decode keystore
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/keystore.jks"
-
-      - name: Inject signing config into twa-manifest
-        run: |
-          jq \
-            --arg path "$RUNNER_TEMP/keystore.jks" \
-            '.signingKey.path = $path' \
-            twa-manifest.json > twa-manifest.tmp.json
-          mv twa-manifest.tmp.json twa-manifest.json
-
-      - name: Init TWA project
-        run: bubblewrap init --skipPwaValidation
 
       - name: Build release AAB
         env:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: bubblewrap build --skipPwaValidation
+        run: |
+          bubblewrap build --skipPwaValidation \
+            --signingKeyPath="$RUNNER_TEMP/keystore.jks" \
+            --signingKeyAlias="video-shrinker"
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: video-shrinker-${{ github.run_number }}
           path: |
-            app-release-bundle.aab
-            app-release.apk
+            android/app-release-bundle.aab
+            android/app-release-signed.apk
           if-no-files-found: warn
           retention-days: 90
