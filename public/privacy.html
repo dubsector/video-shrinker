@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy - Video Shrinker</title>
+  <link rel="icon" href="/video-shrinker/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --text: #6b6375;
+      --text-h: #08060d;
+      --bg: #fff;
+      --border: #e5e4e7;
+      --code-bg: #f4f3ec;
+      --accent: #5865f2;
+      --accent-bg: rgba(88, 101, 242, 0.1);
+      --accent-border: rgba(88, 101, 242, 0.5);
+      --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+      --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+      --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+
+      font: 18px/145% var(--sans);
+      letter-spacing: 0.18px;
+      color-scheme: light dark;
+      color: var(--text);
+      background: var(--bg);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme='light']) {
+        --text: #9ca3af;
+        --text-h: #f3f4f6;
+        --bg: #16171d;
+        --border: #2e303a;
+        --code-bg: #1f2028;
+        --accent-bg: rgba(88, 101, 242, 0.2);
+        --accent-border: rgba(88, 101, 242, 0.6);
+        --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+      }
+    }
+
+    :root[data-theme='dark'] {
+      --text: #9ca3af;
+      --text-h: #f3f4f6;
+      --bg: #16171d;
+      --border: #2e303a;
+      --code-bg: #1f2028;
+      --accent-bg: rgba(88, 101, 242, 0.2);
+      --accent-border: rgba(88, 101, 242, 0.6);
+      --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    }
+
+    body { margin: 0; }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 4rem;
+    }
+
+    h1, h2 {
+      font-family: var(--heading);
+      font-weight: 500;
+      color: var(--text-h);
+    }
+    h1 {
+      font-size: 40px;
+      letter-spacing: -1.2px;
+      margin: 0 0 4px;
+    }
+    h2 {
+      font-size: 22px;
+      line-height: 118%;
+      letter-spacing: -0.22px;
+      margin: 32px 0 8px;
+    }
+    p, li { margin: 0 0 0.5rem; }
+    ul { padding-left: 1.25rem; }
+    strong { color: var(--text-h); }
+    a { color: var(--accent); }
+    .updated { font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+    .theme-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 2px;
+      padding: 4px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      z-index: 50;
+    }
+    .theme-toggle button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 999px;
+      background: none;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .theme-toggle button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .theme-toggle button:hover:not(.active) {
+      background: var(--accent-bg);
+      color: var(--text-h);
+    }
+    @media (max-width: 480px) {
+      .theme-toggle { top: 10px; right: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="theme-toggle" role="radiogroup" aria-label="Theme">
+    <button type="button" role="radio" data-theme-value="system" aria-label="Match system theme" title="Match system theme">
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="4" width="16" height="10" rx="1.5" />
+        <path d="M7 17h6M10 14v3" stroke-linecap="round" />
+      </svg>
+    </button>
+    <button type="button" role="radio" data-theme-value="light" aria-label="Light theme" title="Light theme">
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="10" cy="10" r="4" />
+        <path d="M10 1.5v2M10 16.5v2M18.5 10h-2M3.5 10h-2M15.6 4.4l-1.4 1.4M5.8 14.2l-1.4 1.4M15.6 15.6l-1.4-1.4M5.8 5.8 4.4 4.4" stroke-linecap="round" />
+      </svg>
+    </button>
+    <button type="button" role="radio" data-theme-value="dark" aria-label="Dark theme" title="Dark theme">
+      <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+        <path d="M17 12.5A7 7 0 0 1 7.5 3 7.5 7.5 0 1 0 17 12.5Z" />
+      </svg>
+    </button>
+  </div>
+
+  <main>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Video Shrinker &middot; Last updated: July 8, 2026</p>
+
+    <p><strong>The short version: your videos never leave your device, and no data about you is collected. Ever.</strong></p>
+
+    <h2>How the app works</h2>
+    <p>Video Shrinker compresses videos entirely on your device, in your browser's own video encoder. There is no server that receives your files. Nothing is uploaded, transmitted, or stored anywhere other than your own device.</p>
+
+    <h2>Data collection</h2>
+    <ul>
+      <li><strong>Videos:</strong> processed locally on your device only. They are never uploaded.</li>
+      <li><strong>Shared files:</strong> when you share a video to the app from another app, the file is handed to the app locally by your operating system and processed on-device, exactly like a file you picked manually.</li>
+      <li><strong>Personal information:</strong> none collected. The app has no accounts, no sign-in, and no way to identify you.</li>
+      <li><strong>Analytics and tracking:</strong> none. No analytics libraries, no cookies, no advertising identifiers, no crash reporting.</li>
+      <li><strong>Metadata:</strong> the app offers an option to strip metadata (such as location) from your videos during conversion. This also happens entirely on your device.</li>
+    </ul>
+
+    <h2>Network access</h2>
+    <p>The app loads its own code from the web the first time you open it and when updates are available, like any web page. After that it works offline. These requests fetch the app's own files only; they never carry your videos or any information about you.</p>
+
+    <h2>Permissions</h2>
+    <p>The app requests no special permissions. It can only access video files you explicitly choose or share to it.</p>
+
+    <h2>Children</h2>
+    <p>The app collects no data from anyone, including children.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this policy ever changes, the updated version will be published at this address with a new date at the top. Given that the app collects nothing, meaningful changes are unlikely.</p>
+
+    <h2>Contact</h2>
+    <p>Questions or concerns? Open an issue on <a href="https://github.com/dubsector/video-shrinker">GitHub</a> or email <a href="mailto:contact@dubsector.dev">contact@dubsector.dev</a>.</p>
+  </main>
+
+  <script>
+    (function () {
+      var STORAGE_KEY = 'theme-preference';
+      var stored = localStorage.getItem(STORAGE_KEY);
+      var theme = stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+
+      var buttons = document.querySelectorAll('.theme-toggle button');
+
+      function apply(value) {
+        theme = value;
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem(STORAGE_KEY, theme);
+        buttons.forEach(function (btn) {
+          var active = btn.dataset.themeValue === theme;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-checked', active);
+        });
+      }
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          apply(btn.dataset.themeValue);
+        });
+      });
+
+      apply(theme);
+    })();
+  </script>
+</body>
+</html>
