@@ -1,27 +1,23 @@
 {
   "packageId": "io.github.dubsector.videoshrinker",
   "host": "dubsector.github.io",
-  "startUrl": "/video-shrinker/",
-  "manifestUrl": "https://dubsector.github.io/video-shrinker/manifest.webmanifest",
   "name": "Video Shrinker",
-  "launcherName": "Video Shrinker",
+  "launcherName": "Vid Shrinker",
   "display": "standalone",
   "themeColor": "#5865F2",
-  "backgroundColor": "#ffffff",
   "navigationColor": "#5865F2",
-  "navigationColorDark": "#5865F2",
-  "navigationDividerColor": "#5865F2",
-  "navigationDividerColorDark": "#5865F2",
+  "backgroundColor": "#ffffff",
+  "enableNotifications": true,
+  "startUrl": "/video-shrinker/",
   "iconUrl": "https://dubsector.github.io/video-shrinker/pwa-512x512.png",
   "maskableIconUrl": "https://dubsector.github.io/video-shrinker/maskable-icon-512x512.png",
-  "monochromeIconUrl": "https://dubsector.github.io/video-shrinker/pwa-512x512.png",
-  "appVersion": "1",
-  "appVersionCode": 1,
+  "splashScreenFadeOutDuration": 300,
   "signingKey": {
-    "path": "",
+    "path": "./android.keystore",
     "alias": "video-shrinker"
   },
-  "enableNotifications": false,
+  "appVersionCode": 1,
+  "appVersion": "1",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://dubsector.github.io/video-shrinker/manifest.webmanifest",
@@ -35,5 +31,19 @@
   "isMetaQuest": false,
   "fullScopeUrl": "https://dubsector.github.io/video-shrinker/",
   "minSdkVersion": 21,
+  "shareTarget": {
+    "action": "https://dubsector.github.io/video-shrinker/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "video",
+          "accept": ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo", "video/x-matroska", "video/mpeg", "video/3gpp"]
+        }
+      ]
+    }
+  },
+  "orientation": "default",
   "fingerprints": []
 }
