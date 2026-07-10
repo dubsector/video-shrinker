@@ -57,6 +57,10 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   event.waitUntil(
     (async () => {
       const client = await new Promise<Client>((resolve) => shareReadyResolvers.push(resolve))
+      // Ack right away so the page can tell "worker is streaming the body"
+      // (slow is normal — the sharing app may be pulling the file from the
+      // cloud) apart from "handshake never happened" (fail fast).
+      client.postMessage({ type: 'SHARE_TARGET_RECEIVING' })
       try {
         const file = (await formDataPromise).get('video')
         if (file instanceof File) {

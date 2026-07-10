@@ -84,6 +84,16 @@ main {
   word-break: break-all;
 }
 
+.file-info.receiving strong {
+  animation: receiving-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes receiving-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
 .controls {
   display: flex;
   flex-direction: column;
