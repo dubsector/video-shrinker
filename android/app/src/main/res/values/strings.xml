@@ -37,6 +37,10 @@
             \"site\": \"https://dubsector.github.io\"
         }
     }]
-    
-  </string>  
+
+  </string>
+
+  <string name="shareRelayTitle">Receiving video</string>
+  <string name="shareRelayStarting">Waiting for the sharing app…</string>
+  <string name="shareRelayFailed">Could not receive the video: %1$s</string>
 </resources>
