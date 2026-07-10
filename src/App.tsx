@@ -1,6 +1,7 @@
 import { canEncodeVideo } from 'mediabunny';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
+import { setAppBusy } from './lib/appBusy';
 import { convertVideo, type ConversionPhase, type ConvertResult } from './lib/convert';
 
 const MB = 1024 * 1024;
@@ -46,6 +47,13 @@ function App() {
       if (resultUrl) URL.revokeObjectURL(resultUrl);
     };
   }, [resultUrl]);
+
+  // A loaded file covers every state a reload would destroy: the selection
+  // itself, a conversion in flight, and a result not yet downloaded (reset()
+  // clears the file along with the rest).
+  useEffect(() => {
+    setAppBusy(file !== null);
+  }, [file]);
 
   const reset = useCallback(() => {
     setFile(null);
@@ -259,7 +267,7 @@ function App() {
           </div>
         )}
 
-        {status === 'error' && error && <div className="message error">{error}</div>}
+        {error && <div className="message error">{error}</div>}
 
         {status === 'done' && result && resultUrl && (
           <div className="result">
