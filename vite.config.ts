@@ -35,10 +35,10 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: 'prompt',
-      // Registration is done manually via the useRegisterSW() hook
-      // (src/UpdatePrompt.tsx) so updates can be applied on the user's
-      // schedule instead of forcing a reload that could interrupt an
-      // in-progress conversion.
+      // 'prompt' here only means the plugin never force-reloads on its own.
+      // src/UpdatePrompt.tsx decides what actually happens: updates apply
+      // automatically while the app is idle, and only fall back to a prompt
+      // when a reload would kill a conversion or an undownloaded result.
       injectRegister: null,
       strategies: 'injectManifest',
       srcDir: 'src',

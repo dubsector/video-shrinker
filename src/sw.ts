@@ -20,8 +20,20 @@ precacheAndRoute(self.__WB_MANIFEST)
 // never hands off the open tab, so the reload never happens.
 clientsClaim()
 
+// Shared files used to be relayed through Cache Storage; a large video may
+// still be sitting in that cache from an old version, so drop it.
+self.addEventListener('activate', (event: ExtendableEvent) => {
+  event.waitUntil(caches.delete('share-target'))
+})
+
+const shareReadyResolvers: Array<(client: Client) => void> = []
+
 self.addEventListener('message', (event: ExtendableMessageEvent) => {
   if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
+  if (event.data === 'share-ready' && event.source) {
+    const client = event.source as Client
+    for (const resolve of shareReadyResolvers.splice(0)) resolve(client)
+  }
 })
 
 registerRoute(
@@ -36,23 +48,28 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   const url = new URL(event.request.url)
   if (event.request.method !== 'POST' || !url.pathname.endsWith('/share-target')) return
 
-  event.respondWith(
+  // Chrome aborts navigations the service worker takes too long to answer,
+  // and parsing a large video's multipart body (plus the old Cache Storage
+  // write) can exceed that budget. Respond with the redirect immediately,
+  // then hand the file to the page once it signals it is listening.
+  const formDataPromise = event.request.formData()
+  event.respondWith(Response.redirect(`${url.origin}/video-shrinker/?share-target=1`, 303))
+  event.waitUntil(
     (async () => {
-      const formData = await event.request.formData()
-      const file = formData.get('video') as File | null
-      if (file) {
-        const cache = await caches.open('share-target')
-        await cache.put(
-          '/share-target-file',
-          new Response(file, {
-            headers: {
-              'Content-Type': file.type,
-              'X-File-Name': encodeURIComponent(file.name),
-            },
-          }),
-        )
+      const client = await new Promise<Client>((resolve) => shareReadyResolvers.push(resolve))
+      try {
+        const file = (await formDataPromise).get('video')
+        if (file instanceof File) {
+          client.postMessage({ type: 'SHARE_TARGET_FILE', file })
+        } else {
+          client.postMessage({ type: 'SHARE_TARGET_ERROR', message: 'No video found in the shared data.' })
+        }
+      } catch (err) {
+        client.postMessage({
+          type: 'SHARE_TARGET_ERROR',
+          message: err instanceof Error ? `${err.name}: ${err.message}` : String(err),
+        })
       }
-      return Response.redirect(`${url.origin}/video-shrinker/?share-target=1`, 303)
     })(),
   )
 })

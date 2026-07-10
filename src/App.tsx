@@ -1,6 +1,7 @@
 import { canEncodeVideo } from 'mediabunny';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
+import { setAppBusy } from './lib/appBusy';
 import { convertVideo, type ConversionPhase, type ConvertResult } from './lib/convert';
 
 const MB = 1024 * 1024;
@@ -27,6 +28,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const shareTargetPending = useRef(location.search.includes('share-target'));
 
   useEffect(() => {
     canEncodeVideo('hevc', { hardwareAcceleration: 'prefer-hardware', width: 1280, height: 720, bitrate: 4_000_000 })
@@ -45,6 +47,13 @@ function App() {
       if (resultUrl) URL.revokeObjectURL(resultUrl);
     };
   }, [resultUrl]);
+
+  // A loaded file covers every state a reload would destroy: the selection
+  // itself, a conversion in flight, and a result not yet downloaded (reset()
+  // clears the file along with the rest).
+  useEffect(() => {
+    setAppBusy(file !== null);
+  }, [file]);
 
   const reset = useCallback(() => {
     setFile(null);
@@ -73,18 +82,38 @@ function App() {
   );
 
   useEffect(() => {
-    if (!location.search.includes('share-target')) return;
-    history.replaceState(null, '', location.pathname);
-    (async () => {
-      const cache = await caches.open('share-target');
-      const response = await cache.match('/share-target-file');
-      if (!response) return;
-      const name = decodeURIComponent(response.headers.get('X-File-Name') ?? 'shared-video');
-      const type = response.headers.get('Content-Type') ?? 'video/mp4';
-      const blob = await response.blob();
-      await cache.delete('/share-target-file');
-      handleFile(new File([blob], name, { type }));
-    })();
+    const sw = navigator.serviceWorker;
+    if (!sw) return;
+    let timeoutId: number | undefined;
+    const onMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'SHARE_TARGET_FILE' && event.data.file instanceof File) {
+        clearTimeout(timeoutId);
+        // handleFile() calls reset(), so a file that arrives after the
+        // timeout error below still loads and clears the error.
+        handleFile(event.data.file);
+      } else if (event.data?.type === 'SHARE_TARGET_ERROR') {
+        clearTimeout(timeoutId);
+        setError(`Could not receive the shared video (${event.data.message}). Try picking the file directly instead.`);
+      }
+    };
+    sw.addEventListener('message', onMessage);
+    sw.startMessages();
+    // The service worker holds the shared file until the page confirms it is
+    // listening, so tell it once per share-target launch. The ref (rather
+    // than checking location.search here) keeps a StrictMode remount from
+    // seeing the already-cleaned URL and skipping the listener setup.
+    if (shareTargetPending.current) {
+      shareTargetPending.current = false;
+      history.replaceState(null, '', location.pathname);
+      sw.controller?.postMessage('share-ready');
+      timeoutId = window.setTimeout(() => {
+        setError('Timed out waiting for the shared video. Try picking the file directly instead.');
+      }, 20_000);
+    }
+    return () => {
+      clearTimeout(timeoutId);
+      sw.removeEventListener('message', onMessage);
+    };
   }, [handleFile]);
 
   const handleConvert = useCallback(async () => {
@@ -238,7 +267,7 @@ function App() {
           </div>
         )}
 
-        {status === 'error' && error && <div className="message error">{error}</div>}
+        {error && <div className="message error">{error}</div>}
 
         {status === 'done' && result && resultUrl && (
           <div className="result">
