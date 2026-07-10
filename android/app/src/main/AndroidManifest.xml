@@ -141,32 +141,6 @@
 
             
 
-            
-                <intent-filter>
-                    
-                        <action android:name="android.intent.action.SEND" />
-                    
-                        <action android:name="android.intent.action.SEND_MULTIPLE" />
-                    
-                    <category android:name="android.intent.category.DEFAULT" />
-                    
-                        <data android:mimeType="video/mp4" />
-                    
-                        <data android:mimeType="video/webm" />
-                    
-                        <data android:mimeType="video/quicktime" />
-                    
-                        <data android:mimeType="video/x-msvideo" />
-                    
-                        <data android:mimeType="video/x-matroska" />
-                    
-                        <data android:mimeType="video/mpeg" />
-                    
-                        <data android:mimeType="video/3gpp" />
-                    
-                </intent-filter>
-            
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -187,6 +161,29 @@
             
 
             
+        </activity>
+
+        <!-- Copies incoming shares to local storage before the TWA sees them,
+             so the browser never has to stream cloud-backed files out of the
+             sender's content provider (which fails for e.g. Google Photos
+             items that are backed up but no longer on the device). -->
+        <activity android:name="ShareRelayActivity"
+            android:label="@string/launcherName"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/mp4" />
+                <data android:mimeType="video/webm" />
+                <data android:mimeType="video/quicktime" />
+                <data android:mimeType="video/x-msvideo" />
+                <data android:mimeType="video/x-matroska" />
+                <data android:mimeType="video/mpeg" />
+                <data android:mimeType="video/3gpp" />
+            </intent-filter>
         </activity>
 
         <activity android:name="com.google.androidbrowserhelper.trusted.FocusActivity" />
