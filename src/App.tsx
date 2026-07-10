@@ -27,6 +27,7 @@ function App() {
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const shareTargetPending = useRef(location.search.includes('share-target'));
 
@@ -50,10 +51,12 @@ function App() {
 
   // A loaded file covers every state a reload would destroy: the selection
   // itself, a conversion in flight, and a result not yet downloaded (reset()
-  // clears the file along with the rest).
+  // clears the file along with the rest). A share handoff in flight counts
+  // too — the file only exists in the old worker's memory, so an auto-update
+  // reload here would drop it on the floor with no error.
   useEffect(() => {
-    setAppBusy(file !== null);
-  }, [file]);
+    setAppBusy(file !== null || receivingShare);
+  }, [file, receivingShare]);
 
   const reset = useCallback(() => {
     setFile(null);
@@ -84,15 +87,31 @@ function App() {
   useEffect(() => {
     const sw = navigator.serviceWorker;
     if (!sw) return;
-    let timeoutId: number | undefined;
+    // Two separate deadlines: the handshake with the worker should be nearly
+    // instant, but streaming the body can legitimately take minutes when the
+    // sharing app has to pull the video down from the cloud first.
+    let handshakeTimer: number | undefined;
+    let transferTimer: number | undefined;
+    const clearTimers = () => {
+      clearTimeout(handshakeTimer);
+      clearTimeout(transferTimer);
+    };
     const onMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'SHARE_TARGET_FILE' && event.data.file instanceof File) {
-        clearTimeout(timeoutId);
-        // handleFile() calls reset(), so a file that arrives after the
-        // timeout error below still loads and clears the error.
+      if (event.data?.type === 'SHARE_TARGET_RECEIVING') {
+        clearTimeout(handshakeTimer);
+        transferTimer = window.setTimeout(() => {
+          setReceivingShare(false);
+          setError('Gave up waiting for the shared video. Try picking the file directly instead.');
+        }, 300_000);
+      } else if (event.data?.type === 'SHARE_TARGET_FILE' && event.data.file instanceof File) {
+        clearTimers();
+        setReceivingShare(false);
+        // handleFile() calls reset(), so a file that arrives after an error
+        // above still loads and clears the error.
         handleFile(event.data.file);
       } else if (event.data?.type === 'SHARE_TARGET_ERROR') {
-        clearTimeout(timeoutId);
+        clearTimers();
+        setReceivingShare(false);
         setError(`Could not receive the shared video (${event.data.message}). Try picking the file directly instead.`);
       }
     };
@@ -105,13 +124,15 @@ function App() {
     if (shareTargetPending.current) {
       shareTargetPending.current = false;
       history.replaceState(null, '', location.pathname);
+      setReceivingShare(true);
       sw.controller?.postMessage('share-ready');
-      timeoutId = window.setTimeout(() => {
-        setError('Timed out waiting for the shared video. Try picking the file directly instead.');
-      }, 20_000);
+      handshakeTimer = window.setTimeout(() => {
+        setReceivingShare(false);
+        setError('The shared video never arrived from the system. Try picking the file directly instead.');
+      }, 10_000);
     }
     return () => {
-      clearTimeout(timeoutId);
+      clearTimers();
       sw.removeEventListener('message', onMessage);
     };
   }, [handleFile]);
@@ -180,6 +201,11 @@ function App() {
             <div className="file-info">
               <strong>{file.name}</strong>
               <span>{formatBytes(file.size)}</span>
+            </div>
+          ) : receivingShare ? (
+            <div className="file-info receiving">
+              <strong>Receiving shared video…</strong>
+              <span>Videos that live in the cloud get downloaded first, so this can take a bit.</span>
             </div>
           ) : (
             <div className="file-info">
