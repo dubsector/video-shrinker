@@ -19,7 +19,14 @@ function UpdatePrompt() {
   } = useRegisterSW({
     onRegisteredSW(_swUrl, registration) {
       if (!registration) return;
-      const check = () => registration.update().catch(() => {});
+      const check = () => {
+        // Data Saver means the user asked to minimize background traffic,
+        // so skip polling; updates still arrive via the registration-time
+        // check on the next launch. Read per-check since it can be toggled.
+        const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+        if (connection?.saveData) return;
+        registration.update().catch(() => {});
+      };
       setInterval(check, UPDATE_CHECK_INTERVAL_MS);
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') check();
