@@ -84,13 +84,116 @@ main {
   word-break: break-all;
 }
 
-.file-info.receiving strong {
-  animation: receiving-pulse 1.6s ease-in-out infinite;
+/* Share-handoff dialog, styled after Android's "Preparing your selected
+   media" dialog so the PWA share flow feels like the native one. */
+.share-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: scrim-in 0.25s ease;
 }
 
-@keyframes receiving-pulse {
+.share-dialog {
+  background: var(--dialog-bg);
+  border-radius: 28px;
+  padding: 24px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: var(--shadow);
+  text-align: left;
+  animation: dialog-in 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.share-dialog h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 130%;
+  color: var(--text-h);
+}
+
+.share-dialog-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.share-spinner {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  animation: spinner-rotate 1.6s linear infinite;
+}
+
+.share-spinner circle {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-dasharray: 126;
+  transform-origin: center;
+  animation: spinner-arc 1.4s ease-in-out infinite;
+}
+
+.share-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.share-dialog-cancel {
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 14px;
+  margin: -10px -14px -10px 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.share-dialog-cancel:hover {
+  background: var(--accent-bg);
+}
+
+@keyframes scrim-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner-arc {
+  0% {
+    stroke-dashoffset: 120;
+    transform: rotate(0deg);
+  }
   50% {
-    opacity: 0.45;
+    stroke-dashoffset: 34;
+    transform: rotate(90deg);
+  }
+  100% {
+    stroke-dashoffset: 120;
+    transform: rotate(360deg);
   }
 }
 

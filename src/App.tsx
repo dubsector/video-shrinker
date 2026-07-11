@@ -30,6 +30,11 @@ function App() {
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const shareTargetPending = useRef(location.search.includes('share-target'));
+  // Set when the user cancels the share handoff: the worker may still deliver
+  // the file (or an error) afterwards, and both should be dropped silently.
+  // Never reset — a new share launch is a fresh navigation.
+  const shareCancelled = useRef(false);
+  const cancelShareRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     canEncodeVideo('hevc', { hardwareAcceleration: 'prefer-hardware', width: 1280, height: 720, bitrate: 4_000_000 })
@@ -96,7 +101,13 @@ function App() {
       clearTimeout(handshakeTimer);
       clearTimeout(transferTimer);
     };
+    cancelShareRef.current = () => {
+      shareCancelled.current = true;
+      clearTimers();
+      setReceivingShare(false);
+    };
     const onMessage = (event: MessageEvent) => {
+      if (shareCancelled.current) return;
       if (event.data?.type === 'SHARE_TARGET_RECEIVING') {
         clearTimeout(handshakeTimer);
         transferTimer = window.setTimeout(() => {
@@ -201,11 +212,6 @@ function App() {
             <div className="file-info">
               <strong>{file.name}</strong>
               <span>{formatBytes(file.size)}</span>
-            </div>
-          ) : receivingShare ? (
-            <div className="file-info receiving">
-              <strong>Receiving shared video…</strong>
-              <span>Videos that live in the cloud get downloaded first, so this can take a bit.</span>
             </div>
           ) : (
             <div className="file-info">
@@ -314,6 +320,25 @@ function App() {
           </div>
         )}
       </main>
+
+      {receivingShare && (
+        <div className="share-scrim" role="dialog" aria-modal="true" aria-labelledby="share-dialog-title">
+          <div className="share-dialog">
+            <h2 id="share-dialog-title">Preparing your video</h2>
+            <div className="share-dialog-status">
+              <svg className="share-spinner" viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="24" r="20" fill="none" strokeWidth="4" />
+              </svg>
+              <span>0 of 1 ready</span>
+            </div>
+            <div className="share-dialog-actions">
+              <button type="button" className="share-dialog-cancel" onClick={() => cancelShareRef.current()}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer>
         <p className="footer-note">Encoding runs via WebCodecs, with an ffmpeg fallback where it isn't supported.</p>
