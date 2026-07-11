@@ -18,7 +18,10 @@ function App() {
   const [file, setFile] = useState<File | null>(null);
   const [targetMb, setTargetMb] = useState(DEFAULT_TARGET_MB);
   const [hevcAvailable, setHevcAvailable] = useState(false);
-  const [preferHevc, setPreferHevc] = useState(false);
+  // H.265 is used automatically whenever the GPU can hardware-encode it. This
+  // opt-in forces the universally-playable H.264 instead, for the cases the app
+  // can't detect: some players and upload targets won't inline-preview HEVC.
+  const [forceH264, setForceH264] = useState(false);
   const [stripMetadata, setStripMetadata] = useState(true);
   const [status, setStatus] = useState<Status>('idle');
   const [progress, setProgress] = useState(0);
@@ -38,13 +41,7 @@ function App() {
 
   useEffect(() => {
     canEncodeVideo('hevc', { hardwareAcceleration: 'prefer-hardware', width: 1280, height: 720, bitrate: 4_000_000 })
-      .then((supported) => {
-        setHevcAvailable(supported);
-        // Default to H.265 when this GPU can hardware-encode it: modern
-        // players (including Discord's) handle it fine, and it produces a
-        // meaningfully smaller file at the same quality. Still user-toggleable.
-        if (supported) setPreferHevc(true);
-      })
+      .then((supported) => setHevcAvailable(supported))
       .catch(() => setHevcAvailable(false));
   }, []);
 
@@ -154,6 +151,8 @@ function App() {
     setProgress(0);
     setPhase('encoding');
     setError(null);
+    // H.265 whenever the GPU supports it, unless the user forces H.264.
+    const preferHevc = hevcAvailable && !forceH264;
     try {
       const converted = await convertVideo(file, targetMb * MB, {
         preferHevc,
@@ -170,9 +169,10 @@ function App() {
       setError(e instanceof Error ? e.message : 'Conversion failed.');
       setStatus('error');
     }
-  }, [file, targetMb, preferHevc, stripMetadata]);
+  }, [file, targetMb, hevcAvailable, forceH264, stripMetadata]);
 
   const downloadName = file ? `${file.name.replace(/\.[^.]+$/, '')}-shrunk.mp4` : 'shrunk.mp4';
+  const codecLabel = result?.codec === 'hevc' ? 'H.265' : 'H.264';
 
   return (
     <div className="app">
@@ -270,8 +270,8 @@ function App() {
 
           {hevcAvailable && (
             <label className="checkbox">
-              <input type="checkbox" checked={preferHevc} onChange={(e) => setPreferHevc(e.target.checked)} />
-              <span>Try H.265 (smaller file — your GPU supports hardware encoding)</span>
+              <input type="checkbox" checked={forceH264} onChange={(e) => setForceH264(e.target.checked)} />
+              <span>Force H.264 (maximum compatibility, lower quality at this size)</span>
             </label>
           )}
 
@@ -288,7 +288,7 @@ function App() {
         {status === 'converting' && (
           <div className="progress-wrap">
             {phase === 'refining' && (
-              <p className="phase-note">First pass overshot the target — re-encoding once more for accuracy.</p>
+              <p className="phase-note">First pass overshot the target. Re-encoding once more for accuracy.</p>
             )}
             <div className="progress">
               <div className="progress-track">
@@ -304,12 +304,11 @@ function App() {
         {status === 'done' && result && resultUrl && (
           <div className="result">
             <p>
-              Done — {formatBytes(result.blob.size)} using{' '}
-              <strong>
-                {result.engine === 'webcodecs'
-                  ? `WebCodecs (${result.codec.toUpperCase()}, hardware-accelerated)`
-                  : 'ffmpeg.wasm (CPU fallback)'}
-              </strong>
+              Done: <strong>{codecLabel} · {formatBytes(result.blob.size)}</strong>
+              <br />
+              <span className="result-detail">
+                {result.engine === 'webcodecs' ? 'WebCodecs, hardware-accelerated' : 'ffmpeg.wasm, CPU fallback'}
+              </span>
             </p>
             <a className="download-button" href={resultUrl} download={downloadName}>
               Download

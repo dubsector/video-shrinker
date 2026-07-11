@@ -372,6 +372,11 @@ main {
   text-align: left;
 }
 
+.result-detail {
+  font-size: 13px;
+  color: var(--text);
+}
+
 .result {
   display: flex;
   flex-direction: column;
