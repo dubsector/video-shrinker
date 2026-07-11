@@ -40,7 +40,7 @@
 
   </string>
 
-  <string name="shareRelayTitle">Receiving video</string>
+  <string name="shareRelayTitle">Preparing your video</string>
   <string name="shareRelayStarting">Waiting for the sharing app…</string>
   <string name="shareRelayFailed">Could not receive the video: %1$s</string>
 </resources>

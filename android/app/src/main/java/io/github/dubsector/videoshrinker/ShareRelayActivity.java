@@ -1,15 +1,22 @@
 package io.github.dubsector.videoshrinker;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ClipData;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,9 +55,10 @@ public class ShareRelayActivity extends Activity {
 
     private volatile boolean cancelled;
     private boolean isResumedState;
-    private ProgressBar progressBar;
+    private ProgressBar spinner;
     private TextView statusView;
-    private AlertDialog dialog;
+    private TextView actionButton;
+    private Dialog dialog;
     private Intent pendingForward;
 
     @Override
@@ -81,36 +89,97 @@ public class ShareRelayActivity extends Activity {
         return null;
     }
 
+    /**
+     * Builds the preparing dialog in code, styled after the system media
+     * picker's "Preparing your selected media" dialog (and the web app's
+     * copy of it): rounded surface, arc spinner beside a status line, and
+     * a text-button Cancel action. The framework AlertDialog is avoided
+     * because the activity's translucent theme renders it in the ancient
+     * pre-Material style.
+     */
     private void buildDialog() {
-        int pad = (int) (24 * getResources().getDisplayMetrics().density);
-        LinearLayout layout = new LinearLayout(this);
+        boolean night = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        int surface = night ? 0xFF23242D : 0xFFFFFFFF;
+        int titleColor = night ? 0xFFF3F4F6 : 0xFF08060D;
+        int statusColor = night ? 0xFF9CA3AF : 0xFF6B6375;
+        int accent = 0xFF5865F2;
+
+        dialog = new Dialog(this, night
+                ? android.R.style.Theme_Material_Dialog_NoActionBar
+                : android.R.style.Theme_Material_Light_Dialog_NoActionBar);
+
+        LinearLayout layout = new LinearLayout(dialog.getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(pad, pad / 2, pad, 0);
+        layout.setPadding(dp(24), dp(24), dp(24), dp(14));
 
-        progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-        progressBar.setIndeterminate(true);
-        progressBar.setMax(100);
-        layout.addView(progressBar, new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        TextView title = new TextView(dialog.getContext());
+        title.setText(R.string.shareRelayTitle);
+        title.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        title.setTextColor(titleColor);
+        layout.addView(title);
 
-        statusView = new TextView(this);
-        statusView.setPadding(0, pad / 4, 0, 0);
+        LinearLayout statusRow = new LinearLayout(dialog.getContext());
+        statusRow.setOrientation(LinearLayout.HORIZONTAL);
+        statusRow.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rowParams.topMargin = dp(20);
+        layout.addView(statusRow, rowParams);
+
+        spinner = new ProgressBar(dialog.getContext());
+        spinner.setIndeterminate(true);
+        spinner.setIndeterminateTintList(ColorStateList.valueOf(accent));
+        LinearLayout.LayoutParams spinnerParams = new LinearLayout.LayoutParams(dp(30), dp(30));
+        spinnerParams.rightMargin = dp(16);
+        statusRow.addView(spinner, spinnerParams);
+
+        statusView = new TextView(dialog.getContext());
+        statusView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        statusView.setTextColor(statusColor);
         statusView.setText(R.string.shareRelayStarting);
-        layout.addView(statusView);
+        statusRow.addView(statusView);
 
-        dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.shareRelayTitle)
-                .setView(layout)
-                .setCancelable(false)
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface d, int which) {
-                        cancelled = true;
-                        finish();
-                    }
-                })
-                .create();
+        actionButton = new TextView(dialog.getContext());
+        actionButton.setText(android.R.string.cancel);
+        actionButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        actionButton.setTextColor(accent);
+        actionButton.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        actionButton.setPadding(dp(14), dp(10), dp(14), dp(10));
+        TypedValue ripple = new TypedValue();
+        if (dialog.getContext().getTheme().resolveAttribute(
+                android.R.attr.selectableItemBackgroundBorderless, ripple, true)) {
+            actionButton.setBackgroundResource(ripple.resourceId);
+        }
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelled = true;
+                finish();
+            }
+        });
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        buttonParams.gravity = Gravity.END;
+        buttonParams.topMargin = dp(10);
+        buttonParams.rightMargin = -dp(14);
+        layout.addView(actionButton, buttonParams);
+
+        GradientDrawable background = new GradientDrawable();
+        background.setColor(surface);
+        background.setCornerRadius(dp(28));
+
+        dialog.setContentView(layout);
+        dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawable(background);
+        int width = Math.min(dp(340),
+                getResources().getDisplayMetrics().widthPixels - dp(48));
+        dialog.getWindow().setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT);
         dialog.show();
+    }
+
+    private int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
     }
 
     private void copyInBackground(final Uri source) {
@@ -223,8 +292,6 @@ public class ShareRelayActivity extends Activity {
             public void run() {
                 if (isFinishing() || cancelled) return;
                 if (total > 0) {
-                    progressBar.setIndeterminate(false);
-                    progressBar.setProgress((int) (copied * 100 / total));
                     statusView.setText(String.format(Locale.US, "%s / %s",
                             formatMb(copied), formatMb(total)));
                 } else {
@@ -240,12 +307,9 @@ public class ShareRelayActivity extends Activity {
 
     private void showFailure(String message) {
         if (isFinishing()) return;
-        progressBar.setIndeterminate(false);
-        progressBar.setProgress(0);
+        spinner.setVisibility(View.GONE);
         statusView.setText(getString(R.string.shareRelayFailed, message));
-        if (dialog != null && dialog.getButton(DialogInterface.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok);
-        }
+        actionButton.setText(android.R.string.ok);
     }
 
     /**
