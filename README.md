@@ -2,6 +2,9 @@
 
 [![PR Checks](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml)
 [![Deploy to GitHub Pages](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/dubsector/video-shrinker/badge)](https://securityscorecards.dev/viewer/?uri=github.com/dubsector/video-shrinker)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-green)](SECURITY.md)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot)](https://github.com/dubsector/video-shrinker/network/updates)
 
 [GitHub Pages Deployment](https://dubsector.github.io/video-shrinker/)
 
