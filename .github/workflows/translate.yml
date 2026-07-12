@@ -8,9 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write
+  contents: read
 
 concurrency:
   group: translate
@@ -19,6 +17,10 @@ concurrency:
 jobs:
   translate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
     steps:
       # This job pushes the translation branch, so it needs the checkout's
       # persisted credentials — persist-credentials: false would break the push.
@@ -34,7 +36,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          npx --yes i18n-ai-translate@latest translate \
+          npx --yes i18n-ai-translate@5.1.0 translate \
             -i src/locales/en.json \
             -o af am ar az be bg bn ca cs da de el es et eu fa fi fr gl gu he hi hr hu hy id is it ja ka kk km kn ko ky lo lt lv mk ml mn mr ms my ne nl no pa pl pt rm ro ru si sk sl sq sr sv sw ta te th tl tr uk ur vi zh zu \
             -e gemini \
@@ -53,7 +55,7 @@ jobs:
       # requests, and stays in sync with zh.json on every run.
       - name: Derive Traditional Chinese
         run: |
-          npm install --no-save --no-package-lock opencc-js@1
+          npm install --no-save --no-package-lock opencc-js@1.4.0
           node <<'EOF'
           const fs = require('fs');
           const OpenCC = require('opencc-js');
