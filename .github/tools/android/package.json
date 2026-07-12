@@ -1,0 +1,7 @@
+{
+  "name": "video-shrinker-android-tools",
+  "private": true,
+  "devDependencies": {
+    "@bubblewrap/cli": "1.24.1"
+  }
+}

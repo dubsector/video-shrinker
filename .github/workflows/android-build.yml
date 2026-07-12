@@ -33,8 +33,13 @@ jobs:
         with:
           node-version: 24
 
+      # @bubblewrap/cli is declared as a devDependency with a committed
+      # lockfile in .github/tools/android, so this installs a pinned,
+      # hash-verified version instead of resolving a version string at
+      # runtime.
       - name: Install Bubblewrap
-        run: npm install -g @bubblewrap/cli@1.24.1
+        working-directory: .github/tools/android
+        run: npm install
 
       # bubblewrap prompts interactively for JDK/SDK paths on first run
       # (Cli.ts's loadOrCreateConfig), which hangs on a non-TTY runner.
@@ -53,7 +58,7 @@ jobs:
           BUBBLEWRAP_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           BUBBLEWRAP_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          bubblewrap build --skipPwaValidation \
+          "$GITHUB_WORKSPACE/.github/tools/android/node_modules/.bin/bubblewrap" build --skipPwaValidation \
             --signingKeyPath="$RUNNER_TEMP/keystore.jks" \
             --signingKeyAlias="video-shrinker"
 
