@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Ulni madhësinë e synuar",
+        "forceH264": "Forco H.264 (përputhshmëri maksimale, cilësi më e ulët në këtë madhësi)",
+        "increase": "Rritni madhësinë e synuar",
+        "stripMetadata": "Hiq metadatat (e rekomanduar)",
+        "targetSize": "Madhësia e synuar"
+    },
+    "convert": {
+        "converting": "Po konvertohet…",
+        "refineNote": "Kalimi i parë e tejkaloi objektivin. Po ri-enkodohet edhe një herë për saktësi.",
+        "refining": "Po optimizohet madhësia…",
+        "start": "Konverto"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, dhe më shumë",
+        "prompt": "Lëshoni një video këtu, ose klikoni për të zgjedhur një"
+    },
+    "errors": {
+        "conversionFailed": "Konvertimi dështoi.",
+        "notVideo": "Ju lutemi zgjidhni një skedar video.",
+        "shareFailed": "Nuk u pranua videoja e ndarë ({{message}}). Provoni të zgjidhni skedarin direkt.",
+        "shareNeverArrived": "Videoja e ndarë nuk arriti kurrë nga sistemi. Provoni ta zgjidhni skedarin direkt.",
+        "shareTimeout": "Pritja për videon e shpërndarë dështoi. Provoni ta zgjidhni skedarin direkt."
+    },
+    "footer": {
+        "note": "Kodimi kryhet përmes WebCodecs, me një rezervë ffmpeg aty ku nuk mbështetet."
+    },
+    "install": {
+        "action": "Instalo",
+        "dismiss": "Shpërfill",
+        "title": "Instalo Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatike",
+        "label": "Gjuha"
+    },
+    "privacy": {
+        "clean": "Pa llogari, pa analitikë, pa cookies.",
+        "installable": "Instalohet si aplikacion, punon jashtë linje.",
+        "local": "Skedari juaj kurrë nuk e lë këtë pajisje."
+    },
+    "result": {
+        "convertAnother": "Konverto një tjetër",
+        "done": "U krye:",
+        "download": "Shkarko",
+        "ffmpeg": "ffmpeg.wasm, rezervë CPU",
+        "webcodecs": "WebCodecs, e përshpejtuar nga hardueri"
+    },
+    "share": {
+        "cancel": "Anulo",
+        "preparing": "Po përgatitet videoja juaj",
+        "progress": "{{done}} nga {{total}} gati"
+    },
+    "tagline": "E ngushton videon në çfarëdo madhësie që ju nevojitet, direkt në pajisjen tuaj.",
+    "theme": {
+        "dark": "Tema e errët",
+        "label": "Tema",
+        "light": "Tema e lehtë",
+        "system": "Përshtat me temën e sistemit"
+    },
+    "update": {
+        "available": "Një version i ri është i disponueshëm.",
+        "dismiss": "Shpërfill",
+        "reload": "Ringarko për të përditësuar"
+    }
+}

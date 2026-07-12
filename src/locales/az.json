@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Hədəf ölçüsünü azalt",
+        "forceH264": "H.264-ə məcbur et (maksimum uyğunluq, bu ölçüdə aşağı keyfiyyət)",
+        "increase": "Hədəf ölçüsünü artır",
+        "stripMetadata": "Metadataları sil (tövsiyə olunur)",
+        "targetSize": "Hədəf ölçü"
+    },
+    "convert": {
+        "converting": "Çevrilir…",
+        "refineNote": "İlk keçid hədəfi aşdı. Dəqiqlik üçün yenidən kodlaşdırılır.",
+        "refining": "Ölçü dəqiqləşdirilir…",
+        "start": "Çevir"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV və daha çoxu",
+        "prompt": "Videonu bura atın və ya seçmək üçün klikləyin"
+    },
+    "errors": {
+        "conversionFailed": "Çevrilmə uğursuz oldu.",
+        "notVideo": "Zəhmət olmasa bir video faylı seçin.",
+        "shareFailed": "Paylaşılan video qəbul edilə bilmədi ({{message}}). Bunun əvəzinə faylı birbaşa seçməyə çalışın.",
+        "shareNeverArrived": "Paylaşılan video sistemdən gəlmədi. Bunun əvəzinə faylı birbaşa seçməyə çalışın.",
+        "shareTimeout": "Paylaşılan videonu gözləməkdən vaz keçildi. Bunun əvəzinə faylı birbaşa seçməyə cəhd edin."
+    },
+    "footer": {
+        "note": "Kodlaşdırma WebCodecs vasitəsilə həyata keçirilir, dəstəklənməyən hallarda isə ffmpeg ehtiyat variantı kimi istifadə olunur."
+    },
+    "install": {
+        "action": "Quraşdır",
+        "dismiss": "Bağla",
+        "title": "Video Shrinker proqramını quraşdırın"
+    },
+    "language": {
+        "auto": "Avtomatik",
+        "label": "Dil"
+    },
+    "privacy": {
+        "clean": "Hesab yoxdur, analitika yoxdur, kukilər yoxdur.",
+        "installable": "Tətbiq kimi quraşdırıla bilər, oflayn işləyir.",
+        "local": "Faylınız heç vaxt bu cihazı tərk etmir."
+    },
+    "result": {
+        "convertAnother": "Başqa birini çevir",
+        "done": "Tamamlandı:",
+        "download": "Yüklə",
+        "ffmpeg": "ffmpeg.wasm, CPU ehtiyatı",
+        "webcodecs": "WebCodecs, aparat sürətləndirməsi ilə"
+    },
+    "share": {
+        "cancel": "Ləğv et",
+        "preparing": "Video hazırlanır",
+        "progress": "{{done}} / {{total}} hazır"
+    },
+    "tagline": "Videonu birbaşa cihazınızda istədiyiniz ölçüyə qədər kiçildir.",
+    "theme": {
+        "dark": "Tünd mövzu",
+        "label": "Mövzu",
+        "light": "Açıq mövzu",
+        "system": "Sistem mövzusu ilə uyğunlaşdır"
+    },
+    "update": {
+        "available": "Yeni versiya mövcuddur.",
+        "dismiss": "Bağla",
+        "reload": "Yeniləmək üçün yenidən yükləyin"
+    }
+}

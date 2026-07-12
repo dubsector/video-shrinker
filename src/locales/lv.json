@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Samazināt mērķa izmēru",
+        "forceH264": "Piespiest H.264 (maksimāla saderība, zemāka kvalitāte šajā izmērā)",
+        "increase": "Palielināt mērķa izmēru",
+        "stripMetadata": "Noņemt metadatus (ieteicams)",
+        "targetSize": "Mērķa izmērs"
+    },
+    "convert": {
+        "converting": "Konvertē...",
+        "refineNote": "Pirmais mēģinājums pārsniedza mērķi. Pārkodēju vēlreiz, lai panāktu precizitāti.",
+        "refining": "Precizēju izmēru…",
+        "start": "Konvertēt"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV un citi",
+        "prompt": "Ievelciet video šeit vai noklikšķiniet, lai to izvēlētos"
+    },
+    "errors": {
+        "conversionFailed": "Konvertēšana neizdevās.",
+        "notVideo": "Lūdzu, izvēlieties video failu.",
+        "shareFailed": "Neizdevās saņemt koplietoto video ({{message}}). Tā vietā mēģiniet izvēlēties failu tieši.",
+        "shareNeverArrived": "Koplietotais video no sistēmas nepienāca. Tā vietā mēģiniet izvēlēties failu tieši.",
+        "shareTimeout": "Pārtraucu gaidīt koplietoto video. Tā vietā mēģiniet izvēlēties failu tieši."
+    },
+    "footer": {
+        "note": "Kodēšana notiek caur WebCodecs, ar ffmpeg atbalstu vietās, kur tas netiek atbalstīts."
+    },
+    "install": {
+        "action": "Instalēt",
+        "dismiss": "Aizvērt",
+        "title": "Instalēt Video Shrinker"
+    },
+    "language": {
+        "auto": "Automātiski",
+        "label": "Valoda"
+    },
+    "privacy": {
+        "clean": "Nav kontu, nav analītikas, nav sīkfailu.",
+        "installable": "Instalējams kā lietotne, darbojas bezsaistē.",
+        "local": "Jūsu fails nekad neatstāj šo ierīci."
+    },
+    "result": {
+        "convertAnother": "Konvertēt citu",
+        "done": "Gatavs:",
+        "download": "Lejupielādēt",
+        "ffmpeg": "ffmpeg.wasm, CPU rezerves risinājums",
+        "webcodecs": "WebCodecs, aparatūras paātrinājums"
+    },
+    "share": {
+        "cancel": "Atcelt",
+        "preparing": "Sagatavo video",
+        "progress": "{{done}} no {{total}} gatavs"
+    },
+    "tagline": "Samazina video līdz vajadzīgajam izmēram tieši jūsu ierīcē.",
+    "theme": {
+        "dark": "Tumšā tēma",
+        "label": "Tēma",
+        "light": "Gaišā tēma",
+        "system": "Saskaņot ar sistēmas motīvu"
+    },
+    "update": {
+        "available": "Ir pieejama jauna versija.",
+        "dismiss": "Aizvērt",
+        "reload": "Pārlādēt, lai atjauninātu"
+    }
+}

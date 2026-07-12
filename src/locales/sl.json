@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Zmanjšaj ciljno velikost",
+        "forceH264": "Vsili H.264 (največja združljivost, nižja kakovost pri tej velikosti)",
+        "increase": "Povečaj ciljno velikost",
+        "stripMetadata": "Odstrani metapodatke (priporočeno)",
+        "targetSize": "Ciljna velikost"
+    },
+    "convert": {
+        "converting": "Pretvarjanje…",
+        "refineNote": "Prvi prehod je presegel cilj. Ponovno kodiranje za večjo natančnost.",
+        "refining": "Natančno določanje velikosti…",
+        "start": "Pretvori"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV in več",
+        "prompt": "Povlecite videoposnetek sem ali kliknite za izbiro"
+    },
+    "errors": {
+        "conversionFailed": "Pretvorba ni uspela.",
+        "notVideo": "Prosimo, izberite videodatoteko.",
+        "shareFailed": "Skupno rabljenega videoposnetka ni bilo mogoče prejeti ({{message}}). Poskusite datoteko izbrati neposredno.",
+        "shareNeverArrived": "Skupno rabljen videoposnetek ni prispel iz sistema. Namesto tega poskusite izbrati datoteko neposredno.",
+        "shareTimeout": "Čakanje na skupno rabljen videoposnetek je prekinjeno. Namesto tega poskusite izbrati datoteko neposredno."
+    },
+    "footer": {
+        "note": "Kodiranje poteka prek WebCodecs, z nadomestno možnostjo ffmpeg, kjer ta ni podprt."
+    },
+    "install": {
+        "action": "Namesti",
+        "dismiss": "Opusti",
+        "title": "Namesti Video Shrinker"
+    },
+    "language": {
+        "auto": "Samodejno",
+        "label": "Jezik"
+    },
+    "privacy": {
+        "clean": "Brez računov, brez analitike, brez piškotkov.",
+        "installable": "Lahko se namesti kot aplikacija, deluje brez povezave.",
+        "local": "Vaša datoteka nikoli ne zapusti te naprave."
+    },
+    "result": {
+        "convertAnother": "Pretvori drugo",
+        "done": "Končano:",
+        "download": "Prenesi",
+        "ffmpeg": "ffmpeg.wasm, nadomestna možnost CPU",
+        "webcodecs": "WebCodecs, strojno pospeševanje"
+    },
+    "share": {
+        "cancel": "Prekliči",
+        "preparing": "Priprava videoposnetka",
+        "progress": "{{done}} od {{total}} pripravljenih"
+    },
+    "tagline": "Pomanjša videoposnetek na želeno velikost, neposredno na vaši napravi.",
+    "theme": {
+        "dark": "Temna tema",
+        "label": "Tema",
+        "light": "Svetla tema",
+        "system": "Prilagodi sistemski temi"
+    },
+    "update": {
+        "available": "Na voljo je nova različica.",
+        "dismiss": "Opusti",
+        "reload": "Osveži za posodobitev"
+    }
+}

@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Txikitu helburu-tamaina",
+        "forceH264": "Behartu H.264 (bateragarritasun maximoa, kalitate baxuagoa tamaina honetan)",
+        "increase": "Handitu helburu-tamaina",
+        "stripMetadata": "Kendu metadatuak (gomendatua)",
+        "targetSize": "Helburuko tamaina"
+    },
+    "convert": {
+        "converting": "Bihurtzen…",
+        "refineNote": "Lehen pasaldiak helburua gainditu du. Berriro kodetzen ari da zehaztasun handiagoa lortzeko.",
+        "refining": "Tamaina doitzen…",
+        "start": "Bihurtu"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV eta gehiago",
+        "prompt": "Utzi bideo bat hemen, edo egin klik hautatzeko"
+    },
+    "errors": {
+        "conversionFailed": "Bihurtzeak huts egin du.",
+        "notVideo": "Mesedez, aukeratu bideo-fitxategi bat.",
+        "shareFailed": "Ezin izan da partekatutako bideoa jaso ({{message}}). Saiatu fitxategia zuzenean hautatzen.",
+        "shareNeverArrived": "Partekaturiko bideoa ez da sistemarengandik iritsi. Saiatu fitxategia zuzenean hautatzen.",
+        "shareTimeout": "Partekaturiko bideoaren zain egoteari utzi diogu. Saiatu fitxategia zuzenean hautatzen."
+    },
+    "footer": {
+        "note": "Kodeketa WebCodecs bidez egiten da, eta onartzen ez denean ffmpeg erabiltzen da."
+    },
+    "install": {
+        "action": "Instalatu",
+        "dismiss": "Baztertu",
+        "title": "Instalatu Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatikoa",
+        "label": "Hizkuntza"
+    },
+    "privacy": {
+        "clean": "Konturik ez, analitikaririk ez, cookierik ez.",
+        "installable": "Aplikazio gisa instalatu daiteke, lineaz kanpo funtzionatzen du.",
+        "local": "Zure fitxategiak ez du inoiz gailu hau uzten."
+    },
+    "result": {
+        "convertAnother": "Bihurtu beste bat",
+        "done": "Eginda:",
+        "download": "Deskargatu",
+        "ffmpeg": "ffmpeg.wasm, CPU ordezkoa",
+        "webcodecs": "WebCodecs, hardware bidez azeleratua"
+    },
+    "share": {
+        "cancel": "Utzi",
+        "preparing": "Zure bideoa prestatzen",
+        "progress": "{{done}} / {{total}} prest"
+    },
+    "tagline": "Bideoa nahi duzun tamainara txikitzen du, zuzenean zure gailuan.",
+    "theme": {
+        "dark": "Gai iluna",
+        "label": "Gaia",
+        "light": "Gai argia",
+        "system": "Sistemaren gaiarekin bat etorri"
+    },
+    "update": {
+        "available": "Bertsio berri bat eskuragarri dago.",
+        "dismiss": "Baztertu",
+        "reload": "Birkargatu eguneratzeko"
+    }
+}
