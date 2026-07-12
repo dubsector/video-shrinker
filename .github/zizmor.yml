@@ -1,0 +1,9 @@
+# zizmor configuration — https://docs.zizmor.sh/configuration/
+rules:
+  # Bubblewrap (Android build) and OpenCC (translation) are only distributed
+  # as ad-hoc CLI installs with no project lockfile to pin them to, so the
+  # adhoc-packages finding is expected and accepted for those two workflows.
+  adhoc-packages:
+    ignore:
+      - android-build.yml
+      - translate.yml
