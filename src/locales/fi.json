@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Pienennä tavoitekokoa",
+        "forceH264": "Pakota H.264 (paras yhteensopivuus, heikompi laatu tällä koolla)",
+        "increase": "Suurenna tavoitekokoa",
+        "stripMetadata": "Poista metatiedot (suositus)",
+        "targetSize": "Tavoitekoko"
+    },
+    "convert": {
+        "converting": "Muunnetaan…",
+        "refineNote": "Ensimmäinen läpiajo ylitti tavoitteen. Uudelleenkoodataan tarkkuuden parantamiseksi.",
+        "refining": "Viimeistellään kokoa…",
+        "start": "Muunna"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV ja muut",
+        "prompt": "Pudota video tähän tai napsauta valitaksesi tiedosto"
+    },
+    "errors": {
+        "conversionFailed": "Muunnos epäonnistui.",
+        "notVideo": "Valitse videotiedosto.",
+        "shareFailed": "Jaettua videota ei voitu vastaanottaa ({{message}}). Kokeile valita tiedosto suoraan.",
+        "shareNeverArrived": "Jaettua videota ei saatu järjestelmästä. Kokeile valita tiedosto suoraan.",
+        "shareTimeout": "Jaetun videon odottaminen keskeytettiin. Kokeile valita tiedosto suoraan."
+    },
+    "footer": {
+        "note": "Koodaus tapahtuu WebCodecs-tekniikalla, ja käytössä on ffmpeg-varajärjestelmä, jos sitä ei tueta."
+    },
+    "install": {
+        "action": "Asenna",
+        "dismiss": "Sulje",
+        "title": "Asenna Video Shrinker"
+    },
+    "language": {
+        "auto": "Automaattinen",
+        "label": "Kieli"
+    },
+    "privacy": {
+        "clean": "Ei tilejä, ei analytiikkaa, ei evästeitä.",
+        "installable": "Asennettavissa sovelluksena, toimii offline-tilassa.",
+        "local": "Tiedostosi ei poistu tältä laitteelta."
+    },
+    "result": {
+        "convertAnother": "Muunna toinen video",
+        "done": "Valmis:",
+        "download": "Lataa",
+        "ffmpeg": "ffmpeg.wasm, CPU-varavaihtoehto",
+        "webcodecs": "WebCodecs, laitteistokiihdytetty"
+    },
+    "share": {
+        "cancel": "Peruuta",
+        "preparing": "Valmistellaan videota",
+        "progress": "{{done}} / {{total}} valmiina"
+    },
+    "tagline": "Pienentää videon haluamaasi kokoon suoraan laitteellasi.",
+    "theme": {
+        "dark": "Tumma teema",
+        "label": "Teema",
+        "light": "Vaalea teema",
+        "system": "Käytä järjestelmän teemaa"
+    },
+    "update": {
+        "available": "Uusi versio on saatavilla.",
+        "dismiss": "Sulje",
+        "reload": "Päivitä lataamalla sivu uudelleen"
+    }
+}

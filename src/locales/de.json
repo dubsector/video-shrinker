@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Zielgröße verringern",
+        "forceH264": "H.264 erzwingen (maximale Kompatibilität, geringere Qualität bei dieser Größe)",
+        "increase": "Zielgröße erhöhen",
+        "stripMetadata": "Metadaten entfernen (empfohlen)",
+        "targetSize": "Zielgröße"
+    },
+    "convert": {
+        "converting": "Konvertierung läuft…",
+        "refineNote": "Der erste Durchgang hat das Ziel überschritten. Erneute Kodierung für mehr Genauigkeit.",
+        "refining": "Größe wird optimiert…",
+        "start": "Konvertieren"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV und mehr",
+        "prompt": "Video hierher ziehen oder zum Auswählen anklicken"
+    },
+    "errors": {
+        "conversionFailed": "Konvertierung fehlgeschlagen.",
+        "notVideo": "Bitte wähle eine Videodatei aus.",
+        "shareFailed": "Das geteilte Video konnte nicht empfangen werden ({{message}}). Versuche stattdessen, die Datei direkt auszuwählen.",
+        "shareNeverArrived": "Das geteilte Video ist nicht vom System eingetroffen. Versuchen Sie stattdessen, die Datei direkt auszuwählen.",
+        "shareTimeout": "Das Warten auf das geteilte Video wurde abgebrochen. Versuchen Sie stattdessen, die Datei direkt auszuwählen."
+    },
+    "footer": {
+        "note": "Die Kodierung erfolgt über WebCodecs, mit einem ffmpeg-Fallback, falls dies nicht unterstützt wird."
+    },
+    "install": {
+        "action": "Installieren",
+        "dismiss": "Schließen",
+        "title": "Video Shrinker installieren"
+    },
+    "language": {
+        "auto": "Automatisch",
+        "label": "Sprache"
+    },
+    "privacy": {
+        "clean": "Keine Konten, kein Analytics, keine Cookies.",
+        "installable": "Als App installierbar, funktioniert offline.",
+        "local": "Deine Datei verlässt niemals dieses Gerät."
+    },
+    "result": {
+        "convertAnother": "Ein weiteres Video konvertieren",
+        "done": "Fertig:",
+        "download": "Download",
+        "ffmpeg": "ffmpeg.wasm, CPU-Fallback",
+        "webcodecs": "WebCodecs, hardwarebeschleunigt"
+    },
+    "share": {
+        "cancel": "Abbrechen",
+        "preparing": "Video wird vorbereitet",
+        "progress": "{{done}} von {{total}} fertig"
+    },
+    "tagline": "Verkleinert Videos auf jede gewünschte Größe, direkt auf Ihrem Gerät.",
+    "theme": {
+        "dark": "Dunkles Design",
+        "label": "Design",
+        "light": "Helles Design",
+        "system": "Systemdesign verwenden"
+    },
+    "update": {
+        "available": "Eine neue Version ist verfügbar.",
+        "dismiss": "Schließen",
+        "reload": "Zum Aktualisieren neu laden"
+    }
+}

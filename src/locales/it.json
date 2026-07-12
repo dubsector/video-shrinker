@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Riduci dimensione obiettivo",
+        "forceH264": "Forza H.264 (massima compatibilità, qualità inferiore a queste dimensioni)",
+        "increase": "Aumenta dimensione obiettivo",
+        "stripMetadata": "Rimuovi metadati (consigliato)",
+        "targetSize": "Dimensione target"
+    },
+    "convert": {
+        "converting": "Conversione in corso…",
+        "refineNote": "Il primo passaggio ha superato l'obiettivo. Ricodifica in corso per una maggiore precisione.",
+        "refining": "Ottimizzazione dimensioni…",
+        "start": "Converti"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV e altri",
+        "prompt": "Trascina qui un video o clicca per sceglierne uno"
+    },
+    "errors": {
+        "conversionFailed": "Conversione fallita.",
+        "notVideo": "Seleziona un file video.",
+        "shareFailed": "Impossibile ricevere il video condiviso ({{message}}). Prova a selezionare direttamente il file.",
+        "shareNeverArrived": "Il video condiviso non è arrivato dal sistema. Prova a selezionare direttamente il file.",
+        "shareTimeout": "Attesa del video condiviso interrotta. Prova a selezionare il file direttamente."
+    },
+    "footer": {
+        "note": "La codifica avviene tramite WebCodecs, con fallback ffmpeg dove non supportato."
+    },
+    "install": {
+        "action": "Installa",
+        "dismiss": "Chiudi",
+        "title": "Installa Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatico",
+        "label": "Lingua"
+    },
+    "privacy": {
+        "clean": "Nessun account, nessuna analisi, nessun cookie.",
+        "installable": "Installabile come app, funziona offline.",
+        "local": "Il tuo file non lascia mai questo dispositivo."
+    },
+    "result": {
+        "convertAnother": "Converti un altro",
+        "done": "Completato:",
+        "download": "Scarica",
+        "ffmpeg": "ffmpeg.wasm, fallback CPU",
+        "webcodecs": "WebCodecs, accelerazione hardware"
+    },
+    "share": {
+        "cancel": "Annulla",
+        "preparing": "Preparazione del video in corso",
+        "progress": "{{done}} di {{total}} pronti"
+    },
+    "tagline": "Riduce il video alle dimensioni desiderate, direttamente sul tuo dispositivo.",
+    "theme": {
+        "dark": "Tema scuro",
+        "label": "Tema",
+        "light": "Tema chiaro",
+        "system": "Abbina al tema di sistema"
+    },
+    "update": {
+        "available": "Una nuova versione è disponibile.",
+        "dismiss": "Chiudi",
+        "reload": "Ricarica per aggiornare"
+    }
+}

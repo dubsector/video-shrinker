@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Kurangkan saiz sasaran",
+        "forceH264": "Paksa H.264 (keserasian maksimum, kualiti lebih rendah pada saiz ini)",
+        "increase": "Tambah saiz sasaran",
+        "stripMetadata": "Buang metadata (disyorkan)",
+        "targetSize": "Saiz sasaran"
+    },
+    "convert": {
+        "converting": "Menukar…",
+        "refineNote": "Laluan pertama melebihi sasaran. Pengekodan semula dilakukan sekali lagi untuk ketepatan.",
+        "refining": "Melaraskan saiz...",
+        "start": "Tukar"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, dan banyak lagi",
+        "prompt": "Letakkan video di sini, atau klik untuk memilih satu"
+    },
+    "errors": {
+        "conversionFailed": "Penukaran gagal.",
+        "notVideo": "Sila pilih fail video.",
+        "shareFailed": "Tidak dapat menerima video yang dikongsi ({{message}}). Cuba pilih fail terus sebaliknya.",
+        "shareNeverArrived": "Video yang dikongsi tidak pernah sampai daripada sistem. Cuba pilih fail terus sebaliknya.",
+        "shareTimeout": "Berhenti menunggu video yang dikongsi. Sila cuba pilih fail secara terus."
+    },
+    "footer": {
+        "note": "Pengekodan berjalan melalui WebCodecs, dengan sandaran ffmpeg di mana ia tidak disokong."
+    },
+    "install": {
+        "action": "Pasang",
+        "dismiss": "Tutup",
+        "title": "Pasang Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatik",
+        "label": "Bahasa"
+    },
+    "privacy": {
+        "clean": "Tiada akaun, tiada analitik, tiada kuki.",
+        "installable": "Boleh dipasang sebagai aplikasi, berfungsi di luar talian.",
+        "local": "Fail anda tidak pernah meninggalkan peranti ini."
+    },
+    "result": {
+        "convertAnother": "Tukar video lain",
+        "done": "Selesai:",
+        "download": "Muat turun",
+        "ffmpeg": "ffmpeg.wasm, sandaran CPU",
+        "webcodecs": "WebCodecs, dipercepatkan perkakasan"
+    },
+    "share": {
+        "cancel": "Batal",
+        "preparing": "Menyediakan video anda",
+        "progress": "{{done}} daripada {{total}} sedia"
+    },
+    "tagline": "Mengecilkan video kepada saiz yang anda perlukan, terus pada peranti anda.",
+    "theme": {
+        "dark": "Tema gelap",
+        "label": "Tema",
+        "light": "Tema cerah",
+        "system": "Padankan tema sistem"
+    },
+    "update": {
+        "available": "Versi baharu tersedia.",
+        "dismiss": "Tutup",
+        "reload": "Muat semula untuk mengemas kini"
+    }
+}

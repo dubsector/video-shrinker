@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Micșorează dimensiunea țintă",
+        "forceH264": "Forțează H.264 (compatibilitate maximă, calitate mai slabă la această dimensiune)",
+        "increase": "Mărește dimensiunea țintă",
+        "stripMetadata": "Elimină metadatele (recomandat)",
+        "targetSize": "Dimensiune țintă"
+    },
+    "convert": {
+        "converting": "Se convertește…",
+        "refineNote": "Prima trecere a depășit ținta. Recodificare încă o dată pentru acuratețe.",
+        "refining": "Rafinarea dimensiunii...",
+        "start": "Convertește"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV și altele",
+        "prompt": "Trage un videoclip aici sau dă clic pentru a alege unul"
+    },
+    "errors": {
+        "conversionFailed": "Conversia a eșuat.",
+        "notVideo": "Te rugăm să alegi un fișier video.",
+        "shareFailed": "Nu s-a putut primi videoclipul partajat ({{message}}). Încearcă să selectezi fișierul direct.",
+        "shareNeverArrived": "Videoclipul partajat nu a ajuns niciodată din sistem. Încearcă să alegi fișierul direct.",
+        "shareTimeout": "Am renunțat să mai aștept videoclipul partajat. Încearcă să alegi fișierul direct."
+    },
+    "footer": {
+        "note": "Codarea rulează prin WebCodecs, cu o alternativă ffmpeg unde nu este suportată."
+    },
+    "install": {
+        "action": "Instalează",
+        "dismiss": "Închide",
+        "title": "Instalează Video Shrinker"
+    },
+    "language": {
+        "auto": "Automat",
+        "label": "Limbă"
+    },
+    "privacy": {
+        "clean": "Fără conturi, fără analitice, fără cookie-uri.",
+        "installable": "Instalabil ca aplicație, funcționează offline.",
+        "local": "Fișierul tău nu părăsește niciodată acest dispozitiv."
+    },
+    "result": {
+        "convertAnother": "Convertește altul",
+        "done": "Finalizat:",
+        "download": "Descarcă",
+        "ffmpeg": "ffmpeg.wasm, alternativă CPU",
+        "webcodecs": "WebCodecs, accelerare hardware"
+    },
+    "share": {
+        "cancel": "Anulează",
+        "preparing": "Se pregătește videoclipul",
+        "progress": "{{done}} din {{total}} gata"
+    },
+    "tagline": "Micșorează videoclipul la dimensiunea de care ai nevoie, chiar pe dispozitivul tău.",
+    "theme": {
+        "dark": "Temă întunecată",
+        "label": "Temă",
+        "light": "Temă luminoasă",
+        "system": "Potrivește cu tema sistemului"
+    },
+    "update": {
+        "available": "O nouă versiune este disponibilă.",
+        "dismiss": "Închide",
+        "reload": "Reîncarcă pentru a actualiza"
+    }
+}

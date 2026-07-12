@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Hedef boyutu küçült",
+        "forceH264": "H.264'ü zorla (maksimum uyumluluk, bu boyutta daha düşük kalite)",
+        "increase": "Hedef boyutu büyüt",
+        "stripMetadata": "Meta verileri temizle (önerilen)",
+        "targetSize": "Hedef boyut"
+    },
+    "convert": {
+        "converting": "Dönüştürülüyor…",
+        "refineNote": "İlk geçiş hedefi aştı. Doğruluk için tekrar kodlanıyor.",
+        "refining": "Boyut ayarlanıyor…",
+        "start": "Dönüştür"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV ve daha fazlası",
+        "prompt": "Buraya bir video bırakın veya seçmek için tıklayın"
+    },
+    "errors": {
+        "conversionFailed": "Dönüştürme başarısız oldu.",
+        "notVideo": "Lütfen bir video dosyası seçin.",
+        "shareFailed": "Paylaşılan video alınamadı ({{message}}). Bunun yerine dosyayı doğrudan seçmeyi deneyin.",
+        "shareNeverArrived": "Paylaşılan video sistemden gelmedi. Bunun yerine dosyayı doğrudan seçmeyi deneyin.",
+        "shareTimeout": "Paylaşılan video için bekleme süresi doldu. Bunun yerine dosyayı doğrudan seçmeyi deneyin."
+    },
+    "footer": {
+        "note": "Kodlama WebCodecs aracılığıyla çalışır, desteklenmediği durumlarda ffmpeg yedeği kullanılır."
+    },
+    "install": {
+        "action": "Yükle",
+        "dismiss": "Kapat",
+        "title": "Video Shrinker'ı yükle"
+    },
+    "language": {
+        "auto": "Otomatik",
+        "label": "Dil"
+    },
+    "privacy": {
+        "clean": "Hesap yok, analiz yok, çerez yok.",
+        "installable": "Uygulama olarak yüklenebilir, çevrimdışı çalışır.",
+        "local": "Dosyanız bu cihazdan asla ayrılmaz."
+    },
+    "result": {
+        "convertAnother": "Başka bir video dönüştür",
+        "done": "Tamamlandı:",
+        "download": "İndir",
+        "ffmpeg": "ffmpeg.wasm, CPU yedekleme",
+        "webcodecs": "WebCodecs, donanım hızlandırmalı"
+    },
+    "share": {
+        "cancel": "İptal",
+        "preparing": "Videonuz hazırlanıyor",
+        "progress": "{{done}} / {{total}} hazır"
+    },
+    "tagline": "Videoyu doğrudan cihazınızda, ihtiyacınız olan boyuta sıkıştırır.",
+    "theme": {
+        "dark": "Koyu tema",
+        "label": "Tema",
+        "light": "Açık tema",
+        "system": "Sistem temasıyla eşleştir"
+    },
+    "update": {
+        "available": "Yeni bir sürüm mevcut.",
+        "dismiss": "Kapat",
+        "reload": "Güncellemek için yeniden yükle"
+    }
+}

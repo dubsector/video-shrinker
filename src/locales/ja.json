@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "目標サイズを縮小",
+        "forceH264": "H.264を強制（互換性最大、このサイズでは画質が低下）",
+        "increase": "目標サイズを拡大",
+        "stripMetadata": "メタデータを削除 (推奨)",
+        "targetSize": "目標サイズ"
+    },
+    "convert": {
+        "converting": "変換中…",
+        "refineNote": "1回目のパスが目標を超えました。精度を高めるため再エンコードします。",
+        "refining": "サイズを調整中…",
+        "start": "変換"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKVなど",
+        "prompt": "動画をここにドロップするか、クリックして選択してください"
+    },
+    "errors": {
+        "conversionFailed": "変換に失敗しました。",
+        "notVideo": "動画ファイルを選択してください。",
+        "shareFailed": "共有ビデオを受信できませんでした ({{message}})。代わりにファイルを直接選択してください。",
+        "shareNeverArrived": "共有された動画がシステムから届きませんでした。代わりに直接ファイルを選択してみてください。",
+        "shareTimeout": "共有ビデオの待機を終了しました。代わりにファイルを直接選択してください。"
+    },
+    "footer": {
+        "note": "エンコードは WebCodecs を通じて実行され、サポートされていない場合は ffmpeg がフォールバックとして使用されます。"
+    },
+    "install": {
+        "action": "インストール",
+        "dismiss": "閉じる",
+        "title": "Video Shrinker をインストール"
+    },
+    "language": {
+        "auto": "自動",
+        "label": "言語"
+    },
+    "privacy": {
+        "clean": "アカウント作成、分析、クッキーは一切ありません。",
+        "installable": "アプリとしてインストール可能、オフラインで動作します。",
+        "local": "ファイルはデバイスから一切外部へ送信されません。"
+    },
+    "result": {
+        "convertAnother": "別のファイルを変換",
+        "done": "完了:",
+        "download": "ダウンロード",
+        "ffmpeg": "ffmpeg.wasm, CPU フォールバック",
+        "webcodecs": "WebCodecs、ハードウェアアクセラレーション"
+    },
+    "share": {
+        "cancel": "キャンセル",
+        "preparing": "ビデオを準備しています",
+        "progress": "{{done}} / {{total}} 完了"
+    },
+    "tagline": "デバイス上で、動画を必要なサイズに圧縮します。",
+    "theme": {
+        "dark": "ダークテーマ",
+        "label": "テーマ",
+        "light": "ライトテーマ",
+        "system": "システムテーマに合わせる"
+    },
+    "update": {
+        "available": "新しいバージョンが利用可能です。",
+        "dismiss": "閉じる",
+        "reload": "リロードして更新"
+    }
+}

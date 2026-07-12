@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Bawasan ang target na laki",
+        "forceH264": "Pilitin ang H.264 (pinakamataas na compatibility, mas mababang kalidad sa laki na ito)",
+        "increase": "Dagdagan ang target na laki",
+        "stripMetadata": "Alisin ang metadata (inirerekomenda)",
+        "targetSize": "Target na laki"
+    },
+    "convert": {
+        "converting": "Nagko-convert…",
+        "refineNote": "Lumampas ang unang pass sa target. Muling nag-e-encode para sa katumpakan.",
+        "refining": "Inaayos ang laki…",
+        "start": "I-convert"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, at iba pa",
+        "prompt": "I-drop ang video dito, o i-click para pumili"
+    },
+    "errors": {
+        "conversionFailed": "Nabigo ang conversion.",
+        "notVideo": "Mangyaring pumili ng file ng video.",
+        "shareFailed": "Hindi natanggap ang ibinahaging video ({{message}}). Subukang piliin nang direkta ang file.",
+        "shareNeverArrived": "Hindi dumating ang ibinahaging video mula sa system. Subukang piliin nang direkta ang file sa halip.",
+        "shareTimeout": "Huminto sa paghihintay sa ibinahaging video. Subukang piliin nang direkta ang file."
+    },
+    "footer": {
+        "note": "Ang encoding ay tumatakbo sa pamamagitan ng WebCodecs, na may ffmpeg fallback kung saan hindi ito suportado."
+    },
+    "install": {
+        "action": "I-install",
+        "dismiss": "Isara",
+        "title": "I-install ang Video Shrinker"
+    },
+    "language": {
+        "auto": "Awtomatiko",
+        "label": "Wika"
+    },
+    "privacy": {
+        "clean": "Walang mga account, walang analytics, walang cookies.",
+        "installable": "Maaaring i-install bilang app, gumagana nang offline.",
+        "local": "Hindi lumalabas sa device na ito ang iyong file."
+    },
+    "result": {
+        "convertAnother": "Mag-convert ng iba pa",
+        "done": "Tapos na:",
+        "download": "I-download",
+        "ffmpeg": "ffmpeg.wasm, fallback ng CPU",
+        "webcodecs": "WebCodecs, hardware-accelerated"
+    },
+    "share": {
+        "cancel": "Kanselahin",
+        "preparing": "Inihahanda ang iyong video",
+        "progress": "{{done}} sa {{total}} ay handa na"
+    },
+    "tagline": "Pinapaliit ang video sa sukat na kailangan mo, mismo sa iyong device.",
+    "theme": {
+        "dark": "Madilim na tema",
+        "label": "Tema",
+        "light": "Temang maliwanag",
+        "system": "Itugma sa tema ng system"
+    },
+    "update": {
+        "available": "May available na bagong bersyon.",
+        "dismiss": "Isara",
+        "reload": "I-reload para mag-update"
+    }
+}

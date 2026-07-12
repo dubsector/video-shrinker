@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Kurangi ukuran target",
+        "forceH264": "Paksa H.264 (kompatibilitas maksimal, kualitas lebih rendah pada ukuran ini)",
+        "increase": "Tambah ukuran target",
+        "stripMetadata": "Hapus metadata (disarankan)",
+        "targetSize": "Ukuran target"
+    },
+    "convert": {
+        "converting": "Mengonversi…",
+        "refineNote": "Langkah pertama melebihi target. Melakukan penyandian ulang sekali lagi demi akurasi.",
+        "refining": "Menyempurnakan ukuran…",
+        "start": "Konversi"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, dan lainnya",
+        "prompt": "Tarik video ke sini, atau klik untuk memilih"
+    },
+    "errors": {
+        "conversionFailed": "Konversi gagal.",
+        "notVideo": "Harap pilih file video.",
+        "shareFailed": "Tidak dapat menerima video yang dibagikan ({{message}}). Coba pilih file secara langsung sebagai gantinya.",
+        "shareNeverArrived": "Video yang dibagikan tidak diterima dari sistem. Coba pilih file secara langsung.",
+        "shareTimeout": "Berhenti menunggu video yang dibagikan. Coba pilih file secara langsung sebagai gantinya."
+    },
+    "footer": {
+        "note": "Encoding berjalan melalui WebCodecs, dengan cadangan ffmpeg jika tidak didukung."
+    },
+    "install": {
+        "action": "Instal",
+        "dismiss": "Tutup",
+        "title": "Instal Video Shrinker"
+    },
+    "language": {
+        "auto": "Otomatis",
+        "label": "Bahasa"
+    },
+    "privacy": {
+        "clean": "Tanpa akun, tanpa analitik, tanpa cookie.",
+        "installable": "Dapat diinstal sebagai aplikasi, berfungsi secara offline.",
+        "local": "File Anda tidak pernah meninggalkan perangkat ini."
+    },
+    "result": {
+        "convertAnother": "Konversi lainnya",
+        "done": "Selesai:",
+        "download": "Unduh",
+        "ffmpeg": "ffmpeg.wasm, cadangan CPU",
+        "webcodecs": "WebCodecs, akselerasi perangkat keras"
+    },
+    "share": {
+        "cancel": "Batal",
+        "preparing": "Menyiapkan video Anda",
+        "progress": "{{done}} dari {{total}} siap"
+    },
+    "tagline": "Mengecilkan video ke ukuran apa pun yang Anda butuhkan, langsung di perangkat Anda.",
+    "theme": {
+        "dark": "Tema gelap",
+        "label": "Tema",
+        "light": "Tema terang",
+        "system": "Sesuaikan dengan tema sistem"
+    },
+    "update": {
+        "available": "Tersedia versi baru.",
+        "dismiss": "Tutup",
+        "reload": "Muat ulang untuk memperbarui"
+    }
+}

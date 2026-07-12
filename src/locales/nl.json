@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Verklein doelgrootte",
+        "forceH264": "Forceer H.264 (maximale compatibiliteit, lagere kwaliteit bij deze grootte)",
+        "increase": "Vergroot doelgrootte",
+        "stripMetadata": "Verwijder metadata (aanbevolen)",
+        "targetSize": "Doelgrootte"
+    },
+    "convert": {
+        "converting": "Converteren…",
+        "refineNote": "De eerste pass ging voorbij het doel. Opnieuw coderen voor nauwkeurigheid.",
+        "refining": "Grootte aanpassen…",
+        "start": "Converteren"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV en meer",
+        "prompt": "Sleep hier een video naartoe of klik om er een te kiezen"
+    },
+    "errors": {
+        "conversionFailed": "Conversie mislukt.",
+        "notVideo": "Kies een videobestand.",
+        "shareFailed": "Kon de gedeelde video niet ontvangen ({{message}}). Probeer in plaats daarvan het bestand direct te kiezen.",
+        "shareNeverArrived": "De gedeelde video kwam nooit aan vanuit het systeem. Probeer in plaats daarvan het bestand direct te kiezen.",
+        "shareTimeout": "Het wachten op de gedeelde video is gestaakt. Probeer in plaats daarvan het bestand direct te kiezen."
+    },
+    "footer": {
+        "note": "Codering verloopt via WebCodecs, met een ffmpeg fallback waar dit niet wordt ondersteund."
+    },
+    "install": {
+        "action": "Installeren",
+        "dismiss": "Sluiten",
+        "title": "Installeer Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatisch",
+        "label": "Taal"
+    },
+    "privacy": {
+        "clean": "Geen accounts, geen analytics, geen cookies.",
+        "installable": "Installeerbaar als app, werkt offline.",
+        "local": "Je bestand verlaat dit apparaat nooit."
+    },
+    "result": {
+        "convertAnother": "Converteer nog een video",
+        "done": "Klaar:",
+        "download": "Downloaden",
+        "ffmpeg": "ffmpeg.wasm, CPU-fallback",
+        "webcodecs": "WebCodecs, hardwareversneld"
+    },
+    "share": {
+        "cancel": "Annuleren",
+        "preparing": "Je video voorbereiden",
+        "progress": "{{done}} van {{total}} gereed"
+    },
+    "tagline": "Verkleint video's tot de gewenste grootte, direct op je apparaat.",
+    "theme": {
+        "dark": "Donkere modus",
+        "label": "Thema",
+        "light": "Licht thema",
+        "system": "Gebruik systeemthema"
+    },
+    "update": {
+        "available": "Er is een nieuwe versie beschikbaar.",
+        "dismiss": "Sluiten",
+        "reload": "Herlaad om bij te werken"
+    }
+}

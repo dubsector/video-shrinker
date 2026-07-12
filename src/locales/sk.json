@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Znížiť cieľovú veľkosť",
+        "forceH264": "Vynútiť H.264 (maximálna kompatibilita, nižšia kvalita pri tejto veľkosti)",
+        "increase": "Zvýšiť cieľovú veľkosť",
+        "stripMetadata": "Odstrániť metaúdaje (odporúčané)",
+        "targetSize": "Cieľová veľkosť"
+    },
+    "convert": {
+        "converting": "Konvertuje sa…",
+        "refineNote": "Prvý prechod prekročil cieľ. Prekódovanie znova pre presnosť.",
+        "refining": "Upravuje sa veľkosť…",
+        "start": "Konvertovať"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV a ďalšie",
+        "prompt": "Sem presuňte video alebo kliknite pre výber"
+    },
+    "errors": {
+        "conversionFailed": "Konverzia zlyhala.",
+        "notVideo": "Prosím, vyberte video súbor.",
+        "shareFailed": "Nepodarilo sa prijať zdieľané video ({{message}}). Namiesto toho skúste vybrať súbor priamo.",
+        "shareNeverArrived": "Zdieľané video neprišlo zo systému. Namiesto toho skúste vybrať súbor priamo.",
+        "shareTimeout": "Čakanie na zdieľané video bolo ukončené. Namiesto toho skúste vybrať súbor priamo."
+    },
+    "footer": {
+        "note": "Kódovanie prebieha cez WebCodecs, s ffmpeg zálohou, ak nie je podporované."
+    },
+    "install": {
+        "action": "Inštalovať",
+        "dismiss": "Zavrieť",
+        "title": "Nainštalovať Video Shrinker"
+    },
+    "language": {
+        "auto": "Automaticky",
+        "label": "Jazyk"
+    },
+    "privacy": {
+        "clean": "Žiadne účty, žiadna analytika, žiadne cookies.",
+        "installable": "Možno nainštalovať ako aplikáciu, funguje offline.",
+        "local": "Váš súbor nikdy neopustí toto zariadenie."
+    },
+    "result": {
+        "convertAnother": "Konvertovať ďalší",
+        "done": "Hotovo:",
+        "download": "Stiahnuť",
+        "ffmpeg": "ffmpeg.wasm, CPU záloha",
+        "webcodecs": "WebCodecs, hardvérová akcelerácia"
+    },
+    "share": {
+        "cancel": "Zrušiť",
+        "preparing": "Pripravuje sa vaše video",
+        "progress": "{{done}} z {{total}} pripravených"
+    },
+    "tagline": "Zmenší video na akúkoľvek veľkosť, ktorú potrebujete, priamo vo vašom zariadení.",
+    "theme": {
+        "dark": "Tmavá téma",
+        "label": "Téma",
+        "light": "Svetlá téma",
+        "system": "Prispôsobiť systémovej téme"
+    },
+    "update": {
+        "available": "Je k dispozícii nová verzia.",
+        "dismiss": "Zavrieť",
+        "reload": "Obnovte stránku pre aktualizáciu"
+    }
+}
