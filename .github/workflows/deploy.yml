@@ -13,10 +13,10 @@ on:
       - '.github/**'
   workflow_dispatch:
 
+# Least privilege at the top level: only the read scope every job needs.
+# The pages/id-token write scopes are granted to the deploy job alone.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -26,8 +26,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: 24
           cache: npm
@@ -36,14 +38,91 @@ jobs:
       # deps (e.g. Rolldown's WASM fallback) are absent and npm ci fails.
       - run: npm install
       - run: npm run build
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
 
-  deploy:
-    needs: build
+  # Gate the publish on GitHub's CodeQL code scanning for this exact commit.
+  # deploy.yml and CodeQL (default setup) both trigger on the push and run
+  # concurrently, so this job waits for CodeQL's check runs on the commit to
+  # finish and refuses to let deploy proceed unless they succeeded. It fails
+  # closed: if the scans never report or a scan fails, the site is not
+  # published. This is defence in depth on top of branch protection, which
+  # already keeps unscanned code off main.
+  security-gate:
     runs-on: ubuntu-latest
+    permissions:
+      checks: read
+    steps:
+      - name: Require CodeQL to pass before publishing
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
+        with:
+          script: |
+            const sha = context.sha;
+            // Check-run names that must succeed before we publish. Covers the
+            // CodeQL umbrella check and each per-language "Analyze (...)" run.
+            const required = [/^codeql$/i, /^analyze /i];
+            const deadlineMs = Date.now() + 15 * 60 * 1000;
+            const pollMs = 20 * 1000;
+
+            while (true) {
+              const runs = await github.paginate(github.rest.checks.listForRef, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: sha,
+                per_page: 100,
+              });
+              const security = runs.filter((r) =>
+                required.some((re) => re.test(r.name)),
+              );
+
+              if (security.length === 0) {
+                if (Date.now() > deadlineMs) {
+                  throw new Error(
+                    'Timed out waiting for CodeQL security checks to start; refusing to publish.',
+                  );
+                }
+                core.info('CodeQL checks not reported yet; waiting…');
+                await new Promise((res) => setTimeout(res, pollMs));
+                continue;
+              }
+
+              const pending = security.filter((r) => r.status !== 'completed');
+              if (pending.length) {
+                if (Date.now() > deadlineMs) {
+                  throw new Error(
+                    'Timed out waiting for CodeQL to finish: ' +
+                      pending.map((r) => r.name).join(', '),
+                  );
+                }
+                core.info('Waiting on: ' + pending.map((r) => r.name).join(', '));
+                await new Promise((res) => setTimeout(res, pollMs));
+                continue;
+              }
+
+              const ok = ['success', 'neutral', 'skipped'];
+              const failed = security.filter((r) => !ok.includes(r.conclusion));
+              if (failed.length) {
+                throw new Error(
+                  'Refusing to publish — security checks did not pass: ' +
+                    failed.map((r) => `${r.name} (${r.conclusion})`).join(', '),
+                );
+              }
+
+              core.info(
+                'Security checks passed: ' +
+                  security.map((r) => r.name).join(', '),
+              );
+              break;
+            }
+
+  deploy:
+    needs: [build, security-gate]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.attempt1.outputs.page_url || steps.attempt2.outputs.page_url || steps.attempt3.outputs.page_url }}
@@ -55,7 +134,7 @@ jobs:
       # CodeQL scan) — it's transient on GitHub's end, so just retry.
       - name: Deploy to GitHub Pages (attempt 1)
         id: attempt1
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
         continue-on-error: true
 
       - name: Wait before retry 1
@@ -65,7 +144,7 @@ jobs:
       - name: Deploy to GitHub Pages (attempt 2)
         id: attempt2
         if: steps.attempt1.outcome == 'failure'
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
         continue-on-error: true
 
       - name: Wait before retry 2
@@ -75,4 +154,4 @@ jobs:
       - name: Deploy to GitHub Pages (attempt 3)
         id: attempt3
         if: steps.attempt1.outcome == 'failure' && steps.attempt2.outcome == 'failure'
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
