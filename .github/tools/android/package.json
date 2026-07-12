@@ -3,5 +3,10 @@
   "private": true,
   "devDependencies": {
     "@bubblewrap/cli": "1.24.1"
+  },
+  "overrides": {
+    "tar": "7.5.20",
+    "uuid": "11.1.1",
+    "file-type": "21.3.4"
   }
 }
