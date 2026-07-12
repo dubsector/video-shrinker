@@ -29,6 +29,14 @@ jobs:
         with:
           node-version: 24
 
+      # i18n-ai-translate and opencc-js are declared as devDependencies with
+      # a committed lockfile in .github/tools/i18n, so this installs pinned,
+      # hash-verified versions instead of resolving a version string at
+      # runtime.
+      - name: Install translation tools
+        working-directory: .github/tools/i18n
+        run: npm install
+
       # Gemini free tier allows 10 requests/minute, so space requests 7s
       # apart. The committed cache file keeps reruns incremental: only new
       # or changed source strings reach the API.
@@ -36,7 +44,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          npx --yes i18n-ai-translate@5.1.0 translate \
+          "$GITHUB_WORKSPACE/.github/tools/i18n/node_modules/.bin/i18n-ai-translate" translate \
             -i src/locales/en.json \
             -o af am ar az be bg bn ca cs da de el es et eu fa fi fr gl gu he hi hr hu hy id is it ja ka kk km kn ko ky lo lt lv mk ml mn mr ms my ne nl no pa pl pt rm ro ru si sk sl sq sr sv sw ta te th tl tr uk ur vi zh zu \
             -e gemini \
@@ -54,8 +62,9 @@ jobs:
       # both the script change and Taiwan vocabulary, costs no API
       # requests, and stays in sync with zh.json on every run.
       - name: Derive Traditional Chinese
+        env:
+          NODE_PATH: ${{ github.workspace }}/.github/tools/i18n/node_modules
         run: |
-          npm install --no-save --no-package-lock opencc-js@1.4.0
           node <<'EOF'
           const fs = require('fs');
           const OpenCC = require('opencc-js');

@@ -1,0 +1,8 @@
+{
+  "name": "video-shrinker-i18n-tools",
+  "private": true,
+  "devDependencies": {
+    "i18n-ai-translate": "5.1.0",
+    "opencc-js": "1.4.0"
+  }
+}
