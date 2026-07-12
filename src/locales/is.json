@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Minnka markstærð",
+        "forceH264": "Þvinga H.264 (hámarks eindrægni, lægri gæði við þessa stærð)",
+        "increase": "Auka markstærð",
+        "stripMetadata": "Fjarlægja lýsigögn (mælt með)",
+        "targetSize": "Markstærð"
+    },
+    "convert": {
+        "converting": "Umbreyti…",
+        "refineNote": "Fyrsta umferð fór yfir markið. Endurkóða einu sinni enn til að ná nákvæmni.",
+        "refining": "Fínstillir stærð…",
+        "start": "Umbreyta"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV og fleira",
+        "prompt": "Slepptu myndbandi hér, eða smelltu til að velja eitt"
+    },
+    "errors": {
+        "conversionFailed": "Umbreyting mistókst.",
+        "notVideo": "Vinsamlegast veldu myndskeiðsskrá.",
+        "shareFailed": "Tókst ekki að taka á móti deilda myndskeiðinu ({{message}}). Prófaðu að velja skrána beint í staðinn.",
+        "shareNeverArrived": "Deilda myndskeiðið barst aldrei frá kerfinu. Prófaðu að velja skrána beint í staðinn.",
+        "shareTimeout": "Hætt var að bíða eftir deilda myndbandinu. Reyndu frekar að velja skrána beint."
+    },
+    "footer": {
+        "note": "Kóðun keyrir í gegnum WebCodecs, með ffmpeg sem varavalkost þar sem það er ekki stutt."
+    },
+    "install": {
+        "action": "Setja upp",
+        "dismiss": "Loka",
+        "title": "Setja upp Video Shrinker"
+    },
+    "language": {
+        "auto": "Sjálfvirkt",
+        "label": "Tungumál"
+    },
+    "privacy": {
+        "clean": "Engir reikningar, engin greining, engar vafrakökur.",
+        "installable": "Hægt að setja upp sem forrit, virkar án nettengingar.",
+        "local": "Skráin þín fer aldrei úr þessu tæki."
+    },
+    "result": {
+        "convertAnother": "Umbreyta öðru",
+        "done": "Lokið:",
+        "download": "Hala niður",
+        "ffmpeg": "ffmpeg.wasm, CPU varaúrræði",
+        "webcodecs": "WebCodecs, vélbúnaðarhröðun"
+    },
+    "share": {
+        "cancel": "Hætta við",
+        "preparing": "Undirbýr myndskeiðið",
+        "progress": "{{done}} af {{total}} tilbúið"
+    },
+    "tagline": "Minnkar myndbandið í þá stærð sem þú þarft, beint í tækinu þínu.",
+    "theme": {
+        "dark": "Dökkt þema",
+        "label": "Þema",
+        "light": "Ljóst þema",
+        "system": "Nota kerfisþema"
+    },
+    "update": {
+        "available": "Ný útgáfa er í boði.",
+        "dismiss": "Loka",
+        "reload": "Endurhlaða til að uppfæra"
+    }
+}

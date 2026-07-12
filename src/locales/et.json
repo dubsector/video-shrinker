@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Vähenda sihtmõõtu",
+        "forceH264": "Kasuta H.264 (maksimaalne ühilduvus, madalam kvaliteet selle suuruse juures)",
+        "increase": "Suurenda sihtmõõtu",
+        "stripMetadata": "Eemalda metaandmed (soovitatav)",
+        "targetSize": "Sihtmõõt"
+    },
+    "convert": {
+        "converting": "Teisendamine…",
+        "refineNote": "Esimene katse ületas sihtmõõtu. Täpsuse huvides kodeerin uuesti.",
+        "refining": "Täpsustan suurust…",
+        "start": "Teisenda"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV ja muud",
+        "prompt": "Lohista video siia või klõpsa valimiseks"
+    },
+    "errors": {
+        "conversionFailed": "Teisendamine ebaõnnestus.",
+        "notVideo": "Palun vali videofail.",
+        "shareFailed": "Jagatud videot ei õnnestunud kätte saada ({{message}}). Proovi selle asemel fail otse valida.",
+        "shareNeverArrived": "Jagatud video ei jõudnud süsteemist kohale. Proovi selle asemel fail otse valida.",
+        "shareTimeout": "Loobusin jagatud video ootamisest. Proovi selle asemel fail otse valida."
+    },
+    "footer": {
+        "note": "Kodeerimine toimub WebCodecs kaudu, toetamata juhtudel kasutatakse ffmpeg varulahendust."
+    },
+    "install": {
+        "action": "Installi",
+        "dismiss": "Sulge",
+        "title": "Paigalda Video Shrinker"
+    },
+    "language": {
+        "auto": "Automaatne",
+        "label": "Keel"
+    },
+    "privacy": {
+        "clean": "Kontosid, analüütikat ega küpsiseid ei kasutata.",
+        "installable": "Paigaldatav rakendusena, töötab võrguühenduseta.",
+        "local": "Sinu fail ei lahku kunagi sellest seadmest."
+    },
+    "result": {
+        "convertAnother": "Teisenda veel üks",
+        "done": "Valmis:",
+        "download": "Laadi alla",
+        "ffmpeg": "ffmpeg.wasm, protsessori kasutamine (varuvariant)",
+        "webcodecs": "WebCodecs, riistvaraline kiirendus"
+    },
+    "share": {
+        "cancel": "Loobu",
+        "preparing": "Video ettevalmistamine",
+        "progress": "{{done}} / {{total}} valmis"
+    },
+    "tagline": "Tihendab video soovitud suuruseni, otse sinu seadmes.",
+    "theme": {
+        "dark": "Tume kujundus",
+        "label": "Teema",
+        "light": "Hele teema",
+        "system": "Kasuta süsteemi teemat"
+    },
+    "update": {
+        "available": "Uus versioon on saadaval.",
+        "dismiss": "Sulge",
+        "reload": "Uuendamiseks laadi leht uuesti"
+    }
+}

@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Reducir la grondezza da destinaziun",
+        "forceH264": "Forzar H.264 (compatibilitad maximala, qualitad pli bassa en questa grondezza)",
+        "increase": "Augmentar la grondezza da destinaziun",
+        "stripMetadata": "Stizzar metadatas (recumandà)",
+        "targetSize": "Grondezza da destinaziun"
+    },
+    "convert": {
+        "converting": "Convertez...",
+        "refineNote": "L'emprima passada ha surpassà la finamira. Recodifitgar anc ina giada per pli grond'exactadad.",
+        "refining": "Refinar la grondezza…",
+        "start": "Convertir"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV e dapli",
+        "prompt": "Lass in ina video qua, u clicca per tschernir in"
+    },
+    "errors": {
+        "conversionFailed": "La conversiun è dada en malura.",
+        "notVideo": "Tscherna in file video.",
+        "shareFailed": "N'ha betg pudì retschaiver il video spartì ({{message}}). Empruvai da tschernir il file directamain.",
+        "shareNeverArrived": "Il video spartì n'è mai arrivà dal sistem. Empruva da tschernir il file directamain.",
+        "shareTimeout": "Stà vegnì dà si d'spetgar sin il video spartì. Empruvai da tschernir il file directamain."
+    },
+    "footer": {
+        "note": "La codificaziun va via WebCodecs, cun in ffmpeg-fallback nua che quai na vegn betg sustegnì."
+    },
+    "install": {
+        "action": "Installar",
+        "dismiss": "Serrar",
+        "title": "Installar Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatic",
+        "label": "Lingua"
+    },
+    "privacy": {
+        "clean": "Nagins quints, nagina analitica, nagins cookies.",
+        "installable": "Installabel sco app, funcziuna offline.",
+        "local": "Tes file na banduna mai quest dispositiv."
+    },
+    "result": {
+        "convertAnother": "Convertir in auter",
+        "done": "Finì:",
+        "download": "Telechargiar",
+        "ffmpeg": "ffmpeg.wasm, CPU-fallback",
+        "webcodecs": "WebCodecs, accelerà da hardware"
+    },
+    "share": {
+        "cancel": "Interrumper",
+        "preparing": "Preparesch tes video",
+        "progress": "{{done}} da {{total}} pront"
+    },
+    "tagline": "Reducescha il video sin la grondezza che ti dovras, directamain sin tes dispositiv.",
+    "theme": {
+        "dark": "Tema stgir",
+        "label": "Tema",
+        "light": "Tema cler",
+        "system": "Adattar al tema dal sistem"
+    },
+    "update": {
+        "available": "In nova versiun è disponibla.",
+        "dismiss": "Serrar",
+        "reload": "Reload per actualisar"
+    }
+}

@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Diminuír o tamaño obxectivo",
+        "forceH264": "Forzar H.264 (máxima compatibilidade, menor calidade neste tamaño)",
+        "increase": "Aumentar o tamaño obxectivo",
+        "stripMetadata": "Eliminar metadatos (recomendado)",
+        "targetSize": "Tamaño obxectivo"
+    },
+    "convert": {
+        "converting": "Convertendo…",
+        "refineNote": "A primeira pasada excedeu o obxectivo. Recodificando unha vez máis para máis precisión.",
+        "refining": "Afinando o tamaño…",
+        "start": "Converter"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV e máis",
+        "prompt": "Arrastra un vídeo aquí, ou fai clic para escoller un"
+    },
+    "errors": {
+        "conversionFailed": "A conversión fallou.",
+        "notVideo": "Escolle un ficheiro de vídeo.",
+        "shareFailed": "Non se puido recibir o vídeo compartido ({{message}}). Tenta escoller o ficheiro directamente.",
+        "shareNeverArrived": "O vídeo compartido nunca chegou do sistema. Tenta escoller o ficheiro directamente.",
+        "shareTimeout": "Deixouse de esperar polo vídeo compartido. Tenta escoller o ficheiro directamente."
+    },
+    "footer": {
+        "note": "A codificación realízase a través de WebCodecs, cun sistema de seguridade (fallback) de ffmpeg onde non é compatible."
+    },
+    "install": {
+        "action": "Instalar",
+        "dismiss": "Ignorar",
+        "title": "Instalar Video Shrinker"
+    },
+    "language": {
+        "auto": "Automático",
+        "label": "Idioma"
+    },
+    "privacy": {
+        "clean": "Sen contas, sen analíticas, sen cookies.",
+        "installable": "Instalable como unha aplicación, funciona sen conexión.",
+        "local": "O teu ficheiro nunca sae deste dispositivo."
+    },
+    "result": {
+        "convertAnother": "Converter outro",
+        "done": "Feito:",
+        "download": "Descargar",
+        "ffmpeg": "ffmpeg.wasm, alternativa de CPU",
+        "webcodecs": "WebCodecs, aceleración por hardware"
+    },
+    "share": {
+        "cancel": "Cancelar",
+        "preparing": "Preparando o teu vídeo",
+        "progress": "{{done}} de {{total}} listos"
+    },
+    "tagline": "Comprime o vídeo ao tamaño que necesites, directamente no teu dispositivo.",
+    "theme": {
+        "dark": "Tema escuro",
+        "label": "Tema",
+        "light": "Tema claro",
+        "system": "Adaptar ao tema do sistema"
+    },
+    "update": {
+        "available": "Hai unha nova versión dispoñible.",
+        "dismiss": "Ignorar",
+        "reload": "Recargar para actualizar"
+    }
+}

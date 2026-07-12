@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "የታለመውን መጠን ቀንስ",
+        "forceH264": "H.264 አስገዳጅ (ከፍተኛ ተኳሃኝነት፣ በዚህ መጠን ዝቅተኛ ጥራት)",
+        "increase": "የታለመውን መጠን ጨምር",
+        "stripMetadata": "ሜታዳታ ያስወግዱ (የሚመከር)",
+        "targetSize": "የታለመ መጠን"
+    },
+    "convert": {
+        "converting": "በመቀየር ላይ…",
+        "refineNote": "የመጀመሪያው ሙከራ ከታለመው መጠን በላይ አልፏል። ለትክክለኛነት እንደገና በሂደት ላይ ነው።",
+        "refining": "መጠን ማስተካከል…",
+        "start": "ቀይር"
+    },
+    "dropzone": {
+        "formats": "MP4፣ MOV፣ WebM፣ MKV እና ሌሎችም",
+        "prompt": "ቪዲዮ እዚህ ይጣሉ፣ ወይም ለመምረጥ ይጫኑ"
+    },
+    "errors": {
+        "conversionFailed": "ልወጣ አልተሳካም።",
+        "notVideo": "እባክዎ የቪዲዮ ፋይል ይምረጡ።",
+        "shareFailed": "የተጋራውን ቪዲዮ መቀበል አልተቻለም ({{message}})። ፋይሉን በቀጥታ ለመምረጥ ይሞክሩ።",
+        "shareNeverArrived": "የተጋራው ቪዲዮ ከስርዓቱ አልመጣም። ፋይሉን በቀጥታ ለመምረጥ ይሞክሩ።",
+        "shareTimeout": "ለተጋራው ቪዲዮ መጠበቅ ተቋርጧል። ፋይሉን በቀጥታ ለመምረጥ ይሞክሩ።"
+    },
+    "footer": {
+        "note": "ኢንኮዲንግ የሚከናወነው በWebCodecs በኩል ሲሆን፣ ድጋፍ በማይኖርበት ጊዜ ደግሞ በffmpeg አማራጭ ይጠቀማል።"
+    },
+    "install": {
+        "action": "ጫን",
+        "dismiss": "አሰናብት",
+        "title": "Video Shrinker ን ይጫኑ"
+    },
+    "language": {
+        "auto": "በራስ-ሰር",
+        "label": "ቋንቋ"
+    },
+    "privacy": {
+        "clean": "ምንም መለያዎች፣ ምንም ትንታኔዎች፣ ምንም ኩኪዎች የሉም።",
+        "installable": "እንደ መተግበሪያ መጫን ይቻላል፣ ከመስመር ውጭ ይሰራል፡፡",
+        "local": "ፋይልዎ ይህንን መሳሪያ ለቅቆ አይወጣም።"
+    },
+    "result": {
+        "convertAnother": "ሌላ ይለውጡ",
+        "done": "ተጠናቋል፦",
+        "download": "አውርድ",
+        "ffmpeg": "ffmpeg.wasm፣ የሲፒዩ (CPU) መጠባበቂያ",
+        "webcodecs": "WebCodecs፣ በሃርድዌር የተፋጠነ"
+    },
+    "share": {
+        "cancel": "ይቅር",
+        "preparing": "ቪዲዮዎን በማዘጋጀት ላይ",
+        "progress": "{{done}} ከ {{total}} ተዘጋጅቷል"
+    },
+    "tagline": "ቪዲዮን በሚፈልጉት መጠን፣ በቀጥታ በመሳሪያዎ ላይ ያሳንሳል።",
+    "theme": {
+        "dark": "ጠቆር ያለ ጭብጥ",
+        "label": "ጭብጥ",
+        "light": "ፈካ ያለ ጭብጥ",
+        "system": "የስርዓት ጭብጥን ተጠቀም"
+    },
+    "update": {
+        "available": "አዲስ ስሪት ይገኛል።",
+        "dismiss": "አሰናብት",
+        "reload": "ለማዘመን እንደገና ጫን"
+    }
+}

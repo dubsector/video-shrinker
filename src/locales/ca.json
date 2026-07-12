@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Redueix la mida objectiu",
+        "forceH264": "Força H.264 (màxima compatibilitat, menys qualitat a aquesta mida)",
+        "increase": "Augmenta la mida objectiu",
+        "stripMetadata": "Eliminar metadades (recomanat)",
+        "targetSize": "Mida objectiu"
+    },
+    "convert": {
+        "converting": "Convertint…",
+        "refineNote": "La primera passada ha superat l'objectiu. Reencodificant una vegada més per a més precisió.",
+        "refining": "Refinant la mida…",
+        "start": "Converteix"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV i més",
+        "prompt": "Arrossega un vídeo aquí o fes clic per triar-ne un"
+    },
+    "errors": {
+        "conversionFailed": "La conversió ha fallat.",
+        "notVideo": "Tria un fitxer de vídeo.",
+        "shareFailed": "No s'ha pogut rebre el vídeo compartit ({{message}}). Intenteu triar el fitxer directament.",
+        "shareNeverArrived": "El vídeo compartit no ha arribat des del sistema. Prova de seleccionar el fitxer directament.",
+        "shareTimeout": "S'ha deixat d'esperar el vídeo compartit. Prova de seleccionar el fitxer directament."
+    },
+    "footer": {
+        "note": "L'encodificació es realitza via WebCodecs, amb una alternativa ffmpeg on no és compatible."
+    },
+    "install": {
+        "action": "Instal·la",
+        "dismiss": "Ignora",
+        "title": "Instal·la Video Shrinker"
+    },
+    "language": {
+        "auto": "Automàtic",
+        "label": "Idioma"
+    },
+    "privacy": {
+        "clean": "Sense comptes, sense analítiques, sense cookies.",
+        "installable": "Es pot instal·lar com a aplicació, funciona fora de línia.",
+        "local": "El teu fitxer no surt mai d'aquest dispositiu."
+    },
+    "result": {
+        "convertAnother": "Converteix-ne un altre",
+        "done": "Fet:",
+        "download": "Descarrega",
+        "ffmpeg": "ffmpeg.wasm, alternativa CPU",
+        "webcodecs": "WebCodecs, accelerat per maquinari"
+    },
+    "share": {
+        "cancel": "Cancel·la",
+        "preparing": "Preparant el vídeo",
+        "progress": "{{done}} de {{total}} a punt"
+    },
+    "tagline": "Redueix el vídeo a la mida que necessitis, directament al dispositiu.",
+    "theme": {
+        "dark": "Tema fosc",
+        "label": "Tema",
+        "light": "Tema clar",
+        "system": "Iguala el tema del sistema"
+    },
+    "update": {
+        "available": "Hi ha una nova versió disponible.",
+        "dismiss": "Ignora",
+        "reload": "Actualitza per aplicar els canvis"
+    }
+}

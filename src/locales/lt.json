@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Sumažinti tikslinį dydį",
+        "forceH264": "Priverstinis H.264 (maksimalus suderinamumas, žemesnė kokybė esant šiam dydžiui)",
+        "increase": "Padidinti tikslinį dydį",
+        "stripMetadata": "Pašalinti metaduomenis (rekomenduojama)",
+        "targetSize": "Tikslinis dydis"
+    },
+    "convert": {
+        "converting": "Konvertuojama…",
+        "refineNote": "Pirmojo etapo metu viršytas tikslas. Norint tikslumo, koduojama dar kartą.",
+        "refining": "Tikslinamas dydis…",
+        "start": "Konvertuoti"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV ir daugiau",
+        "prompt": "Įkelkite vaizdo įrašą čia arba spustelėkite, kad pasirinktumėte"
+    },
+    "errors": {
+        "conversionFailed": "Konvertuoti nepavyko.",
+        "notVideo": "Pasirinkite vaizdo įrašo failą.",
+        "shareFailed": "Nepavyko gauti bendrinamo vaizdo įrašo ({{message}}). Vietoj to bandykite pasirinkti failą tiesiogiai.",
+        "shareNeverArrived": "Bendrinamas vaizdo įrašas negautas iš sistemos. Vietoj to bandykite pasirinkti failą tiesiogiai.",
+        "shareTimeout": "Nepavyko sulaukti bendrinamo vaizdo įrašo. Vietoj to bandykite pasirinkti failą tiesiogiai."
+    },
+    "footer": {
+        "note": "Kodavimas vyksta naudojant WebCodecs, o jei palaikymo nėra – naudojama ffmpeg alternatyva."
+    },
+    "install": {
+        "action": "Įdiegti",
+        "dismiss": "Atmesti",
+        "title": "Įdiegti Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatinis",
+        "label": "Kalba"
+    },
+    "privacy": {
+        "clean": "Jokių paskyrų, jokios analitikos, jokių slapukų.",
+        "installable": "Galima įdiegti kaip programėlę, veikia neprisijungus.",
+        "local": "Jūsų failas niekada nepalieka šio įrenginio."
+    },
+    "result": {
+        "convertAnother": "Konvertuoti kitą",
+        "done": "Atlikta:",
+        "download": "Atsisiųsti",
+        "ffmpeg": "ffmpeg.wasm, CPU atsarginis variantas",
+        "webcodecs": "WebCodecs, aparatinis spartinimas"
+    },
+    "share": {
+        "cancel": "Atšaukti",
+        "preparing": "Ruošiamas vaizdo įrašas",
+        "progress": "Parengta {{done}} iš {{total}}"
+    },
+    "tagline": "Suspaudžia vaizdo įrašą iki jūsų pasirinkto dydžio tiesiog jūsų įrenginyje.",
+    "theme": {
+        "dark": "Tamsi tema",
+        "label": "Tema",
+        "light": "Šviesi tema",
+        "system": "Derinti prie sistemos temos"
+    },
+    "update": {
+        "available": "Yra nauja versija.",
+        "dismiss": "Atmesti",
+        "reload": "Įkelkite iš naujo, kad atnaujintumėte"
+    }
+}

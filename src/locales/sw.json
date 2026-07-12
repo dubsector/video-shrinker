@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Punguza ukubwa unaolengwa",
+        "forceH264": "Lazimisha H.264 (utangamano wa hali ya juu, ubora wa chini kwa saizi hii)",
+        "increase": "Ongeza ukubwa unaolengwa",
+        "stripMetadata": "Ondoa metadata (inapendekezwa)",
+        "targetSize": "Saizi lengwa"
+    },
+    "convert": {
+        "converting": "Inageuza...",
+        "refineNote": "Hatua ya kwanza imezidi lengo. Inasimba upya kwa usahihi.",
+        "refining": "Inarekebisha ukubwa...",
+        "start": "Badilisha"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, na zaidi",
+        "prompt": "Dondosha video hapa, au bofya ili kuchagua"
+    },
+    "errors": {
+        "conversionFailed": "Ubadilishaji umeshindwa.",
+        "notVideo": "Tafadhali chagua faili ya video.",
+        "shareFailed": "Imeshindwa kupokea video iliyoshirikiwa ({{message}}). Jaribu kuchagua faili moja kwa moja badala yake.",
+        "shareNeverArrived": "Video iliyoshirikiwa haijafika kutoka kwa mfumo. Jaribu kuchagua faili moja kwa moja badala yake.",
+        "shareTimeout": "Imeacha kusubiri video iliyoshirikiwa. Jaribu kuchagua faili moja kwa moja badala yake."
+    },
+    "footer": {
+        "note": "Usimbaji unafanyika kupitia WebCodecs, na ffmpeg mbadala mahali ambapo haitumiki."
+    },
+    "install": {
+        "action": "Sakinisha",
+        "dismiss": "Ondoa",
+        "title": "Sakinisha Video Shrinker"
+    },
+    "language": {
+        "auto": "Otomatiki",
+        "label": "Lugha"
+    },
+    "privacy": {
+        "clean": "Hakuna akaunti, hakuna takwimu, hakuna vidakuzi.",
+        "installable": "Inaweza kusakinishwa kama programu, inafanya kazi nje ya mtandao.",
+        "local": "Faili yako haitoki kamwe kwenye kifaa hiki."
+    },
+    "result": {
+        "convertAnother": "Badilisha nyingine",
+        "done": "Imekamilika:",
+        "download": "Pakua",
+        "ffmpeg": "ffmpeg.wasm, mbadala wa CPU (fallback)",
+        "webcodecs": "WebCodecs, iliyoharakishwa kwa maunzi"
+    },
+    "share": {
+        "cancel": "Ghairi",
+        "preparing": "Inatayarisha video yako",
+        "progress": "{{done}} kati ya {{total}} viko tayari"
+    },
+    "tagline": "Hupunguza video kwa saizi yoyote unayohitaji, moja kwa moja kwenye kifaa chako.",
+    "theme": {
+        "dark": "Mandhari meusi",
+        "label": "Mandhari",
+        "light": "Mandhari mepesi",
+        "system": "Linganisha na mandhari ya mfumo"
+    },
+    "update": {
+        "available": "Toleo jipya linapatikana.",
+        "dismiss": "Ondoa",
+        "reload": "Pakia upya ili kusasisha"
+    }
+}

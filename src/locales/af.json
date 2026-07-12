@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Verlaag teikengrootte",
+        "forceH264": "Forseer H.264 (maksimum verenigbaarheid, laer gehalte by hierdie grootte)",
+        "increase": "Verhoog teikengrootte",
+        "stripMetadata": "Verwyder metadata (aanbeveel)",
+        "targetSize": "Teikengrootte"
+    },
+    "convert": {
+        "converting": "Besig om te omskakel…",
+        "refineNote": "Eerste deurgang het die teiken oorskry. Her-enkodeer weer vir akkuraatheid.",
+        "refining": "Verfyn grootte…",
+        "start": "Skakel om"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, en meer",
+        "prompt": "Los 'n video hier, of klik om een te kies"
+    },
+    "errors": {
+        "conversionFailed": "Omskakeling het misluk.",
+        "notVideo": "Kies asseblief 'n videolêer.",
+        "shareFailed": "Kon nie die gedeelde video ontvang nie ({{message}}). Probeer eerder om die lêer direk te kies.",
+        "shareNeverArrived": "Die gedeelde video het nie vanaf die stelsel aangekom nie. Probeer eerder om die lêer direk te kies.",
+        "shareTimeout": "Het opgehou wag vir die gedeelde video. Probeer eerder om die lêer direk te kies."
+    },
+    "footer": {
+        "note": "Enkodering loop via WebCodecs, met 'n ffmpeg-rugsteun waar dit nie ondersteun word nie."
+    },
+    "install": {
+        "action": "Installeer",
+        "dismiss": "Verwerp",
+        "title": "Installeer Video Shrinker"
+    },
+    "language": {
+        "auto": "Outomaties",
+        "label": "Taal"
+    },
+    "privacy": {
+        "clean": "Geen rekeninge, geen analise, geen koekies.",
+        "installable": "Installeerbaar as 'n toepassing, werk vanlyn.",
+        "local": "Jou lêer verlaat nooit hierdie toestel nie."
+    },
+    "result": {
+        "convertAnother": "Skakel nog een om",
+        "done": "Klaar:",
+        "download": "Laai af",
+        "ffmpeg": "ffmpeg.wasm, SVE-rugsteun",
+        "webcodecs": "WebCodecs, hardeware-versnel"
+    },
+    "share": {
+        "cancel": "Kanselleer",
+        "preparing": "Besig om jou video voor te berei",
+        "progress": "{{done}} van {{total}} gereed"
+    },
+    "tagline": "Verklein video na enige grootte wat jy nodig het, reg op jou toestel.",
+    "theme": {
+        "dark": "Donker tema",
+        "label": "Tema",
+        "light": "Ligte tema",
+        "system": "Pas aan by stelseltema"
+    },
+    "update": {
+        "available": "'n Nuwe weergawe is beskikbaar.",
+        "dismiss": "Verwerp",
+        "reload": "Herlaai om op te dateer"
+    }
+}
