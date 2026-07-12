@@ -36,7 +36,7 @@ jobs:
             -i src/locales/en.json \
             -o ar bg bn cs da de el es fa fi fr he hi hr hu id it ja ko ms nl no pl pt ro ru sk sr sv th tr uk vi zh tl \
             -e gemini \
-            -m gemini-2.5-flash \
+            -m gemini-flash-latest \
             -r 7000 \
             --cache .github/i18n/cache.json \
             --glossary .github/i18n/glossary.json \
