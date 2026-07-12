@@ -97,14 +97,30 @@ jobs:
             --body "Automated translation refresh for src/locales." \
             --base main \
             --head "$BRANCH"
-          # PRs opened with the workflow token never start pull_request
-          # workflows, so dispatch the required check onto the branch
-          # explicitly, wait for it, then merge.
+          # Dispatch the required check onto the branch explicitly and wait
+          # for it. GitHub also auto-creates a pull_request run for this
+          # bot-authored PR, so filter by event to watch the run we started,
+          # not that one.
           gh workflow run pr-checks.yml --ref "$BRANCH"
           sleep 15
-          RUN_ID=$(gh run list --workflow=pr-checks.yml --branch "$BRANCH" --limit 1 --json databaseId --jq '.[0].databaseId')
+          RUN_ID=$(gh run list --workflow=pr-checks.yml --branch "$BRANCH" --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId')
           gh run watch "$RUN_ID" --exit-status
-          gh pr merge "$BRANCH" --squash --delete-branch
+          # The auto-created pull_request run blocks the merge box until it
+          # finishes (it lags the dispatched run by a few seconds), so retry
+          # the merge instead of failing on the first attempt.
+          MERGED=0
+          for i in $(seq 1 10); do
+            if gh pr merge "$BRANCH" --squash --delete-branch; then
+              MERGED=1
+              break
+            fi
+            echo "Merge blocked, retrying in 15s ($i/10)..."
+            sleep 15
+          done
+          if [ "$MERGED" != "1" ]; then
+            echo "PR never became mergeable; approve/merge it manually."
+            exit 1
+          fi
           # Merges by the workflow token don't trigger push workflows
           # either, so kick the Pages deploy directly.
           gh workflow run deploy.yml --ref main
