@@ -3,6 +3,11 @@ name: PR Checks
 on:
   pull_request:
     branches: [main]
+  # The translate workflow opens PRs with the default workflow token, and
+  # GitHub never starts pull_request runs for those. Dispatching this
+  # workflow against the PR branch still registers the required "check" on
+  # the head commit, so those PRs can satisfy branch protection.
+  workflow_dispatch:
 
 permissions:
   contents: read

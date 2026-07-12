@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ThemeToggle.css';
 
 type Theme = 'system' | 'light' | 'dark';
@@ -39,13 +40,14 @@ function MoonIcon() {
   );
 }
 
-const OPTIONS: { value: Theme; label: string; icon: () => React.ReactNode }[] = [
-  { value: 'system', label: 'Match system theme', icon: SystemIcon },
-  { value: 'light', label: 'Light theme', icon: SunIcon },
-  { value: 'dark', label: 'Dark theme', icon: MoonIcon },
+const OPTIONS: { value: Theme; labelKey: string; icon: () => React.ReactNode }[] = [
+  { value: 'system', labelKey: 'theme.system', icon: SystemIcon },
+  { value: 'light', labelKey: 'theme.light', icon: SunIcon },
+  { value: 'dark', labelKey: 'theme.dark', icon: MoonIcon },
 ];
 
 function ThemeToggle() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<Theme>(getStoredTheme);
 
   useEffect(() => {
@@ -54,15 +56,15 @@ function ThemeToggle() {
   }, [theme]);
 
   return (
-    <div className="theme-toggle" role="radiogroup" aria-label="Theme">
-      {OPTIONS.map(({ value, label, icon: Icon }) => (
+    <div className="theme-toggle" role="radiogroup" aria-label={t('theme.label')}>
+      {OPTIONS.map(({ value, labelKey, icon: Icon }) => (
         <button
           key={value}
           type="button"
           role="radio"
           aria-checked={theme === value}
-          aria-label={label}
-          title={label}
+          aria-label={t(labelKey)}
+          title={t(labelKey)}
           className={theme === value ? 'active' : ''}
           onClick={() => setTheme(value)}
         >

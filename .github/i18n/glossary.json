@@ -1,0 +1,15 @@
+{
+  "doNotTranslate": [
+    "Video Shrinker",
+    "H.264",
+    "H.265",
+    "WebCodecs",
+    "ffmpeg.wasm",
+    "ffmpeg",
+    "MP4",
+    "MOV",
+    "WebM",
+    "MKV",
+    "MB"
+  ]
+}

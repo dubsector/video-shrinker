@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { isAppBusy, onAppBusyChange } from './lib/appBusy';
 import './UpdatePrompt.css';
@@ -13,6 +14,7 @@ const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
 // instead — and if they clear the app back to idle while the prompt is
 // still up, the update applies itself then.
 function UpdatePrompt() {
+  const { t } = useTranslation();
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -54,12 +56,12 @@ function UpdatePrompt() {
 
   return (
     <div className="update-prompt">
-      <span>A new version is available.</span>
+      <span>{t('update.available')}</span>
       <button type="button" onClick={() => updateServiceWorker(true)}>
-        Reload to update
+        {t('update.reload')}
       </button>
       <button type="button" className="dismiss" onClick={() => setNeedRefresh(false)}>
-        Dismiss
+        {t('update.dismiss')}
       </button>
     </div>
   );

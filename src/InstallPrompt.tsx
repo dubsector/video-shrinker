@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './InstallPrompt.css';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -25,6 +26,7 @@ function isInstalled() {
 // handle beforeinstallprompt themselves; since this app calls
 // preventDefault() below, we're on the hook for surfacing install access.
 function InstallPrompt() {
+  const { t } = useTranslation();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
@@ -55,7 +57,7 @@ function InstallPrompt() {
     <div className="install-banner">
       <img src={`${import.meta.env.BASE_URL}pwa-192x192.png`} alt="" className="install-banner-icon" />
       <div className="install-banner-text">
-        <strong>Install Video Shrinker</strong>
+        <strong>{t('install.title')}</strong>
         <span>{location.hostname}</span>
       </div>
       <button
@@ -67,12 +69,12 @@ function InstallPrompt() {
           setDeferredPrompt(null);
         }}
       >
-        Install
+        {t('install.action')}
       </button>
       <button
         type="button"
         className="install-banner-dismiss"
-        aria-label="Dismiss"
+        aria-label={t('install.dismiss')}
         onClick={() => {
           localStorage.setItem(DISMISSED_KEY, __BUILD_INFO__.commit);
           setDeferredPrompt(null);
