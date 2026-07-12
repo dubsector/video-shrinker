@@ -34,7 +34,7 @@ jobs:
         run: |
           npx --yes i18n-ai-translate@latest translate \
             -i src/locales/en.json \
-            -o ar bg bn cs da de el es fa fi fr he hi hr hu id it ja ko ms nl no pl pt ro ru sk sr sv th tr uk vi zh tl \
+            -o af am ar az be bg bn ca cs da de el es et eu fa fi fr gl gu he hi hr hu hy id is it ja ka kk km kn ko ky lo lt lv mk ml mn mr ms my ne nl no pa pl pt rm ro ru si sk sl sq sr sv sw ta te th tl tr uk ur vi zh \
             -e gemini \
             -m gemini-3.1-flash-lite \
             -r 7000 \
