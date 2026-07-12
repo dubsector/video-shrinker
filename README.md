@@ -8,7 +8,8 @@
 [![Security Policy](https://img.shields.io/badge/Security-Policy-green)](SECURITY.md)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot)](https://github.com/dubsector/video-shrinker/network/updates)
 
-[GitHub Pages Deployment](https://dubsector.github.io/video-shrinker/)
+[GitHub Pages Deployment](https://dubsector.github.io/video-shrinker/)<br>
+[Join Android Closed Beta 🤖](https://groups.google.com/g/video-shrinker-beta-testing)
 
 Shrinks a video to a target file size, entirely in the browser. Nothing gets uploaded. Encoding happens locally via WebCodecs (hardware-accelerated when the browser/GPU support it), with an ffmpeg.wasm fallback for browsers that don't.
 
