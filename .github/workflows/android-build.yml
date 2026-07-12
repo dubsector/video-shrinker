@@ -71,3 +71,53 @@ jobs:
             android/app-release-signed.apk
           if-no-files-found: warn
           retention-days: 90
+
+  # Runs only after a successful build, so a broken build never advances
+  # the version. Bumps versionCode/versionName one past what this run
+  # just built, so the next build produces a Play-Console-uploadable AAB
+  # without anyone needing to remember to do it by hand.
+  bump-version:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      # This job pushes the version-bump branch, so it needs the checkout's
+      # persisted credentials — persist-credentials: false would break the push.
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 # zizmor: ignore[artipacked]
+
+      - name: Bump version and open PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          current=$(grep -oP 'versionCode \K\d+' android/app/build.gradle)
+          next=$((current + 1))
+
+          sed -i "s/versionCode $current/versionCode $next/" android/app/build.gradle
+          sed -i "s/versionName \"$current\"/versionName \"$next\"/" android/app/build.gradle
+          sed -i "s/\"appVersionCode\": $current/\"appVersionCode\": $next/" android/twa-manifest.json
+          sed -i "s/\"appVersion\": \"$current\"/\"appVersion\": \"$next\"/" android/twa-manifest.json
+          sha1sum android/twa-manifest.json | cut -d' ' -f1 | tr -d '\n' > android/manifest-checksum.txt
+
+          BRANCH="bump-android-version-$next"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add android/app/build.gradle android/twa-manifest.json android/manifest-checksum.txt
+          git commit -m "Bump Android versionCode to $next"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "Bump Android versionCode to $next" \
+            --body "Auto-bump after a successful android-build.yml run that built versionCode $current. Prepares the repo so the next build produces versionCode $next." \
+            --base main \
+            --head "$BRANCH"
+          # PRs opened with the workflow token never start pull_request
+          # workflows, so dispatch the required check onto the branch
+          # explicitly, wait for it, then merge.
+          gh workflow run pr-checks.yml --ref "$BRANCH"
+          sleep 15
+          RUN_ID=$(gh run list --workflow=pr-checks.yml --branch "$BRANCH" --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch "$RUN_ID" --exit-status
+          gh pr merge "$BRANCH" --squash --delete-branch
