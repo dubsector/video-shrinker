@@ -55,7 +55,7 @@ android {
     namespace "io.github.dubsector.videoshrinker"
     defaultConfig {
         applicationId "io.github.dubsector.videoshrinker"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 35
         versionCode 3
         versionName "3"
