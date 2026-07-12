@@ -30,7 +30,7 @@
   "isChromeOSOnly": false,
   "isMetaQuest": false,
   "fullScopeUrl": "https://dubsector.github.io/video-shrinker/",
-  "minSdkVersion": 21,
+  "minSdkVersion": 23,
   "shareTarget": {
     "action": "https://dubsector.github.io/video-shrinker/share-target",
     "method": "POST",
