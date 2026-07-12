@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Reducir tamaño objetivo",
+        "forceH264": "Forzar H.264 (máxima compatibilidad, menor calidad en este tamaño)",
+        "increase": "Aumentar tamaño objetivo",
+        "stripMetadata": "Eliminar metadatos (recomendado)",
+        "targetSize": "Tamaño objetivo"
+    },
+    "convert": {
+        "converting": "Convirtiendo…",
+        "refineNote": "La primera pasada superó el objetivo. Recodificando una vez más para mayor precisión.",
+        "refining": "Ajustando tamaño…",
+        "start": "Convertir"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV y más",
+        "prompt": "Suelta un video aquí o haz clic para elegir uno"
+    },
+    "errors": {
+        "conversionFailed": "La conversión falló.",
+        "notVideo": "Por favor, elige un archivo de video.",
+        "shareFailed": "No se pudo recibir el video compartido ({{message}}). Intenta elegir el archivo directamente.",
+        "shareNeverArrived": "El video compartido nunca llegó desde el sistema. Intenta elegir el archivo directamente.",
+        "shareTimeout": "Se agotó el tiempo de espera para el video compartido. Intenta elegir el archivo directamente en su lugar."
+    },
+    "footer": {
+        "note": "La codificación se ejecuta mediante WebCodecs, con un respaldo de ffmpeg donde no es compatible."
+    },
+    "install": {
+        "action": "Instalar",
+        "dismiss": "Descartar",
+        "title": "Instalar Video Shrinker"
+    },
+    "language": {
+        "auto": "Automático",
+        "label": "Idioma"
+    },
+    "privacy": {
+        "clean": "Sin cuentas, sin analíticas, sin cookies.",
+        "installable": "Se puede instalar como aplicación, funciona sin conexión.",
+        "local": "Tu archivo nunca abandona este dispositivo."
+    },
+    "result": {
+        "convertAnother": "Convertir otro",
+        "done": "Hecho:",
+        "download": "Descargar",
+        "ffmpeg": "ffmpeg.wasm, respaldo de CPU",
+        "webcodecs": "WebCodecs, aceleración por hardware"
+    },
+    "share": {
+        "cancel": "Cancelar",
+        "preparing": "Preparando tu video",
+        "progress": "{{done}} de {{total}} listo"
+    },
+    "tagline": "Reduce el video al tamaño que necesites, directamente en tu dispositivo.",
+    "theme": {
+        "dark": "Tema oscuro",
+        "label": "Tema",
+        "light": "Tema claro",
+        "system": "Usar tema del sistema"
+    },
+    "update": {
+        "available": "Hay una nueva versión disponible.",
+        "dismiss": "Descartar",
+        "reload": "Recargar para actualizar"
+    }
+}

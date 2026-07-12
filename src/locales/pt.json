@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Diminuir tamanho alvo",
+        "forceH264": "Forçar H.264 (máxima compatibilidade, qualidade inferior neste tamanho)",
+        "increase": "Aumentar tamanho alvo",
+        "stripMetadata": "Remover metadados (recomendado)",
+        "targetSize": "Tamanho alvo"
+    },
+    "convert": {
+        "converting": "Convertendo…",
+        "refineNote": "A primeira passagem ultrapassou o alvo. Recodificando novamente para garantir a precisão.",
+        "refining": "Ajustando tamanho…",
+        "start": "Converter"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV e mais",
+        "prompt": "Solte um vídeo aqui, ou clique para escolher um"
+    },
+    "errors": {
+        "conversionFailed": "A conversão falhou.",
+        "notVideo": "Por favor, escolha um arquivo de vídeo.",
+        "shareFailed": "Não foi possível receber o vídeo compartilhado ({{message}}). Tente escolher o arquivo diretamente.",
+        "shareNeverArrived": "O vídeo compartilhado nunca chegou do sistema. Tente escolher o arquivo diretamente.",
+        "shareTimeout": "Não foi possível aguardar o vídeo compartilhado. Tente escolher o arquivo diretamente."
+    },
+    "footer": {
+        "note": "A codificação ocorre via WebCodecs, com um fallback de ffmpeg onde não for suportado."
+    },
+    "install": {
+        "action": "Instalar",
+        "dismiss": "Ignorar",
+        "title": "Instalar Video Shrinker"
+    },
+    "language": {
+        "auto": "Automático",
+        "label": "Idioma"
+    },
+    "privacy": {
+        "clean": "Sem contas, sem análise, sem cookies.",
+        "installable": "Instalável como um aplicativo, funciona offline.",
+        "local": "Seu arquivo nunca deixa este dispositivo."
+    },
+    "result": {
+        "convertAnother": "Converter outro",
+        "done": "Concluído:",
+        "download": "Baixar",
+        "ffmpeg": "ffmpeg.wasm, fallback de CPU",
+        "webcodecs": "WebCodecs, acelerado por hardware"
+    },
+    "share": {
+        "cancel": "Cancelar",
+        "preparing": "Preparando seu vídeo",
+        "progress": "{{done}} de {{total}} pronto"
+    },
+    "tagline": "Reduz o vídeo para o tamanho que você precisa, diretamente no seu dispositivo.",
+    "theme": {
+        "dark": "Tema escuro",
+        "label": "Tema",
+        "light": "Tema claro",
+        "system": "Usar tema do sistema"
+    },
+    "update": {
+        "available": "Uma nova versão está disponível.",
+        "dismiss": "Ignorar",
+        "reload": "Recarregar para atualizar"
+    }
+}

@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Smanji ciljanu veličinu",
+        "forceH264": "Forsiraj H.264 (maksimalna kompatibilnost, lošiji kvalitet pri ovoj veličini)",
+        "increase": "Povećaj ciljanu veličinu",
+        "stripMetadata": "Ukloni metapodatke (preporučeno)",
+        "targetSize": "Ciljana veličina"
+    },
+    "convert": {
+        "converting": "Konvertovanje…",
+        "refineNote": "Prvi prolaz je premašio cilj. Ponovno kodiranje radi preciznosti.",
+        "refining": "Preciziranje veličine…",
+        "start": "Konvertuj"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV i više",
+        "prompt": "Prevucite video ovde ili kliknite da odaberete jedan"
+    },
+    "errors": {
+        "conversionFailed": "Konverzija nije uspela.",
+        "notVideo": "Molimo odaberite video datoteku.",
+        "shareFailed": "Nije bilo moguće primiti deljeni video snimak ({{message}}). Pokušajte da izaberete datoteku direktno.",
+        "shareNeverArrived": "Deljeni video snimak nikada nije stigao iz sistema. Pokušajte da izaberete datoteku direktno.",
+        "shareTimeout": "Prekinuli smo čekanje na deljeni video. Pokušajte da direktno izaberete datoteku."
+    },
+    "footer": {
+        "note": "Kodiranje se odvija putem WebCodecs-a, uz ffmpeg rezervu tamo gde nije podržano."
+    },
+    "install": {
+        "action": "Instaliraj",
+        "dismiss": "Odbaci",
+        "title": "Instaliraj Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatski",
+        "label": "Jezik"
+    },
+    "privacy": {
+        "clean": "Bez naloga, bez analitike, bez kolačića.",
+        "installable": "Može se instalirati kao aplikacija, radi van mreže.",
+        "local": "Vaša datoteka nikada ne napušta ovaj uređaj."
+    },
+    "result": {
+        "convertAnother": "Konvertuj još jedan",
+        "done": "Gotovo:",
+        "download": "Preuzmi",
+        "ffmpeg": "ffmpeg.wasm, rezervni CPU",
+        "webcodecs": "WebCodecs, hardversko ubrzanje"
+    },
+    "share": {
+        "cancel": "Otkaži",
+        "preparing": "Priprema video snimka",
+        "progress": "{{done}} od {{total}} spremno"
+    },
+    "tagline": "Smanjuje video na veličinu koja vam je potrebna, direktno na vašem uređaju.",
+    "theme": {
+        "dark": "Tamna tema",
+        "label": "Tema",
+        "light": "Svetla tema",
+        "system": "Prilagodi temi sistema"
+    },
+    "update": {
+        "available": "Dostupna je nova verzija.",
+        "dismiss": "Odbaci",
+        "reload": "Učitaj ponovo za ažuriranje"
+    }
+}

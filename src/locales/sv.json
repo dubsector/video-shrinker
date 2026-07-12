@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Minska målstorlek",
+        "forceH264": "Tvinga H.264 (maximal kompatibilitet, lägre kvalitet vid denna storlek)",
+        "increase": "Öka målstorlek",
+        "stripMetadata": "Rensa metadata (rekommenderas)",
+        "targetSize": "Målstorlek"
+    },
+    "convert": {
+        "converting": "Konverterar…",
+        "refineNote": "Första passet överskred målet. Kodar om en gång till för noggrannhet.",
+        "refining": "Finjusterar storlek…",
+        "start": "Konvertera"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV och mer",
+        "prompt": "Släpp en video här, eller klicka för att välja en"
+    },
+    "errors": {
+        "conversionFailed": "Konverteringen misslyckades.",
+        "notVideo": "Välj en videofil.",
+        "shareFailed": "Kunde inte ta emot den delade videon ({{message}}). Försök att välja filen direkt istället.",
+        "shareNeverArrived": "Den delade videon kom aldrig fram från systemet. Försök att välja filen direkt istället.",
+        "shareTimeout": "Gav upp väntan på den delade videon. Prova att välja filen direkt istället."
+    },
+    "footer": {
+        "note": "Kodning sker via WebCodecs, med en ffmpeg-fallback där det inte stöds."
+    },
+    "install": {
+        "action": "Installera",
+        "dismiss": "Stäng",
+        "title": "Installera Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatisk",
+        "label": "Språk"
+    },
+    "privacy": {
+        "clean": "Inga konton, ingen analys, inga cookies.",
+        "installable": "Kan installeras som en app, fungerar offline.",
+        "local": "Din fil lämnar aldrig den här enheten."
+    },
+    "result": {
+        "convertAnother": "Konvertera en annan",
+        "done": "Klar:",
+        "download": "Ladda ner",
+        "ffmpeg": "ffmpeg.wasm, CPU-fallback",
+        "webcodecs": "WebCodecs, hårdvaruaccelererad"
+    },
+    "share": {
+        "cancel": "Avbryt",
+        "preparing": "Förbereder din video",
+        "progress": "{{done}} av {{total}} klara"
+    },
+    "tagline": "Krymper video till vilken storlek du än behöver, direkt på din enhet.",
+    "theme": {
+        "dark": "Mörkt tema",
+        "label": "Tema",
+        "light": "Ljust tema",
+        "system": "Matcha systemtema"
+    },
+    "update": {
+        "available": "En ny version finns tillgänglig.",
+        "dismiss": "Stäng",
+        "reload": "Ladda om för att uppdatera"
+    }
+}

@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Célméret csökkentése",
+        "forceH264": "H.264 kényszerítése (maximális kompatibilitás, alacsonyabb minőség ennél a méretnél)",
+        "increase": "Célméret növelése",
+        "stripMetadata": "Metaadatok eltávolítása (ajánlott)",
+        "targetSize": "Célméret"
+    },
+    "convert": {
+        "converting": "Konvertálás…",
+        "refineNote": "Az első kör túllépte a célméretet. Újrakódolás a pontosság érdekében.",
+        "refining": "Méret finomítása…",
+        "start": "Konvertál"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV és egyéb",
+        "prompt": "Húzz ide egy videót, vagy kattints a választáshoz"
+    },
+    "errors": {
+        "conversionFailed": "A konvertálás sikertelen.",
+        "notVideo": "Kérlek, válassz egy videófájlt.",
+        "shareFailed": "A megosztott videó fogadása sikertelen ({{message}}). Próbáld meg közvetlenül kiválasztani a fájlt.",
+        "shareNeverArrived": "A megosztott videó nem érkezett meg a rendszertől. Próbáld meg közvetlenül kiválasztani a fájlt.",
+        "shareTimeout": "A megosztott videóra való várakozás leállítva. Próbáld meg közvetlenül kiválasztani a fájlt."
+    },
+    "footer": {
+        "note": "A kódolás WebCodecs-en keresztül fut, ffmpeg tartalékkal, ahol az nem támogatott."
+    },
+    "install": {
+        "action": "Telepítés",
+        "dismiss": "Bezárás",
+        "title": "Video Shrinker telepítése"
+    },
+    "language": {
+        "auto": "Automatikus",
+        "label": "Nyelv"
+    },
+    "privacy": {
+        "clean": "Nincs fiók, nincs analitika, nincsenek sütik.",
+        "installable": "Alkalmazásként telepíthető, offline is működik.",
+        "local": "A fájljaid sosem hagyják el ezt az eszközt."
+    },
+    "result": {
+        "convertAnother": "Újabb videó konvertálása",
+        "done": "Kész:",
+        "download": "Letöltés",
+        "ffmpeg": "ffmpeg.wasm, CPU-alapú tartalék",
+        "webcodecs": "WebCodecs, hardveres gyorsítással"
+    },
+    "share": {
+        "cancel": "Mégse",
+        "preparing": "Videó előkészítése",
+        "progress": "{{done}} / {{total}} kész"
+    },
+    "tagline": "A videót a kívánt méretre tömöríti, közvetlenül az eszközön.",
+    "theme": {
+        "dark": "Sötét téma",
+        "label": "Téma",
+        "light": "Világos téma",
+        "system": "Rendszer téma követése"
+    },
+    "update": {
+        "available": "Új verzió érhető el.",
+        "dismiss": "Bezárás",
+        "reload": "Frissítéshez töltse be újra"
+    }
+}

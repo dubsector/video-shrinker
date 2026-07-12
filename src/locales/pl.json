@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Zmniejsz rozmiar docelowy",
+        "forceH264": "Wymuś H.264 (maksymalna kompatybilność, niższa jakość przy tym rozmiarze)",
+        "increase": "Zwiększ rozmiar docelowy",
+        "stripMetadata": "Usuń metadane (zalecane)",
+        "targetSize": "Rozmiar docelowy"
+    },
+    "convert": {
+        "converting": "Konwertowanie…",
+        "refineNote": "Pierwsze przejście przekroczyło cel. Ponowne kodowanie dla dokładności.",
+        "refining": "Dostrajanie rozmiaru…",
+        "start": "Konwertuj"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV i więcej",
+        "prompt": "Upuść wideo tutaj lub kliknij, aby wybrać plik"
+    },
+    "errors": {
+        "conversionFailed": "Konwersja nie powiodła się.",
+        "notVideo": "Wybierz plik wideo.",
+        "shareFailed": "Nie udało się odebrać udostępnionego wideo ({{message}}). Spróbuj wybrać plik bezpośrednio.",
+        "shareNeverArrived": "Udostępnione wideo nie dotarło z systemu. Spróbuj wybrać plik bezpośrednio.",
+        "shareTimeout": "Przerwano oczekiwanie na udostępnione wideo. Spróbuj wybrać plik bezpośrednio."
+    },
+    "footer": {
+        "note": "Kodowanie odbywa się przez WebCodecs, z obsługą ffmpeg w przypadku braku wsparcia."
+    },
+    "install": {
+        "action": "Zainstaluj",
+        "dismiss": "Zamknij",
+        "title": "Zainstaluj Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatyczny",
+        "label": "Język"
+    },
+    "privacy": {
+        "clean": "Brak kont, brak analityki, brak plików cookie.",
+        "installable": "Możliwość instalacji jako aplikacja, działa offline.",
+        "local": "Twój plik nigdy nie opuszcza tego urządzenia."
+    },
+    "result": {
+        "convertAnother": "Konwertuj kolejny",
+        "done": "Gotowe:",
+        "download": "Pobierz",
+        "ffmpeg": "ffmpeg.wasm, zapasowy procesor (CPU)",
+        "webcodecs": "WebCodecs, przyspieszenie sprzętowe"
+    },
+    "share": {
+        "cancel": "Anuluj",
+        "preparing": "Przygotowywanie wideo",
+        "progress": "{{done}} z {{total}} gotowych"
+    },
+    "tagline": "Zmniejsza wideo do potrzebnego rozmiaru, bezpośrednio na Twoim urządzeniu.",
+    "theme": {
+        "dark": "Ciemny motyw",
+        "label": "Motyw",
+        "light": "Jasny motyw",
+        "system": "Dopasuj do motywu systemu"
+    },
+    "update": {
+        "available": "Dostępna jest nowa wersja.",
+        "dismiss": "Zamknij",
+        "reload": "Odśwież, aby zaktualizować"
+    }
+}

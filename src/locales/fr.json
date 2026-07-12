@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Diminuer la taille cible",
+        "forceH264": "Forcer H.264 (compatibilité maximale, qualité inférieure à cette taille)",
+        "increase": "Augmenter la taille cible",
+        "stripMetadata": "Supprimer les métadonnées (recommandé)",
+        "targetSize": "Taille cible"
+    },
+    "convert": {
+        "converting": "Conversion…",
+        "refineNote": "La première passe a dépassé la cible. Réencodage pour plus de précision.",
+        "refining": "Ajustement de la taille…",
+        "start": "Convertir"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, et plus",
+        "prompt": "Déposez une vidéo ici ou cliquez pour en choisir une"
+    },
+    "errors": {
+        "conversionFailed": "La conversion a échoué.",
+        "notVideo": "Veuillez choisir un fichier vidéo.",
+        "shareFailed": "Impossible de recevoir la vidéo partagée ({{message}}). Essayez plutôt de sélectionner le fichier directement.",
+        "shareNeverArrived": "La vidéo partagée n'est jamais arrivée du système. Essayez plutôt de sélectionner le fichier directement.",
+        "shareTimeout": "L'attente de la vidéo partagée a été annulée. Essayez plutôt de sélectionner le fichier directement."
+    },
+    "footer": {
+        "note": "L'encodage s'effectue via WebCodecs, avec un recours à ffmpeg lorsque cela n'est pas pris en charge."
+    },
+    "install": {
+        "action": "Installer",
+        "dismiss": "Fermer",
+        "title": "Installer Video Shrinker"
+    },
+    "language": {
+        "auto": "Automatique",
+        "label": "Langue"
+    },
+    "privacy": {
+        "clean": "Aucun compte, aucune analyse, aucun cookie.",
+        "installable": "Installable comme application, fonctionne hors ligne.",
+        "local": "Votre fichier ne quitte jamais cet appareil."
+    },
+    "result": {
+        "convertAnother": "Convertir une autre vidéo",
+        "done": "Terminé :",
+        "download": "Télécharger",
+        "ffmpeg": "ffmpeg.wasm, alternative CPU",
+        "webcodecs": "WebCodecs, accélération matérielle"
+    },
+    "share": {
+        "cancel": "Annuler",
+        "preparing": "Préparation de votre vidéo",
+        "progress": "{{done}} sur {{total}} prêts"
+    },
+    "tagline": "Réduit la vidéo à la taille souhaitée, directement sur votre appareil.",
+    "theme": {
+        "dark": "Thème sombre",
+        "label": "Thème",
+        "light": "Thème clair",
+        "system": "Utiliser le thème du système"
+    },
+    "update": {
+        "available": "Une nouvelle version est disponible.",
+        "dismiss": "Fermer",
+        "reload": "Actualiser pour mettre à jour"
+    }
+}

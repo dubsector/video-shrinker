@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Giảm kích thước mục tiêu",
+        "forceH264": "Buộc H.264 (tương thích tối đa, chất lượng thấp hơn ở kích thước này)",
+        "increase": "Tăng kích thước mục tiêu",
+        "stripMetadata": "Xóa siêu dữ liệu (khuyên dùng)",
+        "targetSize": "Kích thước mục tiêu"
+    },
+    "convert": {
+        "converting": "Đang chuyển đổi…",
+        "refineNote": "Lần nén đầu tiên vượt quá mục tiêu. Đang mã hóa lại để đảm bảo độ chính xác.",
+        "refining": "Đang tinh chỉnh kích thước…",
+        "start": "Chuyển đổi"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV và nhiều định dạng khác",
+        "prompt": "Thả video vào đây, hoặc nhấp để chọn video"
+    },
+    "errors": {
+        "conversionFailed": "Chuyển đổi thất bại.",
+        "notVideo": "Vui lòng chọn một tệp video.",
+        "shareFailed": "Không thể nhận video được chia sẻ ({{message}}). Hãy thử chọn tệp trực tiếp thay thế.",
+        "shareNeverArrived": "Video được chia sẻ chưa nhận được từ hệ thống. Hãy thử chọn tệp trực tiếp.",
+        "shareTimeout": "Đã ngừng chờ video được chia sẻ. Hãy thử chọn tệp trực tiếp."
+    },
+    "footer": {
+        "note": "Quá trình mã hóa chạy qua WebCodecs, với dự phòng ffmpeg nếu không được hỗ trợ."
+    },
+    "install": {
+        "action": "Cài đặt",
+        "dismiss": "Bỏ qua",
+        "title": "Cài đặt Video Shrinker"
+    },
+    "language": {
+        "auto": "Tự động",
+        "label": "Ngôn ngữ"
+    },
+    "privacy": {
+        "clean": "Không tài khoản, không phân tích, không cookie.",
+        "installable": "Có thể cài đặt như một ứng dụng, hoạt động ngoại tuyến.",
+        "local": "Tệp của bạn không bao giờ rời khỏi thiết bị này."
+    },
+    "result": {
+        "convertAnother": "Chuyển đổi tệp khác",
+        "done": "Hoàn tất:",
+        "download": "Tải xuống",
+        "ffmpeg": "ffmpeg.wasm, dự phòng CPU",
+        "webcodecs": "WebCodecs, tăng tốc phần cứng"
+    },
+    "share": {
+        "cancel": "Hủy",
+        "preparing": "Đang chuẩn bị video của bạn",
+        "progress": "{{done}} trên {{total}} đã sẵn sàng"
+    },
+    "tagline": "Nén video theo bất kỳ kích thước nào bạn cần, ngay trên thiết bị của bạn.",
+    "theme": {
+        "dark": "Chủ đề tối",
+        "label": "Chủ đề",
+        "light": "Chủ đề sáng",
+        "system": "Đồng bộ với chủ đề hệ thống"
+    },
+    "update": {
+        "available": "Đã có phiên bản mới.",
+        "dismiss": "Bỏ qua",
+        "reload": "Tải lại để cập nhật"
+    }
+}

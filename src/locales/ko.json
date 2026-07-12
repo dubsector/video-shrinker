@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "목표 크기 줄이기",
+        "forceH264": "H.264 강제 적용 (최대 호환성, 이 크기에서는 화질 저하)",
+        "increase": "목표 크기 늘리기",
+        "stripMetadata": "메타데이터 제거(권장)",
+        "targetSize": "목표 크기"
+    },
+    "convert": {
+        "converting": "변환 중…",
+        "refineNote": "첫 번째 패스가 목표치를 초과했습니다. 정확성을 위해 다시 인코딩 중입니다.",
+        "refining": "크기 조정 중…",
+        "start": "변환"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV 등",
+        "prompt": "여기에 동영상을 놓거나 클릭하여 선택하세요"
+    },
+    "errors": {
+        "conversionFailed": "변환에 실패했습니다.",
+        "notVideo": "동영상 파일을 선택해주세요.",
+        "shareFailed": "공유된 동영상을 받을 수 없습니다 ({{message}}). 대신 파일을 직접 선택해보세요.",
+        "shareNeverArrived": "시스템에서 공유된 비디오를 받지 못했습니다. 대신 파일을 직접 선택해 보세요.",
+        "shareTimeout": "공유된 동영상을 기다리다 중단되었습니다. 대신 파일을 직접 선택해보세요."
+    },
+    "footer": {
+        "note": "인코딩은 WebCodecs를 통해 실행되며, 지원되지 않는 경우 ffmpeg 폴백이 사용됩니다."
+    },
+    "install": {
+        "action": "설치",
+        "dismiss": "닫기",
+        "title": "Video Shrinker 설치"
+    },
+    "language": {
+        "auto": "자동",
+        "label": "언어"
+    },
+    "privacy": {
+        "clean": "계정, 분석 도구, 쿠키가 없습니다.",
+        "installable": "앱으로 설치 가능하며, 오프라인에서 작동합니다.",
+        "local": "파일은 이 기기를 절대 벗어나지 않습니다."
+    },
+    "result": {
+        "convertAnother": "다른 파일 변환",
+        "done": "완료:",
+        "download": "다운로드",
+        "ffmpeg": "ffmpeg.wasm, CPU 대체 모드",
+        "webcodecs": "WebCodecs, 하드웨어 가속"
+    },
+    "share": {
+        "cancel": "취소",
+        "preparing": "비디오 준비 중",
+        "progress": "{{done}} / {{total}} 준비됨"
+    },
+    "tagline": "기기에서 바로 필요한 크기로 동영상을 줄여줍니다.",
+    "theme": {
+        "dark": "다크 테마",
+        "label": "테마",
+        "light": "라이트 테마",
+        "system": "시스템 테마 맞춤"
+    },
+    "update": {
+        "available": "새 버전이 있습니다.",
+        "dismiss": "닫기",
+        "reload": "새로고침하여 업데이트"
+    }
+}
