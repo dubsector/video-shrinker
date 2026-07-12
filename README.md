@@ -2,6 +2,8 @@
 
 [![PR Checks](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/pr-checks.yml)
 [![Deploy to GitHub Pages](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/deploy.yml)
+[![zizmor](https://github.com/dubsector/video-shrinker/actions/workflows/zizmor.yml/badge.svg)](https://github.com/dubsector/video-shrinker/actions/workflows/zizmor.yml)
+[![CodeQL](https://img.shields.io/badge/CodeQL-enabled-blue)](https://github.com/dubsector/video-shrinker/security/code-scanning)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/dubsector/video-shrinker/badge)](https://securityscorecards.dev/viewer/?uri=github.com/dubsector/video-shrinker)
 [![Security Policy](https://img.shields.io/badge/Security-Policy-green)](SECURITY.md)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot)](https://github.com/dubsector/video-shrinker/network/updates)
