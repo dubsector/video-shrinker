@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "Nciphisa usayizi oqondiwe",
+        "forceH264": "Phoqa i-H.264 (ukuhambisana okuphezulu, ikhwalithi ephansi ngale sayizi)",
+        "increase": "Khulisa usayizi oqondiwe",
+        "stripMetadata": "Susa imethadatha (kunconyiwe)",
+        "targetSize": "Usayizi ohlosiwe"
+    },
+    "convert": {
+        "converting": "Iyaguqula…",
+        "refineNote": "Ukudlula kokuqala kweqe okuhlosiwe. Iphinda ikhode futhi ukuze ithole ukunemba.",
+        "refining": "Ilungisa usayizi…",
+        "start": "Guqula"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV, nokunye",
+        "prompt": "Beka ividiyo lapha, noma chofoza ukuze ukhethe eyodwa"
+    },
+    "errors": {
+        "conversionFailed": "Ukuguqulwa kwehlulekile.",
+        "notVideo": "Sicela ukhethe ifayela levidiyo.",
+        "shareFailed": "Kuhluleke ukuthola ividiyo eyabelwe ({{message}}). Zama ukukhetha ifayela ngokuqondile esikhundleni salokho.",
+        "shareNeverArrived": "Ividiyo eyabelwe ayizange ifike kusistimu. Zama ukukhetha ifayela ngokuqondile esikhundleni salokho.",
+        "shareTimeout": "Kuyekwe ukulinda ividiyo eyabelwe. Zama ukukhetha ifayela ngokuqondile esikhundleni salokho."
+    },
+    "footer": {
+        "note": "Ukufaka ikhodi kwenzeka nge-WebCodecs, ngokusebenzisa i-ffmpeg fallback lapho ingasekelwe."
+    },
+    "install": {
+        "action": "Faka",
+        "dismiss": "Chitha",
+        "title": "Faka i-Video Shrinker"
+    },
+    "language": {
+        "auto": "Okuzenzakalelayo",
+        "label": "Ulimi"
+    },
+    "privacy": {
+        "clean": "Awekho ama-akhawunti, akukho ukuhlaziya, awekho amakhukhi.",
+        "installable": "Ingafakwa njengohlelo lokusebenza, isebenza ungaxhumekile ku-inthanethi.",
+        "local": "Ifayela lakho alishiyi le divayisi neze."
+    },
+    "result": {
+        "convertAnother": "Guqula okunye",
+        "done": "Kwenziwe:",
+        "download": "Landa",
+        "ffmpeg": "ffmpeg.wasm, CPU fallback",
+        "webcodecs": "WebCodecs, isheshiswe ngehadiwe"
+    },
+    "share": {
+        "cancel": "Khansela",
+        "preparing": "Ilungiselela ividiyo yakho",
+        "progress": "{{done}} kwe-{{total}} kulungile"
+    },
+    "tagline": "Inciphisa ividiyo ibe usayizi owudingayo, khona kanye kudivayisi yakho.",
+    "theme": {
+        "dark": "Ingqikithi emnyama",
+        "label": "Itimu",
+        "light": "Itimu elula",
+        "system": "Fana netimu yesistimu"
+    },
+    "update": {
+        "available": "Kukhona inguqulo entsha etholakalayo.",
+        "dismiss": "Chitha",
+        "reload": "Layisha kabusha ukuze ubuyekeze"
+    }
+}
