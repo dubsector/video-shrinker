@@ -1,5 +1,6 @@
 import { canEncodeVideo } from 'mediabunny';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './App.css';
 import { setAppBusy } from './lib/appBusy';
 import { convertVideo, type ConversionPhase, type ConvertResult } from './lib/convert';
@@ -10,11 +11,17 @@ const DEFAULT_TARGET_MB = 25;
 
 type Status = 'idle' | 'converting' | 'done' | 'error';
 
+// Errors are stored as translation keys (or a raw engine message) and only
+// rendered through t(), so an error that is on screen when the user switches
+// language re-renders in the new language.
+type AppError = { key: string; params?: Record<string, unknown> } | { message: string };
+
 function formatBytes(bytes: number): string {
   return `${(bytes / MB).toFixed(2)} MB`;
 }
 
 function App() {
+  const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
   const [targetMb, setTargetMb] = useState(DEFAULT_TARGET_MB);
   const [hevcAvailable, setHevcAvailable] = useState(false);
@@ -28,7 +35,7 @@ function App() {
   const [phase, setPhase] = useState<ConversionPhase>('encoding');
   const [result, setResult] = useState<ConvertResult | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -77,7 +84,7 @@ function App() {
     (chosen: File | null) => {
       if (!chosen) return;
       if (!chosen.type.startsWith('video/')) {
-        setError('Please choose a video file.');
+        setError({ key: 'errors.notVideo' });
         return;
       }
       reset();
@@ -109,7 +116,7 @@ function App() {
         clearTimeout(handshakeTimer);
         transferTimer = window.setTimeout(() => {
           setReceivingShare(false);
-          setError('Gave up waiting for the shared video. Try picking the file directly instead.');
+          setError({ key: 'errors.shareTimeout' });
         }, 300_000);
       } else if (event.data?.type === 'SHARE_TARGET_FILE' && event.data.file instanceof File) {
         clearTimers();
@@ -120,7 +127,7 @@ function App() {
       } else if (event.data?.type === 'SHARE_TARGET_ERROR') {
         clearTimers();
         setReceivingShare(false);
-        setError(`Could not receive the shared video (${event.data.message}). Try picking the file directly instead.`);
+        setError({ key: 'errors.shareFailed', params: { message: event.data.message } });
       }
     };
     sw.addEventListener('message', onMessage);
@@ -136,7 +143,7 @@ function App() {
       sw.controller?.postMessage('share-ready');
       handshakeTimer = window.setTimeout(() => {
         setReceivingShare(false);
-        setError('The shared video never arrived from the system. Try picking the file directly instead.');
+        setError({ key: 'errors.shareNeverArrived' });
       }, 10_000);
     }
     return () => {
@@ -166,7 +173,7 @@ function App() {
       setResultUrl(URL.createObjectURL(converted.blob));
       setStatus('done');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Conversion failed.');
+      setError(e instanceof Error ? { message: e.message } : { key: 'errors.conversionFailed' });
       setStatus('error');
     }
   }, [file, targetMb, hevcAvailable, forceH264, stripMetadata]);
@@ -178,11 +185,11 @@ function App() {
     <div className="app">
       <header>
         <h1>Video Shrinker</h1>
-        <p className="tagline">Shrinks video to whatever size you need, right on your device.</p>
+        <p className="tagline">{t('tagline')}</p>
         <ul className="privacy-facts">
-          <li>Your file never leaves this device.</li>
-          <li>No accounts, no analytics, no cookies.</li>
-          <li>Installable as an app, works offline.</li>
+          <li>{t('privacy.local')}</li>
+          <li>{t('privacy.clean')}</li>
+          <li>{t('privacy.installable')}</li>
         </ul>
       </header>
 
@@ -215,15 +222,15 @@ function App() {
             </div>
           ) : (
             <div className="file-info">
-              <strong>Drop a video here, or click to choose one</strong>
-              <span>MP4, MOV, WebM, MKV, and more</span>
+              <strong>{t('dropzone.prompt')}</strong>
+              <span>{t('dropzone.formats')}</span>
             </div>
           )}
         </div>
 
         <div className="controls">
           <label className="field">
-            <span>Target size</span>
+            <span>{t('controls.targetSize')}</span>
             <div className="size-input-row">
               <div className="size-input">
                 <input
@@ -238,7 +245,7 @@ function App() {
                 <button
                   type="button"
                   className="step-button"
-                  aria-label="Decrease target size"
+                  aria-label={t('controls.decrease')}
                   onClick={() => setTargetMb((mb) => Math.max(1, mb - 1))}
                 >
                   −
@@ -246,7 +253,7 @@ function App() {
                 <button
                   type="button"
                   className="step-button"
-                  aria-label="Increase target size"
+                  aria-label={t('controls.increase')}
                   onClick={() => setTargetMb((mb) => mb + 1)}
                 >
                   +
@@ -271,24 +278,24 @@ function App() {
           {hevcAvailable && (
             <label className="checkbox">
               <input type="checkbox" checked={forceH264} onChange={(e) => setForceH264(e.target.checked)} />
-              <span>Force H.264 (maximum compatibility, lower quality at this size)</span>
+              <span>{t('controls.forceH264')}</span>
             </label>
           )}
 
           <label className="checkbox">
             <input type="checkbox" checked={stripMetadata} onChange={(e) => setStripMetadata(e.target.checked)} />
-            <span>Strip metadata (recommended)</span>
+            <span>{t('controls.stripMetadata')}</span>
           </label>
         </div>
 
         <button type="button" className="convert-button" disabled={!file || status === 'converting'} onClick={handleConvert}>
-          {status === 'converting' ? (phase === 'refining' ? 'Refining size…' : 'Converting…') : 'Convert'}
+          {status === 'converting' ? (phase === 'refining' ? t('convert.refining') : t('convert.converting')) : t('convert.start')}
         </button>
 
         {status === 'converting' && (
           <div className="progress-wrap">
             {phase === 'refining' && (
-              <p className="phase-note">First pass overshot the target. Re-encoding once more for accuracy.</p>
+              <p className="phase-note">{t('convert.refineNote')}</p>
             )}
             <div className="progress">
               <div className="progress-track">
@@ -299,22 +306,22 @@ function App() {
           </div>
         )}
 
-        {error && <div className="message error">{error}</div>}
+        {error && <div className="message error">{'key' in error ? t(error.key, error.params) : error.message}</div>}
 
         {status === 'done' && result && resultUrl && (
           <div className="result">
             <p>
-              Done: <strong>{codecLabel} · {formatBytes(result.blob.size)}</strong>
+              {t('result.done')} <strong>{codecLabel} · {formatBytes(result.blob.size)}</strong>
               <br />
               <span className="result-detail">
-                {result.engine === 'webcodecs' ? 'WebCodecs, hardware-accelerated' : 'ffmpeg.wasm, CPU fallback'}
+                {result.engine === 'webcodecs' ? t('result.webcodecs') : t('result.ffmpeg')}
               </span>
             </p>
             <a className="download-button" href={resultUrl} download={downloadName}>
-              Download
+              {t('result.download')}
             </a>
             <button type="button" className="link-button" onClick={reset}>
-              Convert another
+              {t('result.convertAnother')}
             </button>
           </div>
         )}
@@ -323,16 +330,16 @@ function App() {
       {receivingShare && (
         <div className="share-scrim" role="dialog" aria-modal="true" aria-labelledby="share-dialog-title">
           <div className="share-dialog">
-            <h2 id="share-dialog-title">Preparing your video</h2>
+            <h2 id="share-dialog-title">{t('share.preparing')}</h2>
             <div className="share-dialog-status">
               <svg className="share-spinner" viewBox="0 0 48 48" aria-hidden="true">
                 <circle cx="24" cy="24" r="20" fill="none" strokeWidth="4" />
               </svg>
-              <span>0 of 1 ready</span>
+              <span>{t('share.progress', { done: 0, total: 1 })}</span>
             </div>
             <div className="share-dialog-actions">
               <button type="button" className="share-dialog-cancel" onClick={() => cancelShareRef.current()}>
-                Cancel
+                {t('share.cancel')}
               </button>
             </div>
           </div>
@@ -340,7 +347,7 @@ function App() {
       )}
 
       <footer>
-        <p className="footer-note">Encoding runs via WebCodecs, with an ffmpeg fallback where it isn't supported.</p>
+        <p className="footer-note">{t('footer.note')}</p>
         <div className="footer-bottom">
           <p className="footer-links">
             <a href="https://github.com/dubsector/video-shrinker" target="_blank" rel="noopener noreferrer">

@@ -1,0 +1,67 @@
+{
+  "tagline": "Shrinks video to whatever size you need, right on your device.",
+  "privacy": {
+    "local": "Your file never leaves this device.",
+    "clean": "No accounts, no analytics, no cookies.",
+    "installable": "Installable as an app, works offline."
+  },
+  "dropzone": {
+    "prompt": "Drop a video here, or click to choose one",
+    "formats": "MP4, MOV, WebM, MKV, and more"
+  },
+  "controls": {
+    "targetSize": "Target size",
+    "decrease": "Decrease target size",
+    "increase": "Increase target size",
+    "forceH264": "Force H.264 (maximum compatibility, lower quality at this size)",
+    "stripMetadata": "Strip metadata (recommended)"
+  },
+  "convert": {
+    "start": "Convert",
+    "converting": "Converting…",
+    "refining": "Refining size…",
+    "refineNote": "First pass overshot the target. Re-encoding once more for accuracy."
+  },
+  "errors": {
+    "notVideo": "Please choose a video file.",
+    "conversionFailed": "Conversion failed.",
+    "shareTimeout": "Gave up waiting for the shared video. Try picking the file directly instead.",
+    "shareNeverArrived": "The shared video never arrived from the system. Try picking the file directly instead.",
+    "shareFailed": "Could not receive the shared video ({{message}}). Try picking the file directly instead."
+  },
+  "result": {
+    "done": "Done:",
+    "webcodecs": "WebCodecs, hardware-accelerated",
+    "ffmpeg": "ffmpeg.wasm, CPU fallback",
+    "download": "Download",
+    "convertAnother": "Convert another"
+  },
+  "share": {
+    "preparing": "Preparing your video",
+    "progress": "{{done}} of {{total}} ready",
+    "cancel": "Cancel"
+  },
+  "footer": {
+    "note": "Encoding runs via WebCodecs, with an ffmpeg fallback where it isn't supported."
+  },
+  "install": {
+    "title": "Install Video Shrinker",
+    "action": "Install",
+    "dismiss": "Dismiss"
+  },
+  "update": {
+    "available": "A new version is available.",
+    "reload": "Reload to update",
+    "dismiss": "Dismiss"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "Match system theme",
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "language": {
+    "label": "Language",
+    "auto": "Automatic"
+  }
+}

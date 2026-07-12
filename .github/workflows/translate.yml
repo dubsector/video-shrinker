@@ -1,0 +1,77 @@
+name: Translate strings
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/locales/en.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: translate
+  cancel-in-progress: false
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      # Gemini free tier allows 10 requests/minute, so space requests 7s
+      # apart. The committed cache file keeps reruns incremental: only new
+      # or changed source strings reach the API.
+      - name: Translate
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          npx --yes i18n-ai-translate@latest translate \
+            -i src/locales/en.json \
+            -o ar bg bn cs da de el es fa fi fr he hi hr hu id it ja ko ms nl no pl pt ro ru sk sr sv th tr uk vi zh tl \
+            -e gemini \
+            -m gemini-2.5-flash \
+            -r 7000 \
+            --cache .github/i18n/cache.json \
+            --glossary .github/i18n/glossary.json \
+            --context "Video Shrinker, a web app that compresses a video file to a target size locally on the user's device" \
+            --verbose \
+            -k "$GEMINI_API_KEY"
+
+      - name: Open and merge PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Translations already up to date."
+            exit 0
+          fi
+          BRANCH="i18n-translations-${{ github.run_number }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add src/locales .github/i18n/cache.json
+          git commit -m "Update translations"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "Update translations" \
+            --body "Automated translation refresh for src/locales." \
+            --base main \
+            --head "$BRANCH"
+          # PRs opened with the workflow token never start pull_request
+          # workflows, so dispatch the required check onto the branch
+          # explicitly, wait for it, then merge.
+          gh workflow run pr-checks.yml --ref "$BRANCH"
+          sleep 15
+          RUN_ID=$(gh run list --workflow=pr-checks.yml --branch "$BRANCH" --limit 1 --json databaseId --jq '.[0].databaseId')
+          gh run watch "$RUN_ID" --exit-status
+          gh pr merge "$BRANCH" --squash --delete-branch
+          # Merges by the workflow token don't trigger push workflows
+          # either, so kick the Pages deploy directly.
+          gh workflow run deploy.yml --ref main
