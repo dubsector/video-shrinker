@@ -42,20 +42,22 @@ i18n
       order: ['localStorage', 'navigator'],
       lookupLocalStorage: LANGUAGE_STORAGE_KEY,
       caches: [],
+      // Browsers report codes our files don't use directly: nb/nn (Bokmål,
+      // Nynorsk), legacy iw for Hebrew, fil for Filipino (ISO 639-1 tl),
+      // and the traditional-script Chinese variants (zh-Hant*, zh-HK,
+      // zh-MO), which read better as zh-TW than simplified zh. The aliases
+      // must be applied to the detected code itself: i18next resolves an
+      // unknown code to its base language before fallbackLng is consulted,
+      // so a fallbackLng map never sees them.
+      convertDetectedLanguage: (code) => {
+        if (/^zh-(Hant|HK|MO|TW)/i.test(code)) return 'zh-TW';
+        const aliases: Record<string, string> = { nb: 'no', nn: 'no', iw: 'he', fil: 'tl' };
+        return aliases[code.split('-')[0]] ?? code;
+      },
     },
     supportedLngs: availableLanguages,
     nonExplicitSupportedLngs: false,
-    // Browsers report codes our files don't use directly: nb/nn (Bokmål,
-    // Nynorsk), legacy iw for Hebrew, fil for Filipino (ISO 639-1 tl), and
-    // zh-HK which reads better as traditional than simplified.
-    fallbackLng: {
-      nb: ['no', 'en'],
-      nn: ['no', 'en'],
-      iw: ['he', 'en'],
-      fil: ['tl', 'en'],
-      'zh-HK': ['zh-TW', 'zh', 'en'],
-      default: ['en'],
-    },
+    fallbackLng: 'en',
     partialBundledLanguages: true,
     resources: { en: { translation: en } },
     interpolation: { escapeValue: false },

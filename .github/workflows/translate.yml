@@ -34,7 +34,7 @@ jobs:
         run: |
           npx --yes i18n-ai-translate@latest translate \
             -i src/locales/en.json \
-            -o af am ar az be bg bn ca cs da de el es et eu fa fi fr gl gu he hi hr hu hy id is it ja ka kk km kn ko ky lo lt lv mk ml mn mr ms my ne nl no pa pl pt rm ro ru si sk sl sq sr sv sw ta te th tl tr uk ur vi zh \
+            -o af am ar az be bg bn ca cs da de el es et eu fa fi fr gl gu he hi hr hu hy id is it ja ka kk km kn ko ky lo lt lv mk ml mn mr ms my ne nl no pa pl pt rm ro ru si sk sl sq sr sv sw ta te th tl tr uk ur vi zh zu \
             -e gemini \
             -m gemini-3.1-flash-lite \
             -r 7000 \
@@ -44,11 +44,31 @@ jobs:
             --verbose \
             -k "$GEMINI_API_KEY"
 
+      # The translator only accepts ISO 639-1 codes, so Traditional
+      # Chinese can't be requested from the API. Derive zh-TW from the
+      # Simplified output instead: OpenCC's cn->twp conversion handles
+      # both the script change and Taiwan vocabulary, costs no API
+      # requests, and stays in sync with zh.json on every run.
+      - name: Derive Traditional Chinese
+        run: |
+          npm install --no-save --no-package-lock opencc-js@1
+          node <<'EOF'
+          const fs = require('fs');
+          const OpenCC = require('opencc-js');
+          const convert = OpenCC.Converter({ from: 'cn', to: 'twp' });
+          const walk = (node) =>
+            typeof node === 'string'
+              ? convert(node)
+              : Object.fromEntries(Object.entries(node).map(([k, v]) => [k, walk(v)]));
+          const zh = JSON.parse(fs.readFileSync('src/locales/zh.json', 'utf8'));
+          fs.writeFileSync('src/locales/zh-TW.json', JSON.stringify(walk(zh), null, 4) + '\n');
+          EOF
+
       - name: Open and merge PR
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -z "$(git status --porcelain)" ]; then
+          if [ -z "$(git status --porcelain src/locales .github/i18n)" ]; then
             echo "Translations already up to date."
             exit 0
           fi

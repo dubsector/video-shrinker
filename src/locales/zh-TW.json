@@ -1,0 +1,67 @@
+{
+    "controls": {
+        "decrease": "減小目標大小",
+        "forceH264": "強制使用 H.264（最大相容性，此大小下質量較低）",
+        "increase": "增大目標大小",
+        "stripMetadata": "去除後設資料（推薦）",
+        "targetSize": "目標大小"
+    },
+    "convert": {
+        "converting": "正在轉換…",
+        "refineNote": "第一遍處理超過了目標大小。正在重新編碼以確保準確性。",
+        "refining": "正在最佳化大小…",
+        "start": "轉換"
+    },
+    "dropzone": {
+        "formats": "MP4, MOV, WebM, MKV 等更多格式",
+        "prompt": "將影片拖放到此處，或點選以選擇影片"
+    },
+    "errors": {
+        "conversionFailed": "轉換失敗。",
+        "notVideo": "請選擇一個影片檔案。",
+        "shareFailed": "無法接收共享影片 ({{message}})。請嘗試直接選擇檔案。",
+        "shareNeverArrived": "未從系統中收到共享影片。請嘗試直接選擇檔案。",
+        "shareTimeout": "等待共享影片超時。請嘗試直接選擇檔案。"
+    },
+    "footer": {
+        "note": "編碼通過 WebCodecs 執行，在不支援的情況下使用 ffmpeg 後備方案。"
+    },
+    "install": {
+        "action": "安裝",
+        "dismiss": "關閉",
+        "title": "安裝 Video Shrinker"
+    },
+    "language": {
+        "auto": "自動",
+        "label": "語言"
+    },
+    "privacy": {
+        "clean": "無賬戶，無分析，無 Cookie。",
+        "installable": "可作為應用安裝，支援離線工作。",
+        "local": "您的檔案永遠不會離開此裝置。"
+    },
+    "result": {
+        "convertAnother": "轉換另一個",
+        "done": "完成：",
+        "download": "下載",
+        "ffmpeg": "ffmpeg.wasm, CPU 後備方案",
+        "webcodecs": "WebCodecs，硬體加速"
+    },
+    "share": {
+        "cancel": "取消",
+        "preparing": "正在準備您的影片",
+        "progress": "{{done}} / {{total}} 已就緒"
+    },
+    "tagline": "直接在您的裝置上將影片壓縮到您需要的任何大小。",
+    "theme": {
+        "dark": "深色主題",
+        "label": "主題",
+        "light": "淺色主題",
+        "system": "匹配系統主題"
+    },
+    "update": {
+        "available": "有新版本可用。",
+        "dismiss": "關閉",
+        "reload": "重新載入以更新"
+    }
+}
