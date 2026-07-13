@@ -1,5 +1,6 @@
 import { ALL_FORMATS, BlobSource, Input, type InputAudioTrack } from 'mediabunny';
 import { planBitrates, refineVideoBitrate } from './bitrate';
+import type { SourceVideo } from './resolution';
 import { convertWithWebCodecs } from './webcodecsEngine';
 
 export type EngineUsed = 'webcodecs' | 'ffmpeg';
@@ -12,6 +13,9 @@ export type ConvertResult = {
   codec: string;
   videoBitrate: number;
   audioBitrate: number;
+  /** Dimensions of the produced video (may be smaller than the source). */
+  width: number;
+  height: number;
 };
 
 export type ConvertOptions = {
@@ -21,7 +25,7 @@ export type ConvertOptions = {
   onProgress?: (progress: number, phase: ConversionPhase) => void;
 };
 
-type Attempt = { blob: Blob; engine: EngineUsed; codec: string };
+type Attempt = { blob: Blob; engine: EngineUsed; codec: string; width: number; height: number };
 
 function isImprovement(candidate: Attempt, baseline: Attempt, targetSizeBytes: number): boolean {
   const candidateOver = candidate.blob.size > targetSizeBytes;
@@ -35,6 +39,7 @@ function isImprovement(candidate: Attempt, baseline: Attempt, targetSizeBytes: n
 async function attemptConversion(
   file: File,
   input: Input,
+  source: SourceVideo,
   durationSeconds: number,
   audioTrack: InputAudioTrack | null,
   videoBitrate: number,
@@ -43,6 +48,7 @@ async function attemptConversion(
   options: ConvertOptions,
 ): Promise<Attempt> {
   const webCodecsResult = await convertWithWebCodecs(input, durationSeconds, audioTrack, {
+    source,
     videoBitrate,
     audioBitrate,
     preferHevc: options.preferHevc,
@@ -51,20 +57,27 @@ async function attemptConversion(
   });
 
   if (webCodecsResult) {
-    return { blob: webCodecsResult.blob, engine: 'webcodecs', codec: webCodecsResult.codec };
+    return {
+      blob: webCodecsResult.blob,
+      engine: 'webcodecs',
+      codec: webCodecsResult.codec,
+      width: webCodecsResult.width,
+      height: webCodecsResult.height,
+    };
   }
 
   // Lazy-loaded: most browsers can use WebCodecs, so the ffmpeg.wasm
   // wrapper (and its wasm binary) should only be fetched when needed.
   const { convertWithFfmpeg } = await import('./ffmpegEngine');
   const ffmpegResult = await convertWithFfmpeg(file, {
+    source,
     videoBitrate,
     audioBitrate,
     hasAudio: !!audioTrack,
     stripMetadata: options.stripMetadata,
     onProgress: (ratio) => options.onProgress?.(ratio, phase),
   });
-  return { blob: ffmpegResult.blob, engine: 'ffmpeg', codec: 'avc' };
+  return { blob: ffmpegResult.blob, engine: 'ffmpeg', codec: 'avc', width: ffmpegResult.width, height: ffmpegResult.height };
 }
 
 /**
@@ -85,6 +98,20 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
   try {
     const duration = await input.computeDuration();
     if (duration <= 0) throw new Error("Couldn't determine this file's duration.");
+
+    const videoTrack = await input.getPrimaryVideoTrack();
+    if (!videoTrack) throw new Error('This file has no video track to convert.');
+    const source: SourceVideo = {
+      width: await videoTrack.getDisplayWidth(),
+      height: await videoTrack.getDisplayHeight(),
+      // Estimated from a small prefix of packets (cheap; no full-file scan);
+      // falls back to a 30fps assumption if it can't be determined.
+      frameRate: await videoTrack
+        .computePacketStats(60)
+        .then((stats) => (stats.averagePacketRate > 0 ? stats.averagePacketRate : 30))
+        .catch(() => 30),
+    };
+
     const audioTrack = await input.getPrimaryAudioTrack();
     const hasAudio = !!audioTrack;
 
@@ -92,6 +119,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
     const first = await attemptConversion(
       file,
       input,
+      source,
       duration,
       audioTrack,
       plan.videoBitrate,
@@ -114,6 +142,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
     const second = await attemptConversion(
       file,
       input,
+      source,
       duration,
       audioTrack,
       refinedVideoBitrate,

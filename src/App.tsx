@@ -311,7 +311,10 @@ function App() {
         {status === 'done' && result && resultUrl && (
           <div className="result">
             <p>
-              {t('result.done')} <strong>{codecLabel} · {formatBytes(result.blob.size)}</strong>
+              {t('result.done')}{' '}
+              <strong>
+                {codecLabel} · {Math.min(result.width, result.height)}p · {formatBytes(result.blob.size)}
+              </strong>
               <br />
               <span className="result-detail">
                 {result.engine === 'webcodecs' ? t('result.webcodecs') : t('result.ffmpeg')}
