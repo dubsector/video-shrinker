@@ -1,5 +1,5 @@
 import { ALL_FORMATS, BlobSource, Input, type InputAudioTrack } from 'mediabunny';
-import { planBitrates, refineVideoBitrate } from './bitrate';
+import { planBitrates, refinedPassMargin, refineVideoBitrate } from './bitrate';
 import { convertWithWebCodecs } from './webcodecsEngine';
 
 export type EngineUsed = 'webcodecs' | 'ffmpeg';
@@ -10,6 +10,8 @@ export type ConvertResult = {
   blob: Blob;
   engine: EngineUsed;
   codec: string;
+  /** Only meaningful when engine is 'webcodecs'; ffmpeg.wasm is always CPU-only. */
+  hardwareAccelerated: boolean;
   videoBitrate: number;
   audioBitrate: number;
 };
@@ -21,7 +23,13 @@ export type ConvertOptions = {
   onProgress?: (progress: number, phase: ConversionPhase) => void;
 };
 
-type Attempt = { blob: Blob; engine: EngineUsed; codec: string };
+type Attempt = { blob: Blob; engine: EngineUsed; codec: string; hardwareAccelerated: boolean };
+
+// Each corrective pass is a full re-encode, so cap how many we run after the
+// initial one. Hardware encoders don't honor a requested bitrate exactly
+// (WebCodecs exposes no hard bitrate ceiling), so a single correction can still
+// land just over target; a couple of measured retries reliably converge under.
+const MAX_REFINEMENT_PASSES = 2;
 
 function isImprovement(candidate: Attempt, baseline: Attempt, targetSizeBytes: number): boolean {
   const candidateOver = candidate.blob.size > targetSizeBytes;
@@ -42,7 +50,7 @@ async function attemptConversion(
   phase: ConversionPhase,
   options: ConvertOptions,
 ): Promise<Attempt> {
-  const webCodecsResult = await convertWithWebCodecs(input, durationSeconds, audioTrack, {
+  const webCodecsOutcome = await convertWithWebCodecs(input, durationSeconds, audioTrack, {
     videoBitrate,
     audioBitrate,
     preferHevc: options.preferHevc,
@@ -50,21 +58,30 @@ async function attemptConversion(
     onProgress: (info) => options.onProgress?.(info.progress, phase),
   });
 
-  if (webCodecsResult) {
-    return { blob: webCodecsResult.blob, engine: 'webcodecs', codec: webCodecsResult.codec };
+  if (webCodecsOutcome.ok) {
+    const { blob, codec, hardwareAccelerated } = webCodecsOutcome.result;
+    return { blob, engine: 'webcodecs', codec, hardwareAccelerated };
   }
 
   // Lazy-loaded: most browsers can use WebCodecs, so the ffmpeg.wasm
   // wrapper (and its wasm binary) should only be fetched when needed.
   const { convertWithFfmpeg } = await import('./ffmpegEngine');
-  const ffmpegResult = await convertWithFfmpeg(file, {
-    videoBitrate,
-    audioBitrate,
-    hasAudio: !!audioTrack,
-    stripMetadata: options.stripMetadata,
-    onProgress: (ratio) => options.onProgress?.(ratio, phase),
-  });
-  return { blob: ffmpegResult.blob, engine: 'ffmpeg', codec: 'avc' };
+  try {
+    const ffmpegResult = await convertWithFfmpeg(file, {
+      videoBitrate,
+      audioBitrate,
+      hasAudio: !!audioTrack,
+      stripMetadata: options.stripMetadata,
+      onProgress: (ratio) => options.onProgress?.(ratio, phase),
+    });
+    return { blob: ffmpegResult.blob, engine: 'ffmpeg', codec: 'avc', hardwareAccelerated: false };
+  } catch (err) {
+    // The WebCodecs failure reason would otherwise be lost here (it only ever
+    // reached console.warn), leaving just ffmpeg's generic error on screen
+    // when both engines fail. Surface both.
+    const message = err instanceof Error ? err.message : String(err);
+    throw new Error(`${message} (WebCodecs also failed: ${webCodecsOutcome.fallbackReason})`);
+  }
 }
 
 /**
@@ -76,8 +93,10 @@ async function attemptConversion(
  * The requested bitrate is only a request to the encoder; how many bytes it
  * actually produces depends on the content and how closely this browser's
  * encoder honors the request. Landing under the target is always accepted
- * as-is; only an overshoot triggers a corrective second pass, re-encoding
- * with a bitrate scaled down by the measured result.
+ * as-is; an overshoot triggers up to MAX_REFINEMENT_PASSES corrective passes,
+ * each re-encoding with a bitrate scaled down by the previous measured result,
+ * stopping as soon as one lands under target. The smallest-overshoot attempt is
+ * returned if none make it under.
  */
 export async function convertVideo(file: File, targetSizeBytes: number, options: ConvertOptions): Promise<ConvertResult> {
   const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(file) });
@@ -89,42 +108,56 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
     const hasAudio = !!audioTrack;
 
     const plan = planBitrates(duration, targetSizeBytes, hasAudio);
-    const first = await attemptConversion(
+
+    let videoBitrate = plan.videoBitrate;
+    let attempt = await attemptConversion(
       file,
       input,
       duration,
       audioTrack,
-      plan.videoBitrate,
+      videoBitrate,
       plan.audioBitrate,
       'encoding',
       options,
     );
+    let best = attempt;
+    let bestVideoBitrate = videoBitrate;
 
-    if (first.blob.size <= targetSizeBytes) {
-      return { ...first, videoBitrate: plan.videoBitrate, audioBitrate: plan.audioBitrate };
+    for (let pass = 0; pass < MAX_REFINEMENT_PASSES && best.blob.size > targetSizeBytes; pass++) {
+      // Scale down from the most recent attempt's measured size — this is the
+      // feedback that makes it converge even when the encoder ignores the exact
+      // requested bitrate.
+      const nextBitrate = refineVideoBitrate(
+        videoBitrate,
+        plan.audioBitrate,
+        attempt.blob.size,
+        duration,
+        targetSizeBytes,
+        refinedPassMargin(pass),
+      );
+      // The bitrate floor is already hit and can't drop further, so another
+      // pass would just re-encode the same thing.
+      if (nextBitrate >= videoBitrate) break;
+
+      videoBitrate = nextBitrate;
+      attempt = await attemptConversion(
+        file,
+        input,
+        duration,
+        audioTrack,
+        videoBitrate,
+        plan.audioBitrate,
+        'refining',
+        options,
+      );
+
+      if (isImprovement(attempt, best, targetSizeBytes)) {
+        best = attempt;
+        bestVideoBitrate = videoBitrate;
+      }
     }
 
-    const refinedVideoBitrate = refineVideoBitrate(
-      plan.videoBitrate,
-      plan.audioBitrate,
-      first.blob.size,
-      duration,
-      targetSizeBytes,
-    );
-    const second = await attemptConversion(
-      file,
-      input,
-      duration,
-      audioTrack,
-      refinedVideoBitrate,
-      plan.audioBitrate,
-      'refining',
-      options,
-    );
-
-    return isImprovement(second, first, targetSizeBytes)
-      ? { ...second, videoBitrate: refinedVideoBitrate, audioBitrate: plan.audioBitrate }
-      : { ...first, videoBitrate: plan.videoBitrate, audioBitrate: plan.audioBitrate };
+    return { ...best, videoBitrate: bestVideoBitrate, audioBitrate: plan.audioBitrate };
   } finally {
     input.dispose();
   }

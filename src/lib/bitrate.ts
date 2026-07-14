@@ -8,10 +8,17 @@ const AUDIO_BITRATE_CANDIDATES = [128_000, 96_000, 64_000, 32_000] as const;
 // request), so it aims just under the target rather than dead-on.
 const FIRST_PASS_MARGIN = 0.93;
 
-// A corrective second pass only runs when the first pass overshot the target
-// (landing under is always accepted, however far under). It uses the first
-// pass's measured output size to scale the bitrate down accurately.
-const REFINED_PASS_MARGIN = 0.97;
+// A corrective pass only runs when the previous pass overshot the target
+// (landing under is always accepted, however far under). It uses the previous
+// pass's measured output size to scale the bitrate down accurately. Headroom
+// tightens on each successive pass: a VBR hardware encoder's overshoot ratio
+// can drift between encodes, so a fixed margin can still land just over target
+// after one correction — aiming progressively lower absorbs that drift.
+const REFINED_PASS_MARGINS = [0.97, 0.93] as const;
+
+export function refinedPassMargin(pass: number): number {
+  return REFINED_PASS_MARGINS[Math.min(pass, REFINED_PASS_MARGINS.length - 1)];
+}
 
 export type BitratePlan = {
   videoBitrate: number;
@@ -53,8 +60,9 @@ export function refineVideoBitrate(
   actualBytes: number,
   durationSeconds: number,
   targetSizeBytes: number,
+  marginRatio: number = REFINED_PASS_MARGINS[0],
 ): number {
-  const targetBytes = targetSizeBytes * REFINED_PASS_MARGIN;
+  const targetBytes = targetSizeBytes * marginRatio;
   const audioBytes = (audioBitrate * durationSeconds) / 8;
   const actualVideoBytes = Math.max(1, actualBytes - audioBytes);
   const targetVideoBytes = Math.max(1, targetBytes - audioBytes);

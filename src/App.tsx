@@ -314,7 +314,11 @@ function App() {
               {t('result.done')} <strong>{codecLabel} · {formatBytes(result.blob.size)}</strong>
               <br />
               <span className="result-detail">
-                {result.engine === 'webcodecs' ? t('result.webcodecs') : t('result.ffmpeg')}
+                {result.engine === 'webcodecs'
+                  ? result.hardwareAccelerated
+                    ? t('result.webcodecs')
+                    : t('result.webcodecsSoftware')
+                  : t('result.ffmpeg')}
               </span>
             </p>
             <a className="download-button" href={resultUrl} download={downloadName}>
