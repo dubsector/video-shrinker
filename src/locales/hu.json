@@ -45,7 +45,8 @@
         "done": "Kész:",
         "download": "Letöltés",
         "ffmpeg": "ffmpeg.wasm, CPU-alapú tartalék",
-        "webcodecs": "WebCodecs, hardveres gyorsítással"
+        "webcodecs": "WebCodecs, hardveres gyorsítással",
+        "webcodecsSoftware": "WebCodecs, szoftveres kódoló"
     },
     "share": {
         "cancel": "Mégse",

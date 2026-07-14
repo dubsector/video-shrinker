@@ -45,7 +45,8 @@
         "done": "Lokið:",
         "download": "Hala niður",
         "ffmpeg": "ffmpeg.wasm, CPU varaúrræði",
-        "webcodecs": "WebCodecs, vélbúnaðarhröðun"
+        "webcodecs": "WebCodecs, vélbúnaðarhröðun",
+        "webcodecsSoftware": "WebCodecs, hugbúnaðarkóðari"
     },
     "share": {
         "cancel": "Hætta við",

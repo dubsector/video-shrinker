@@ -45,7 +45,8 @@
         "done": "Hoàn tất:",
         "download": "Tải xuống",
         "ffmpeg": "ffmpeg.wasm, dự phòng CPU",
-        "webcodecs": "WebCodecs, tăng tốc phần cứng"
+        "webcodecs": "WebCodecs, tăng tốc phần cứng",
+        "webcodecsSoftware": "WebCodecs, bộ mã hóa phần mềm"
     },
     "share": {
         "cancel": "Hủy",

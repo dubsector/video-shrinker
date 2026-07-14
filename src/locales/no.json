@@ -45,7 +45,8 @@
         "done": "Ferdig:",
         "download": "Last ned",
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
-        "webcodecs": "WebCodecs, maskinvareakselerert"
+        "webcodecs": "WebCodecs, maskinvareakselerert",
+        "webcodecsSoftware": "WebCodecs, programvare-enkoder"
     },
     "share": {
         "cancel": "Avbryt",

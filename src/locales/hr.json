@@ -45,7 +45,8 @@
         "done": "Gotovo:",
         "download": "Preuzmi",
         "ffmpeg": "ffmpeg.wasm, CPU rezerva",
-        "webcodecs": "WebCodecs, hardverski ubrzano"
+        "webcodecs": "WebCodecs, hardverski ubrzano",
+        "webcodecsSoftware": "WebCodecs, softverski enkoder"
     },
     "share": {
         "cancel": "Odustani",

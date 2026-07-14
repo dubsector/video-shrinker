@@ -45,7 +45,8 @@
         "done": "Valmis:",
         "download": "Lataa",
         "ffmpeg": "ffmpeg.wasm, CPU-varavaihtoehto",
-        "webcodecs": "WebCodecs, laitteistokiihdytetty"
+        "webcodecs": "WebCodecs, laitteistokiihdytetty",
+        "webcodecsSoftware": "WebCodecs, ohjelmistokooderi"
     },
     "share": {
         "cancel": "Peruuta",

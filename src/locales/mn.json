@@ -45,7 +45,8 @@
         "done": "Дууссан:",
         "download": "Татах",
         "ffmpeg": "ffmpeg.wasm, CPU-н нөөц хувилбар",
-        "webcodecs": "WebCodecs, техник хангамжийн хурдасгуур"
+        "webcodecs": "WebCodecs, техник хангамжийн хурдасгуур",
+        "webcodecsSoftware": "WebCodecs, програм хангамжийн энкодер"
     },
     "share": {
         "cancel": "Цуцлах",

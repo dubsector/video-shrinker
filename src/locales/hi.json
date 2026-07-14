@@ -45,7 +45,8 @@
         "done": "पूरा हुआ:",
         "download": "डाउनलोड",
         "ffmpeg": "ffmpeg.wasm, CPU फ़ॉलबैक",
-        "webcodecs": "WebCodecs, हार्डवेयर-एक्सेलरेटेड"
+        "webcodecs": "WebCodecs, हार्डवेयर-एक्सेलरेटेड",
+        "webcodecsSoftware": "WebCodecs, सॉफ्टवेयर एनकोडर"
     },
     "share": {
         "cancel": "रद्द करें",

@@ -45,7 +45,8 @@
         "done": "ಸಿದ್ಧವಾಗಿದೆ:",
         "download": "ಡೌನ್‌ಲೋಡ್",
         "ffmpeg": "ffmpeg.wasm, CPU ಫಾಲ್‌ಬ್ಯಾಕ್",
-        "webcodecs": "WebCodecs, ಹಾರ್ಡ್‌ವೇರ್-ವೇಗವರ್ಧಿತ"
+        "webcodecs": "WebCodecs, ಹಾರ್ಡ್‌ವೇರ್-ವೇಗವರ್ಧಿತ",
+        "webcodecsSoftware": "WebCodecs, ಸಾಫ್ಟ್‌ವೇರ್ ಎನ್ಕೋಡರ್"
     },
     "share": {
         "cancel": "ರದ್ದುಮಾಡಿ",

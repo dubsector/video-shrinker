@@ -45,7 +45,8 @@
         "done": "مکمل:",
         "download": "ڈاؤن لوڈ کریں",
         "ffmpeg": "ffmpeg.wasm، CPU فال بیک",
-        "webcodecs": "WebCodecs، ہارڈویئر ایکسلریٹڈ"
+        "webcodecs": "WebCodecs، ہارڈویئر ایکسلریٹڈ",
+        "webcodecsSoftware": "WebCodecs، سافٹ ویئر انکوڈر"
     },
     "share": {
         "cancel": "منسوخ کریں",

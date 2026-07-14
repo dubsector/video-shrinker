@@ -45,7 +45,8 @@
         "done": "Finalizat:",
         "download": "Descarcă",
         "ffmpeg": "ffmpeg.wasm, alternativă CPU",
-        "webcodecs": "WebCodecs, accelerare hardware"
+        "webcodecs": "WebCodecs, accelerare hardware",
+        "webcodecsSoftware": "WebCodecs, codificator software"
     },
     "share": {
         "cancel": "Anulează",

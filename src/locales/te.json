@@ -45,7 +45,8 @@
         "done": "పూర్తయింది:",
         "download": "డౌన్‌లోడ్ చేయండి",
         "ffmpeg": "ffmpeg.wasm, CPU ఫాల్‌బ్యాక్",
-        "webcodecs": "WebCodecs, హార్డ్‌వేర్-యాక్సిలరేటెడ్"
+        "webcodecs": "WebCodecs, హార్డ్‌వేర్-యాక్సిలరేటెడ్",
+        "webcodecsSoftware": "WebCodecs, సాఫ్ట్‌వేర్ ఎన్‌కోడర్"
     },
     "share": {
         "cancel": "రద్దు చేయండి",

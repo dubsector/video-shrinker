@@ -45,7 +45,8 @@
         "done": "ပြီးစီး:",
         "download": "ဒေါင်းလုဒ်လုပ်ရန်",
         "ffmpeg": "ffmpeg.wasm၊ CPU အရန်သင့်",
-        "webcodecs": "WebCodecs၊ ဟာ့ဒ်ဝဲဖြင့် အရှိန်မြှင့်ထားသည်"
+        "webcodecs": "WebCodecs၊ ဟာ့ဒ်ဝဲဖြင့် အရှိန်မြှင့်ထားသည်",
+        "webcodecsSoftware": "WebCodecs, ဆော့ဖ်ဝဲလ် အန်ကုဒါ"
     },
     "share": {
         "cancel": "မလုပ်တော့ပါ",

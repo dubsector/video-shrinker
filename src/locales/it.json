@@ -45,7 +45,8 @@
         "done": "Completato:",
         "download": "Scarica",
         "ffmpeg": "ffmpeg.wasm, fallback CPU",
-        "webcodecs": "WebCodecs, accelerazione hardware"
+        "webcodecs": "WebCodecs, accelerazione hardware",
+        "webcodecsSoftware": "WebCodecs, codificatore software"
     },
     "share": {
         "cancel": "Annulla",

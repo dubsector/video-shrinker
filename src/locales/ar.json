@@ -45,7 +45,8 @@
         "done": "تم:",
         "download": "تنزيل",
         "ffmpeg": "ffmpeg.wasm، احتياطي المعالج (CPU)",
-        "webcodecs": "WebCodecs، مع تسريع الأجهزة"
+        "webcodecs": "WebCodecs، مع تسريع الأجهزة",
+        "webcodecsSoftware": "WebCodecs، مشفر برمجي"
     },
     "share": {
         "cancel": "إلغاء",

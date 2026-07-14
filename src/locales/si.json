@@ -45,7 +45,8 @@
         "done": "අවසන්:",
         "download": "බාගන්න",
         "ffmpeg": "ffmpeg.wasm, CPU ෆෝල්බැක් (fallback)",
-        "webcodecs": "WebCodecs, දෘඪාංග භාවිතයෙන් වේගවත් කළ"
+        "webcodecs": "WebCodecs, දෘඪාංග භාවිතයෙන් වේගවත් කළ",
+        "webcodecsSoftware": "WebCodecs, මෘදුකාංග කේතකය"
     },
     "share": {
         "cancel": "අවලංගු කරන්න",

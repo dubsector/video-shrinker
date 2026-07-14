@@ -45,7 +45,8 @@
         "done": "완료:",
         "download": "다운로드",
         "ffmpeg": "ffmpeg.wasm, CPU 대체 모드",
-        "webcodecs": "WebCodecs, 하드웨어 가속"
+        "webcodecs": "WebCodecs, 하드웨어 가속",
+        "webcodecsSoftware": "WebCodecs, 소프트웨어 인코더"
     },
     "share": {
         "cancel": "취소",

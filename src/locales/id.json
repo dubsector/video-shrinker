@@ -45,7 +45,8 @@
         "done": "Selesai:",
         "download": "Unduh",
         "ffmpeg": "ffmpeg.wasm, cadangan CPU",
-        "webcodecs": "WebCodecs, akselerasi perangkat keras"
+        "webcodecs": "WebCodecs, akselerasi perangkat keras",
+        "webcodecsSoftware": "WebCodecs, enkoder perangkat lunak"
     },
     "share": {
         "cancel": "Batal",

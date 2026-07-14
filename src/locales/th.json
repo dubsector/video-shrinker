@@ -45,7 +45,8 @@
         "done": "เสร็จสิ้น:",
         "download": "ดาวน์โหลด",
         "ffmpeg": "ffmpeg.wasm, ใช้ CPU แทน",
-        "webcodecs": "WebCodecs, เร่งความเร็วด้วยฮาร์ดแวร์"
+        "webcodecs": "WebCodecs, เร่งความเร็วด้วยฮาร์ดแวร์",
+        "webcodecsSoftware": "WebCodecs, ซอฟต์แวร์เข้ารหัส"
     },
     "share": {
         "cancel": "ยกเลิก",

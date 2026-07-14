@@ -45,7 +45,8 @@
         "done": "Kwenziwe:",
         "download": "Landa",
         "ffmpeg": "ffmpeg.wasm, CPU fallback",
-        "webcodecs": "WebCodecs, isheshiswe ngehadiwe"
+        "webcodecs": "WebCodecs, isheshiswe ngehadiwe",
+        "webcodecsSoftware": "WebCodecs, i-encoder yesofthiwe"
     },
     "share": {
         "cancel": "Khansela",

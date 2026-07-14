@@ -45,7 +45,8 @@
         "done": "完了:",
         "download": "ダウンロード",
         "ffmpeg": "ffmpeg.wasm, CPU フォールバック",
-        "webcodecs": "WebCodecs、ハードウェアアクセラレーション"
+        "webcodecs": "WebCodecs、ハードウェアアクセラレーション",
+        "webcodecsSoftware": "WebCodecs、ソフトウェアエンコーダー"
     },
     "share": {
         "cancel": "キャンセル",

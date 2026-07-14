@@ -45,7 +45,8 @@
         "done": "Finì:",
         "download": "Telechargiar",
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
-        "webcodecs": "WebCodecs, accelerà da hardware"
+        "webcodecs": "WebCodecs, accelerà da hardware",
+        "webcodecsSoftware": "WebCodecs, codificatur da software"
     },
     "share": {
         "cancel": "Interrumper",
