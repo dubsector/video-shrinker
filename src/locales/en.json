@@ -32,6 +32,7 @@
   "result": {
     "done": "Done:",
     "webcodecs": "WebCodecs, hardware-accelerated",
+    "webcodecsSoftware": "WebCodecs, software encoder",
     "ffmpeg": "ffmpeg.wasm, CPU fallback",
     "download": "Download",
     "convertAnother": "Convert another"
