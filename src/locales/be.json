@@ -45,7 +45,8 @@
         "done": "Гатова:",
         "download": "Спампаваць",
         "ffmpeg": "ffmpeg.wasm, рэзервовы варыянт на базе CPU",
-        "webcodecs": "WebCodecs, апаратнае паскарэнне"
+        "webcodecs": "WebCodecs, апаратнае паскарэнне",
+        "webcodecsSoftware": "WebCodecs, праграмны энкодар"
     },
     "share": {
         "cancel": "Скасаваць",

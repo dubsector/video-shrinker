@@ -45,7 +45,8 @@
         "done": "Imekamilika:",
         "download": "Pakua",
         "ffmpeg": "ffmpeg.wasm, mbadala wa CPU (fallback)",
-        "webcodecs": "WebCodecs, iliyoharakishwa kwa maunzi"
+        "webcodecs": "WebCodecs, iliyoharakishwa kwa maunzi",
+        "webcodecsSoftware": "WebCodecs, enkoda ya programu"
     },
     "share": {
         "cancel": "Ghairi",

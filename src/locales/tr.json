@@ -45,7 +45,8 @@
         "done": "Tamamlandı:",
         "download": "İndir",
         "ffmpeg": "ffmpeg.wasm, CPU yedekleme",
-        "webcodecs": "WebCodecs, donanım hızlandırmalı"
+        "webcodecs": "WebCodecs, donanım hızlandırmalı",
+        "webcodecsSoftware": "WebCodecs, yazılım kodlayıcı"
     },
     "share": {
         "cancel": "İptal",

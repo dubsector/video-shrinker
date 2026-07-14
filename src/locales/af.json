@@ -45,7 +45,8 @@
         "done": "Klaar:",
         "download": "Laai af",
         "ffmpeg": "ffmpeg.wasm, SVE-rugsteun",
-        "webcodecs": "WebCodecs, hardeware-versnel"
+        "webcodecs": "WebCodecs, hardeware-versnel",
+        "webcodecsSoftware": "WebCodecs, sagteware-enkodeerder"
     },
     "share": {
         "cancel": "Kanselleer",

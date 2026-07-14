@@ -45,7 +45,8 @@
         "done": "সম্পন্ন:",
         "download": "ডাউনলোড",
         "ffmpeg": "ffmpeg.wasm, CPU ফলব্যাক",
-        "webcodecs": "WebCodecs, হার্ডওয়্যার-অ্যাক্সিলারেটেড"
+        "webcodecs": "WebCodecs, হার্ডওয়্যার-অ্যাক্সিলারেটেড",
+        "webcodecsSoftware": "WebCodecs, সফটওয়্যার এনকোডার"
     },
     "share": {
         "cancel": "বাতিল করুন",

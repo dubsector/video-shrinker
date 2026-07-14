@@ -45,7 +45,8 @@
         "done": "Gotowe:",
         "download": "Pobierz",
         "ffmpeg": "ffmpeg.wasm, zapasowy procesor (CPU)",
-        "webcodecs": "WebCodecs, przyspieszenie sprzętowe"
+        "webcodecs": "WebCodecs, przyspieszenie sprzętowe",
+        "webcodecsSoftware": "WebCodecs, koder programowy"
     },
     "share": {
         "cancel": "Anuluj",

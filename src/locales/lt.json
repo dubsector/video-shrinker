@@ -45,7 +45,8 @@
         "done": "Atlikta:",
         "download": "Atsisiųsti",
         "ffmpeg": "ffmpeg.wasm, CPU atsarginis variantas",
-        "webcodecs": "WebCodecs, aparatinis spartinimas"
+        "webcodecs": "WebCodecs, aparatinis spartinimas",
+        "webcodecsSoftware": "WebCodecs, programinės įrangos kodavimo priemonė"
     },
     "share": {
         "cancel": "Atšaukti",

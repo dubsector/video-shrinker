@@ -45,7 +45,8 @@
         "done": "Končano:",
         "download": "Prenesi",
         "ffmpeg": "ffmpeg.wasm, nadomestna možnost CPU",
-        "webcodecs": "WebCodecs, strojno pospeševanje"
+        "webcodecs": "WebCodecs, strojno pospeševanje",
+        "webcodecsSoftware": "WebCodecs, programski kodirnik"
     },
     "share": {
         "cancel": "Prekliči",

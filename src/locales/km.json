@@ -45,7 +45,8 @@
         "done": "រួចរាល់៖",
         "download": "ទាញយក",
         "ffmpeg": "ffmpeg.wasm, ការប្រើប្រាស់ CPU បម្រុង",
-        "webcodecs": "WebCodecs, បង្កើនល្បឿនដោយផ្នែករឹង"
+        "webcodecs": "WebCodecs, បង្កើនល្បឿនដោយផ្នែករឹង",
+        "webcodecsSoftware": "WebCodecs, កូដឌ័រផ្នែកទន់"
     },
     "share": {
         "cancel": "បោះបង់",

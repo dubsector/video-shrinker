@@ -45,7 +45,8 @@
         "done": "सकियो:",
         "download": "डाउनलोड गर्नुहोस्",
         "ffmpeg": "ffmpeg.wasm, CPU फलब्याक (Fallback)",
-        "webcodecs": "WebCodecs, हार्डवेयर-एक्सिलरेटेड"
+        "webcodecs": "WebCodecs, हार्डवेयर-एक्सिलरेटेड",
+        "webcodecsSoftware": "WebCodecs, सफ्टवेयर इनकोडर"
     },
     "share": {
         "cancel": "रद्द गर्नुहोस्",

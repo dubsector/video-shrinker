@@ -45,7 +45,8 @@
         "done": "ተጠናቋል፦",
         "download": "አውርድ",
         "ffmpeg": "ffmpeg.wasm፣ የሲፒዩ (CPU) መጠባበቂያ",
-        "webcodecs": "WebCodecs፣ በሃርድዌር የተፋጠነ"
+        "webcodecs": "WebCodecs፣ በሃርድዌር የተፋጠነ",
+        "webcodecsSoftware": "WebCodecs፣ የሶፍትዌር ኢንኮደር"
     },
     "share": {
         "cancel": "ይቅር",

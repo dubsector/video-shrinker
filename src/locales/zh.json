@@ -45,7 +45,8 @@
         "done": "完成：",
         "download": "下载",
         "ffmpeg": "ffmpeg.wasm, CPU 后备方案",
-        "webcodecs": "WebCodecs，硬件加速"
+        "webcodecs": "WebCodecs，硬件加速",
+        "webcodecsSoftware": "WebCodecs，软件编码器"
     },
     "share": {
         "cancel": "取消",

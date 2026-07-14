@@ -45,7 +45,8 @@
         "done": "בוצע:",
         "download": "הורדה",
         "ffmpeg": "ffmpeg.wasm, חלופה מבוססת מעבד (CPU)",
-        "webcodecs": "WebCodecs, מואץ חומרה"
+        "webcodecs": "WebCodecs, מואץ חומרה",
+        "webcodecsSoftware": "WebCodecs, מקודד תוכנה"
     },
     "share": {
         "cancel": "ביטול",

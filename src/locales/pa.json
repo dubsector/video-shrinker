@@ -45,7 +45,8 @@
         "done": "ਪੂਰਾ ਹੋਇਆ:",
         "download": "ਡਾਊਨਲੋਡ ਕਰੋ",
         "ffmpeg": "ffmpeg.wasm, CPU ਫਾਲਬੈਕ",
-        "webcodecs": "WebCodecs, ਹਾਰਡਵੇਅਰ-ਐਕਸਲੇਟਡ"
+        "webcodecs": "WebCodecs, ਹਾਰਡਵੇਅਰ-ਐਕਸਲੇਟਡ",
+        "webcodecsSoftware": "WebCodecs, ਸਾਫਟਵੇਅਰ ਐਨਕੋਡਰ"
     },
     "share": {
         "cancel": "ਰੱਦ ਕਰੋ",

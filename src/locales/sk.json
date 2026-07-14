@@ -45,7 +45,8 @@
         "done": "Hotovo:",
         "download": "Stiahnuť",
         "ffmpeg": "ffmpeg.wasm, CPU záloha",
-        "webcodecs": "WebCodecs, hardvérová akcelerácia"
+        "webcodecs": "WebCodecs, hardvérová akcelerácia",
+        "webcodecsSoftware": "WebCodecs, softvérový enkodér"
     },
     "share": {
         "cancel": "Zrušiť",

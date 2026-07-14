@@ -45,7 +45,8 @@
         "done": "Selesai:",
         "download": "Muat turun",
         "ffmpeg": "ffmpeg.wasm, sandaran CPU",
-        "webcodecs": "WebCodecs, dipercepatkan perkakasan"
+        "webcodecs": "WebCodecs, dipercepatkan perkakasan",
+        "webcodecsSoftware": "WebCodecs, pengekod perisian"
     },
     "share": {
         "cancel": "Batal",

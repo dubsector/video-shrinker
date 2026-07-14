@@ -45,7 +45,8 @@
         "done": "انجام شد:",
         "download": "دانلود",
         "ffmpeg": "ffmpeg.wasm، جایگزین پردازنده مرکزی (CPU)",
-        "webcodecs": "WebCodecs، شتاب‌دهنده سخت‌افزاری"
+        "webcodecs": "WebCodecs، شتاب‌دهنده سخت‌افزاری",
+        "webcodecsSoftware": "WebCodecs، انکودر نرم‌افزاری"
     },
     "share": {
         "cancel": "لغو",

@@ -45,7 +45,8 @@
         "done": "დასრულებულია:",
         "download": "ჩამოტვირთვა",
         "ffmpeg": "ffmpeg.wasm, CPU-ს სარეზერვო რეჟიმი",
-        "webcodecs": "WebCodecs, აპარატურული დაჩქარებით"
+        "webcodecs": "WebCodecs, აპარატურული დაჩქარებით",
+        "webcodecsSoftware": "WebCodecs, პროგრამული ენკოდერი"
     },
     "share": {
         "cancel": "გაუქმება",

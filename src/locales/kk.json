@@ -45,7 +45,8 @@
         "done": "Орындалды:",
         "download": "Жүктеп алу",
         "ffmpeg": "ffmpeg.wasm, CPU резервтік шешімі",
-        "webcodecs": "WebCodecs, аппараттық үдеткіш"
+        "webcodecs": "WebCodecs, аппараттық үдеткіш",
+        "webcodecsSoftware": "WebCodecs, бағдарламалық жасақтама кодтағышы"
     },
     "share": {
         "cancel": "Болдырмау",

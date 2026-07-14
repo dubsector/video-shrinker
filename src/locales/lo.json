@@ -45,7 +45,8 @@
         "done": "ສຳເລັດ:",
         "download": "ດາວໂຫຼດ",
         "ffmpeg": "ffmpeg.wasm, ການສຳຮອງດ້ວຍ CPU",
-        "webcodecs": "WebCodecs, ເລັ່ງຄວາມໄວດ້ວຍຮາດແວ"
+        "webcodecs": "WebCodecs, ເລັ່ງຄວາມໄວດ້ວຍຮາດແວ",
+        "webcodecsSoftware": "WebCodecs, ຕົວເຂົ້າລະຫັດຊອບແວ"
     },
     "share": {
         "cancel": "ຍົກເລີກ",

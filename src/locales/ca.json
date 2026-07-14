@@ -45,7 +45,8 @@
         "done": "Fet:",
         "download": "Descarrega",
         "ffmpeg": "ffmpeg.wasm, alternativa CPU",
-        "webcodecs": "WebCodecs, accelerat per maquinari"
+        "webcodecs": "WebCodecs, accelerat per maquinari",
+        "webcodecsSoftware": "WebCodecs, codificador de programari"
     },
     "share": {
         "cancel": "Cancel·la",

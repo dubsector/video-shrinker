@@ -45,7 +45,8 @@
         "done": "Valmis:",
         "download": "Laadi alla",
         "ffmpeg": "ffmpeg.wasm, protsessori kasutamine (varuvariant)",
-        "webcodecs": "WebCodecs, riistvaraline kiirendus"
+        "webcodecs": "WebCodecs, riistvaraline kiirendus",
+        "webcodecsSoftware": "WebCodecs, tarkvaraline kodeerija"
     },
     "share": {
         "cancel": "Loobu",
