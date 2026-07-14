@@ -19,7 +19,6 @@ It's installable as an app. An in-page banner offers to install it directly, or 
 
 - Pick a target size (defaults to 25MB, Discord's non-Nitro upload limit). Duration and target size get turned into a bitrate request for the encoder.
 - That request is approximate, not exact: actual output size depends on content complexity and how closely the browser's encoder honors the request. The first pass aims a bit under target; if it overshoots anyway, a second pass re-encodes with a corrected bitrate. Landing under target on the first try is accepted as-is, however far under.
-- If the resulting bitrate is too thin for the source resolution, the video is downscaled to a size it can actually render well (a 4K clip squeezed into a few MB looks better at 720p than blocky 4K). The original resolution is always kept when the bitrate can support it.
 - H.265 gets used instead of H.264 automatically when the browser reports hardware HEVC encode support, since it's meaningfully smaller at the same quality. There's a toggle if you'd rather force H.264 for compatibility.
 - Metadata (location, title, artist, comments, embedded images) gets stripped by default. Toggleable if you want to keep it.
 
