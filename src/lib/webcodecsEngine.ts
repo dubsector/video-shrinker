@@ -1,6 +1,5 @@
-import { BufferTarget, canEncodeVideo, Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output } from 'mediabunny';
+import { BufferTarget, Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output } from 'mediabunny';
 import { pickWebCodecsCodec } from './capabilities';
-import { planScale, type SourceVideo } from './resolution';
 
 export type ProgressInfo = {
   progress: number;
@@ -11,13 +10,9 @@ export type ProgressInfo = {
 export type WebCodecsResult = {
   blob: Blob;
   codec: 'avc' | 'hevc';
-  /** Dimensions of the produced video (may be smaller than the source). */
-  width: number;
-  height: number;
 };
 
 export type WebCodecsConvertOptions = {
-  source: SourceVideo;
   videoBitrate: number;
   audioBitrate: number;
   preferHevc: boolean;
@@ -41,30 +36,17 @@ export async function convertWithWebCodecs(
   audioTrack: InputAudioTrack | null,
   options: WebCodecsConvertOptions,
 ): Promise<WebCodecsResult | null> {
-  const { width, height } = options.source;
+  const videoTrack = await input.getPrimaryVideoTrack();
+  if (!videoTrack) throw new Error('This file has no video track to convert.');
+
+  const width = await videoTrack.getDisplayWidth();
+  const height = await videoTrack.getDisplayHeight();
 
   // Some browsers (e.g. Brave) support hardware AVC encode in general but
   // reject specific resolution/bitrate/level combinations, so the probe must
   // match what's actually about to be requested, not a generic placeholder.
   const codec = await pickWebCodecsCodec(options.preferHevc, { width, height, bitrate: options.videoBitrate });
   if (!codec) return null;
-
-  // Spend the bitrate more effectively by downscaling when the source
-  // resolution is too high for it; the source resolution is kept otherwise.
-  // Verify the encoder actually accepts the smaller size before committing to
-  // it (a downscale should never make an encode fail, but stay defensive and
-  // fall back to the source resolution if it somehow does).
-  const scaled = planScale(options.source, options.videoBitrate, codec);
-  const scaledOk =
-    scaled !== null &&
-    (await canEncodeVideo(codec, {
-      width: scaled.width,
-      height: scaled.height,
-      bitrate: options.videoBitrate,
-      hardwareAcceleration: 'prefer-hardware',
-    }));
-  const outputWidth = scaledOk ? scaled.width : width;
-  const outputHeight = scaledOk ? scaled.height : height;
 
   const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
 
@@ -75,7 +57,6 @@ export async function convertWithWebCodecs(
       codec,
       bitrate: options.videoBitrate,
       hardwareAcceleration: 'prefer-hardware',
-      ...(scaledOk ? { width: outputWidth, height: outputHeight } : {}),
     },
     audio: audioTrack ? { codec: 'aac', bitrate: options.audioBitrate } : { discard: true },
     // Descriptive tags (location, title, artist, etc.) are normally copied
@@ -106,5 +87,5 @@ export async function convertWithWebCodecs(
   const buffer = output.target.buffer;
   if (!buffer) throw new Error('Conversion finished without producing output data.');
 
-  return { blob: new Blob([buffer], { type: 'video/mp4' }), codec, width: outputWidth, height: outputHeight };
+  return { blob: new Blob([buffer], { type: 'video/mp4' }), codec };
 }

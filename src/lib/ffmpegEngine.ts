@@ -1,5 +1,4 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { planScale, type SourceVideo } from './resolution';
 
 const CORE_URL = '/ffmpeg-core/ffmpeg-core.js';
 const WASM_URL = '/ffmpeg-core/ffmpeg-core.wasm';
@@ -21,13 +20,9 @@ function getFFmpeg(): Promise<FFmpeg> {
 
 export type FfmpegResult = {
   blob: Blob;
-  /** Dimensions of the produced video (may be smaller than the source). */
-  width: number;
-  height: number;
 };
 
 export type FfmpegConvertOptions = {
-  source: SourceVideo;
   videoBitrate: number;
   audioBitrate: number;
   hasAudio: boolean;
@@ -41,13 +36,7 @@ export type FfmpegConvertOptions = {
  * this browser can't encode video via WebCodecs at all.
  */
 export async function convertWithFfmpeg(file: File, options: FfmpegConvertOptions): Promise<FfmpegResult> {
-  const { source, videoBitrate, audioBitrate, hasAudio, stripMetadata, onProgress } = options;
-
-  // Mirror the WebCodecs path's resolution decision so the fallback produces
-  // consistent output. ffmpeg.wasm always encodes AVC (libx264).
-  const scaled = planScale(source, videoBitrate, 'avc');
-  const outputWidth = scaled?.width ?? source.width;
-  const outputHeight = scaled?.height ?? source.height;
+  const { videoBitrate, audioBitrate, hasAudio, stripMetadata, onProgress } = options;
 
   const ffmpeg = await getFFmpeg();
 
@@ -80,11 +69,6 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
       '-pix_fmt',
       'yuv420p',
     ];
-    // Downscale to match the WebCodecs path when the bitrate is too thin for
-    // the source resolution. Dimensions from planScale are already even.
-    if (scaled) {
-      args.push('-vf', `scale=${scaled.width}:${scaled.height}`);
-    }
     if (hasAudio) {
       args.push('-c:a', 'aac', '-b:a', `${audioBitrate}`);
     } else {
@@ -100,7 +84,7 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
 
     const data = await ffmpeg.readFile(outputName);
     const bytes = new Uint8Array(data as Uint8Array);
-    return { blob: new Blob([bytes], { type: 'video/mp4' }), width: outputWidth, height: outputHeight };
+    return { blob: new Blob([bytes], { type: 'video/mp4' }) };
   } finally {
     ffmpeg.off('progress', onProgressEvent);
     await ffmpeg.deleteFile(inputName).catch(() => {});
