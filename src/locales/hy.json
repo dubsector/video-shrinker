@@ -45,7 +45,8 @@
         "done": "Պատրաստ է՝",
         "download": "Ներբեռնել",
         "ffmpeg": "ffmpeg.wasm, պահեստային տարբերակ (CPU)",
-        "webcodecs": "WebCodecs, սարքային արագացումով"
+        "webcodecs": "WebCodecs, սարքային արագացումով",
+        "webcodecsSoftware": "WebCodecs, ծրագրային կոդավորիչ"
     },
     "share": {
         "cancel": "Չեղարկել",

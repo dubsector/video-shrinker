@@ -45,7 +45,8 @@
         "done": "Tapos na:",
         "download": "I-download",
         "ffmpeg": "ffmpeg.wasm, fallback ng CPU",
-        "webcodecs": "WebCodecs, hardware-accelerated"
+        "webcodecs": "WebCodecs, hardware-accelerated",
+        "webcodecsSoftware": "WebCodecs, software encoder"
     },
     "share": {
         "cancel": "Kanselahin",

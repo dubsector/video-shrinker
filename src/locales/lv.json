@@ -45,7 +45,8 @@
         "done": "Gatavs:",
         "download": "Lejupielādēt",
         "ffmpeg": "ffmpeg.wasm, CPU rezerves risinājums",
-        "webcodecs": "WebCodecs, aparatūras paātrinājums"
+        "webcodecs": "WebCodecs, aparatūras paātrinājums",
+        "webcodecsSoftware": "WebCodecs, programmatūras kodētājs"
     },
     "share": {
         "cancel": "Atcelt",

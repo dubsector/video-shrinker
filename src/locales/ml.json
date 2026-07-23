@@ -45,7 +45,8 @@
         "done": "പൂർത്തിയായി:",
         "download": "ഡൗൺലോഡ് ചെയ്യുക",
         "ffmpeg": "ffmpeg.wasm, സിപിയു (CPU) ഫോൾബാക്ക്",
-        "webcodecs": "WebCodecs, ഹാർഡ്‌വെയർ-ആക്സിലറേറ്റഡ്"
+        "webcodecs": "WebCodecs, ഹാർഡ്‌വെയർ-ആക്സിലറേറ്റഡ്",
+        "webcodecsSoftware": "WebCodecs, സോഫ്റ്റ്‌വെയർ എൻകോഡർ"
     },
     "share": {
         "cancel": "റദ്ദാക്കുക",

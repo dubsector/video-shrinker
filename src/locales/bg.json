@@ -45,7 +45,8 @@
         "done": "Готово:",
         "download": "Изтегляне",
         "ffmpeg": "ffmpeg.wasm, CPU алтернатива",
-        "webcodecs": "WebCodecs, хардуерно ускорение"
+        "webcodecs": "WebCodecs, хардуерно ускорение",
+        "webcodecsSoftware": "WebCodecs, софтуерен енкодер"
     },
     "share": {
         "cancel": "Отказ",

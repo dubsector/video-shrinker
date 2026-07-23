@@ -45,7 +45,8 @@
         "done": "Ολοκληρώθηκε:",
         "download": "Λήψη",
         "ffmpeg": "ffmpeg.wasm, εναλλακτική λύση μέσω CPU",
-        "webcodecs": "WebCodecs, επιτάχυνση υλικού"
+        "webcodecs": "WebCodecs, επιτάχυνση υλικού",
+        "webcodecsSoftware": "WebCodecs, κωδικοποιητής λογισμικού"
     },
     "share": {
         "cancel": "Ακύρωση",

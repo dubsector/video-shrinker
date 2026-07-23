@@ -45,7 +45,8 @@
         "done": "முடிந்தது:",
         "download": "பதிவிறக்கம்",
         "ffmpeg": "ffmpeg.wasm, CPU ஃபால்பேக் (fallback)",
-        "webcodecs": "WebCodecs, வன்பொருள் முடுக்கப்பட்டது"
+        "webcodecs": "WebCodecs, வன்பொருள் முடுக்கப்பட்டது",
+        "webcodecsSoftware": "WebCodecs, மென்பொருள் என்கோடர்"
     },
     "share": {
         "cancel": "ரத்துசெய்",

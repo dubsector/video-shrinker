@@ -45,7 +45,8 @@
         "done": "Eginda:",
         "download": "Deskargatu",
         "ffmpeg": "ffmpeg.wasm, CPU ordezkoa",
-        "webcodecs": "WebCodecs, hardware bidez azeleratua"
+        "webcodecs": "WebCodecs, hardware bidez azeleratua",
+        "webcodecsSoftware": "WebCodecs, software kodetzailea"
     },
     "share": {
         "cancel": "Utzi",

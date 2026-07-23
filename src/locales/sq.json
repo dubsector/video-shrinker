@@ -45,7 +45,8 @@
         "done": "U krye:",
         "download": "Shkarko",
         "ffmpeg": "ffmpeg.wasm, rezervë CPU",
-        "webcodecs": "WebCodecs, e përshpejtuar nga hardueri"
+        "webcodecs": "WebCodecs, e përshpejtuar nga hardueri",
+        "webcodecsSoftware": "WebCodecs, kodues softuerik"
     },
     "share": {
         "cancel": "Anulo",

@@ -45,7 +45,8 @@
         "done": "Tamamlandı:",
         "download": "Yüklə",
         "ffmpeg": "ffmpeg.wasm, CPU ehtiyatı",
-        "webcodecs": "WebCodecs, aparat sürətləndirməsi ilə"
+        "webcodecs": "WebCodecs, aparat sürətləndirməsi ilə",
+        "webcodecsSoftware": "WebCodecs, proqram təminatı enkoderi"
     },
     "share": {
         "cancel": "Ləğv et",

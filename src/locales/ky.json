@@ -45,7 +45,8 @@
         "done": "Даяр:",
         "download": "Жүктөө",
         "ffmpeg": "ffmpeg.wasm, CPU резервдик варианты",
-        "webcodecs": "WebCodecs, аппараттык тездетүү менен"
+        "webcodecs": "WebCodecs, аппараттык тездетүү менен",
+        "webcodecsSoftware": "WebCodecs, программалык камсыздоо коддогучу"
     },
     "share": {
         "cancel": "Жокко чыгаруу",
