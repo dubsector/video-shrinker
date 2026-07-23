@@ -48,6 +48,11 @@ export default defineConfig({
         name: 'Video Shrinker',
         short_name: 'Video Shrinker',
         description: 'Shrink video to a target file size, entirely in your browser. No uploads, no third-party APIs.',
+        // Explicit, permanent app identity. Set to the existing implicit id
+        // (the resolved start_url) so already-installed PWAs are unaffected.
+        // Never change this value once shipped.
+        id: '/video-shrinker/',
+        categories: ['utilities', 'photo', 'productivity'],
         theme_color: '#5865F2',
         background_color: '#ffffff',
         display: 'standalone',
@@ -55,6 +60,22 @@ export default defineConfig({
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
           { src: 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+        screenshots: [
+          {
+            src: 'screenshot-wide.png',
+            sizes: '1280x800',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'Video Shrinker on the desktop',
+          },
+          {
+            src: 'screenshot-narrow.png',
+            sizes: '448x998',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Video Shrinker on mobile',
+          },
         ],
         share_target: {
           action: '/video-shrinker/share-target',
