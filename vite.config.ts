@@ -30,6 +30,11 @@ export default defineConfig({
         {
           src: 'node_modules/@ffmpeg/core/dist/esm/ffmpeg-core.*',
           dest: 'ffmpeg-core',
+          // Without stripBase the matched glob path is preserved, so the
+          // files land under ffmpeg-core/node_modules/@ffmpeg/core/dist/esm/
+          // instead of ffmpeg-core/ — which is where src/lib/ffmpegEngine.ts
+          // asks for them and what the worker's cache route matches.
+          rename: { stripBase: true },
         },
       ],
     }),
@@ -44,6 +49,16 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       includeAssets: ['favicon.svg'],
+      injectManifest: {
+        // ffmpeg-core is the CPU fallback engine: a 32 MB wasm binary that
+        // only browsers without WebCodecs video encode ever load. It stays
+        // out of the precache so a normal install doesn't pull it down, and
+        // is kept by the runtime cache route in src/sw.ts once fetched.
+        // Until the copy above was corrected this exclusion happened by
+        // accident, through Workbox's default node_modules ignore matching
+        // the mistakenly nested output path.
+        globIgnores: ['**/node_modules/**/*', 'ffmpeg-core/**'],
+      },
       manifest: {
         name: 'Video Shrinker',
         short_name: 'Video Shrinker',
