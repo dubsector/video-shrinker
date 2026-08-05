@@ -1,7 +1,9 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 
-const CORE_URL = '/ffmpeg-core/ffmpeg-core.js';
-const WASM_URL = '/ffmpeg-core/ffmpeg-core.wasm';
+// Root-absolute paths would resolve against the domain root, but the site is
+// served from a subpath, so these must go through the configured base.
+const CORE_URL = `${import.meta.env.BASE_URL}ffmpeg-core/ffmpeg-core.js`;
+const WASM_URL = `${import.meta.env.BASE_URL}ffmpeg-core/ffmpeg-core.wasm`;
 
 let ffmpegPromise: Promise<FFmpeg> | null = null;
 

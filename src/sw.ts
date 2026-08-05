@@ -9,7 +9,15 @@ declare const self: ServiceWorkerGlobalScope & {
 }
 
 cleanupOutdatedCaches()
-precacheAndRoute(self.__WB_MANIFEST)
+// The share handoff below redirects to /?share-target=1, and Workbox appends
+// its directory index to the *unstripped* URL when looking for a precache
+// match — so without listing the parameter here it searches for
+// `index.html?share-target=1`, misses, and falls through to the network.
+// That breaks every shared video while offline, which is exactly when this
+// app is most useful.
+precacheAndRoute(self.__WB_MANIFEST, {
+  ignoreURLParametersMatching: [/^utm_/, /^fbclid$/, /^share-target$/],
+})
 
 // registerType is 'prompt', so this worker only activates once the user
 // clicks "Reload to update" (see src/UpdatePrompt.tsx), which posts
