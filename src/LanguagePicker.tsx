@@ -4,17 +4,23 @@ import { availableLanguages, LANGUAGE_STORAGE_KEY } from './i18n';
 import './LanguagePicker.css';
 
 const AUTO = 'auto';
+const endonymCache = new Map<string, string>();
 
 // A language's own name for itself ("Deutsch", "日本語") so every entry is
 // readable to the person who needs it, whatever language is active.
 function endonym(code: string): string {
+  const cached = endonymCache.get(code);
+  if (cached !== undefined) return cached;
+
+  let result = code;
   try {
     const name = new Intl.DisplayNames([code], { type: 'language' }).of(code);
-    if (name && name !== code) return name.charAt(0).toLocaleUpperCase(code) + name.slice(1);
+    if (name && name !== code) result = name.charAt(0).toLocaleUpperCase(code) + name.slice(1);
   } catch {
     // Fall through to the raw code for locales the browser can't name.
   }
-  return code;
+  endonymCache.set(code, result);
+  return result;
 }
 
 function GlobeIcon() {
