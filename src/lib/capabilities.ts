@@ -8,12 +8,22 @@ export type EncodeProbe = {
   bitrate: number;
 };
 
-// Used only for the up-front "does this browser support H.265 hardware
-// encode at all" toggle visibility check, before a file is even loaded.
-const GENERIC_HEVC_PROBE: EncodeProbe = { width: 1280, height: 720, bitrate: 4_000_000 };
+// Used for the up-front capability questions asked before a file is even
+// loaded, where there are no real dimensions to probe with yet: whether to
+// show the H.265 toggle, and whether this browser will need the CPU fallback.
+export const GENERIC_ENCODE_PROBE: EncodeProbe = { width: 1280, height: 720, bitrate: 4_000_000 };
 
-export async function detectHevcHardwareSupport(probe: EncodeProbe = GENERIC_HEVC_PROBE): Promise<boolean> {
+export async function detectHevcHardwareSupport(probe: EncodeProbe = GENERIC_ENCODE_PROBE): Promise<boolean> {
   return canEncodeVideo('hevc', { ...probe, hardwareAcceleration: 'prefer-hardware' });
+}
+
+/**
+ * Whether this browser can encode H.264 through WebCodecs at all. A `false`
+ * here means every conversion will land on the ffmpeg.wasm fallback, since
+ * AVC is the last codec `pickWebCodecsCodec` tries.
+ */
+export async function canEncodeAvc(probe: EncodeProbe = GENERIC_ENCODE_PROBE): Promise<boolean> {
+  return canEncodeVideo('avc', probe);
 }
 
 /**
