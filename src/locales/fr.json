@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Conversion…",
-        "refineNote": "La première passe a dépassé la cible. Réencodage pour plus de précision.",
+        "refineNote": "La première passe a manqué la cible. Ajustement du débit et de l'encodage une fois de plus.",
         "refining": "Ajustement de la taille…",
         "start": "Convertir"
     },
@@ -41,10 +41,15 @@
         "local": "Votre fichier ne quitte jamais cet appareil."
     },
     "result": {
+        "alreadySmall": "Déjà plus petit que votre cible :",
         "convertAnother": "Convertir une autre vidéo",
         "done": "Terminé :",
         "download": "Télécharger",
         "ffmpeg": "ffmpeg.wasm, alternative CPU",
+        "noShrink": "Impossible de réduire la taille :",
+        "noShrinkDetail": "Cette séquence ne se compresse pas au-delà de sa taille actuelle, elle a donc été conservée telle quelle.",
+        "remuxed": "Métadonnées supprimées, vidéo laissée intacte",
+        "untouched": "Laissé tel quel, rien à réduire",
         "webcodecs": "WebCodecs, accélération matérielle",
         "webcodecsSoftware": "WebCodecs, encodeur logiciel"
     },

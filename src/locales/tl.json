@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Nagko-convert…",
-        "refineNote": "Lumampas ang unang pass sa target. Muling nag-e-encode para sa katumpakan.",
+        "refineNote": "Hindi naabot ng unang pag-compress ang target. Ina-adjust muli ang bitrate at encoding.",
         "refining": "Inaayos ang laki…",
         "start": "I-convert"
     },
@@ -41,10 +41,15 @@
         "local": "Hindi lumalabas sa device na ito ang iyong file."
     },
     "result": {
+        "alreadySmall": "Mas maliit na kaysa sa iyong target:",
         "convertAnother": "Mag-convert ng iba pa",
         "done": "Tapos na:",
         "download": "I-download",
         "ffmpeg": "ffmpeg.wasm, fallback ng CPU",
+        "noShrink": "Hindi ito mapaliit:",
+        "noShrinkDetail": "Hindi na puwedeng paliitin pa ang footage na ito, kaya pinanatili ito sa kasalukuyang sukat",
+        "remuxed": "Tinanggal ang metadata, hindi ginalaw ang video",
+        "untouched": "Iniwan nang ganito, walang dapat paliitin",
         "webcodecs": "WebCodecs, hardware-accelerated",
         "webcodecsSoftware": "WebCodecs, software encoder"
     },

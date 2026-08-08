@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Konvertiranje…",
-        "refineNote": "Prvi je prolaz premašio cilj. Ponovno kodiranje za preciznost.",
+        "refineNote": "Prvi prolazak je promašio cilj. Ponovno prilagođavanje bitratea i kodiranja.",
         "refining": "Prilagodba veličine…",
         "start": "Konvertiraj"
     },
@@ -41,10 +41,15 @@
         "local": "Vaša datoteka nikada ne napušta ovaj uređaj."
     },
     "result": {
+        "alreadySmall": "Već manje od ciljane veličine:",
         "convertAnother": "Konvertiraj drugo",
         "done": "Gotovo:",
         "download": "Preuzmi",
         "ffmpeg": "ffmpeg.wasm, CPU rezerva",
+        "noShrink": "Ovo nije bilo moguće dodatno smanjiti:",
+        "noShrinkDetail": "Ovaj se videozapis ne može komprimirati ispod trenutne veličine, stoga je ostavljen kakav jest",
+        "remuxed": "Metapodaci uklonjeni, video ostavljen netaknut",
+        "untouched": "Ostavljeno kako jest, nema se što smanjiti",
         "webcodecs": "WebCodecs, hardverski ubrzano",
         "webcodecsSoftware": "WebCodecs, softverski enkoder"
     },

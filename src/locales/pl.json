@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Konwertowanie…",
-        "refineNote": "Pierwsze przejście przekroczyło cel. Ponowne kodowanie dla dokładności.",
+        "refineNote": "Pierwszy przebieg nie osiągnął celu. Ponowna regulacja bitrate i kodowania.",
         "refining": "Dostrajanie rozmiaru…",
         "start": "Konwertuj"
     },
@@ -41,10 +41,15 @@
         "local": "Twój plik nigdy nie opuszcza tego urządzenia."
     },
     "result": {
+        "alreadySmall": "Już jest mniejszy niż założony cel:",
         "convertAnother": "Konwertuj kolejny",
         "done": "Gotowe:",
         "download": "Pobierz",
         "ffmpeg": "ffmpeg.wasm, zapasowy procesor (CPU)",
+        "noShrink": "Nie udało się bardziej zmniejszyć:",
+        "noShrinkDetail": "Tego nagrania nie można skompresować do mniejszego rozmiaru, więc pozostało bez zmian",
+        "remuxed": "Metadane usunięto, wideo pozostało nienaruszone",
+        "untouched": "Pozostawiono bez zmian, nie ma czego zmniejszać",
         "webcodecs": "WebCodecs, przyspieszenie sprzętowe",
         "webcodecsSoftware": "WebCodecs, koder programowy"
     },

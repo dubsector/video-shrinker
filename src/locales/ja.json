@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "変換中…",
-        "refineNote": "1回目のパスが目標を超えました。精度を高めるため再エンコードします。",
+        "refineNote": "最初の処理でターゲットに達しませんでした。ビットレートとエンコードを再調整しています。",
         "refining": "サイズを調整中…",
         "start": "変換"
     },
@@ -41,10 +41,15 @@
         "local": "ファイルはデバイスから一切外部へ送信されません。"
     },
     "result": {
+        "alreadySmall": "すでにターゲットサイズより小さいです：",
         "convertAnother": "別のファイルを変換",
         "done": "完了:",
         "download": "ダウンロード",
         "ffmpeg": "ffmpeg.wasm, CPU フォールバック",
+        "noShrink": "これ以上小さくできませんでした:",
+        "noShrinkDetail": "この映像は現在のサイズ以下には圧縮できないため、そのままにしました",
+        "remuxed": "メタデータを削除し、動画は変更せずに残しました",
+        "untouched": "変更なし。圧縮の必要はありません",
         "webcodecs": "WebCodecs、ハードウェアアクセラレーション",
         "webcodecsSoftware": "WebCodecs、ソフトウェアエンコーダー"
     },

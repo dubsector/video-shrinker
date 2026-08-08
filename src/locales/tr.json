@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Dönüştürülüyor…",
-        "refineNote": "İlk geçiş hedefi aştı. Doğruluk için tekrar kodlanıyor.",
+        "refineNote": "İlk geçiş hedefi tutturamadı. Bit hızı ve kodlamayı tekrar ayarlıyoruz.",
         "refining": "Boyut ayarlanıyor…",
         "start": "Dönüştür"
     },
@@ -41,10 +41,15 @@
         "local": "Dosyanız bu cihazdan asla ayrılmaz."
     },
     "result": {
+        "alreadySmall": "Zaten hedefinizden daha küçük:",
         "convertAnother": "Başka bir video dönüştür",
         "done": "Tamamlandı:",
         "download": "İndir",
         "ffmpeg": "ffmpeg.wasm, CPU yedekleme",
+        "noShrink": "Bu dosya küçültülemedi:",
+        "noShrinkDetail": "Bu video mevcut boyutunun altına sıkıştırılamıyor, bu yüzden olduğu gibi bırakıldı",
+        "remuxed": "Metadata kaldırıldı, video dokunulmadan bırakıldı",
+        "untouched": "Olduğu gibi bırakıldı, küçültülecek bir şey yok",
         "webcodecs": "WebCodecs, donanım hızlandırmalı",
         "webcodecsSoftware": "WebCodecs, yazılım kodlayıcı"
     },

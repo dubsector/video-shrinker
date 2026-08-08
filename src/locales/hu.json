@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Konvertálás…",
-        "refineNote": "Az első kör túllépte a célméretet. Újrakódolás a pontosság érdekében.",
+        "refineNote": "Az első próbálkozás nem érte el a célméretet. Újraállítjuk a bitrátát és a kódolást.",
         "refining": "Méret finomítása…",
         "start": "Konvertál"
     },
@@ -41,10 +41,15 @@
         "local": "A fájljaid sosem hagyják el ezt az eszközt."
     },
     "result": {
+        "alreadySmall": "Már így is kisebb a célméretnél:",
         "convertAnother": "Újabb videó konvertálása",
         "done": "Kész:",
         "download": "Letöltés",
         "ffmpeg": "ffmpeg.wasm, CPU-alapú tartalék",
+        "noShrink": "Ezt nem sikerült kisebbre méretezni:",
+        "noShrinkDetail": "Ez a felvétel nem tömöríthető tovább a jelenlegi mérete alá, így változatlan maradt",
+        "remuxed": "Metaadatok eltávolítva, videó érintetlenül hagyva",
+        "untouched": "Érintetlenül hagyva, nincs mit tömöríteni",
         "webcodecs": "WebCodecs, hardveres gyorsítással",
         "webcodecsSoftware": "WebCodecs, szoftveres kódoló"
     },

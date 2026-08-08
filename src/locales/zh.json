@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "正在转换…",
-        "refineNote": "第一遍处理超过了目标大小。正在重新编码以确保准确性。",
+        "refineNote": "第一次压缩未达到目标大小。正在再次调整比特率和编码。",
         "refining": "正在优化大小…",
         "start": "转换"
     },
@@ -41,10 +41,15 @@
         "local": "您的文件永远不会离开此设备。"
     },
     "result": {
+        "alreadySmall": "已小于您的目标大小：",
         "convertAnother": "转换另一个",
         "done": "完成：",
         "download": "下载",
         "ffmpeg": "ffmpeg.wasm, CPU 后备方案",
+        "noShrink": "无法将其缩小:",
+        "noShrinkDetail": "此视频无法压缩至当前大小以下，因此已保持原样",
+        "remuxed": "元数据已被剥离，视频保持不变",
+        "untouched": "保持原样，无需压缩",
         "webcodecs": "WebCodecs，硬件加速",
         "webcodecsSoftware": "WebCodecs，软件编码器"
     },

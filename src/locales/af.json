@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Besig om te omskakel…",
-        "refineNote": "Eerste deurgang het die teiken oorskry. Her-enkodeer weer vir akkuraatheid.",
+        "refineNote": "Die eerste poging het die teiken gemis. Pas die biskoers en enkoderingsinstelling weer eens aan.",
         "refining": "Verfyn grootte…",
         "start": "Skakel om"
     },
@@ -41,10 +41,15 @@
         "local": "Jou lêer verlaat nooit hierdie toestel nie."
     },
     "result": {
+        "alreadySmall": "Reeds kleiner as jou teiken:",
         "convertAnother": "Skakel nog een om",
         "done": "Klaar:",
         "download": "Laai af",
         "ffmpeg": "ffmpeg.wasm, SVE-rugsteun",
+        "noShrink": "Kon dit nie kleiner maak nie:",
+        "noShrinkDetail": "Hierdie beeldmateriaal komprimeer nie kleiner as sy huidige grootte nie, dus is dit behou soos dit is.",
+        "remuxed": "Metadata gestroop, video onaangeraak gelaat",
+        "untouched": "So gelaat, niks om te verklein nie",
         "webcodecs": "WebCodecs, hardeware-versnel",
         "webcodecsSoftware": "WebCodecs, sagteware-enkodeerder"
     },

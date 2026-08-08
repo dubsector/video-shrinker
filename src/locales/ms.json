@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Menukar…",
-        "refineNote": "Laluan pertama melebihi sasaran. Pengekodan semula dilakukan sekali lagi untuk ketepatan.",
+        "refineNote": "Laluan pertama tidak mencapai sasaran. Melaraskan bitrate dan pengekodan sekali lagi.",
         "refining": "Melaraskan saiz...",
         "start": "Tukar"
     },
@@ -41,10 +41,15 @@
         "local": "Fail anda tidak pernah meninggalkan peranti ini."
     },
     "result": {
+        "alreadySmall": "Sudah lebih kecil daripada sasaran anda:",
         "convertAnother": "Tukar video lain",
         "done": "Selesai:",
         "download": "Muat turun",
         "ffmpeg": "ffmpeg.wasm, sandaran CPU",
+        "noShrink": "Tidak dapat mengecilkan fail ini:",
+        "noShrinkDetail": "Rakaman ini tidak boleh dimampatkan di bawah saiz semasanya, jadi ia dikekalkan seperti asal",
+        "remuxed": "Metadata dilucutkan, video dibiarkan tidak disentuh",
+        "untouched": "Dibiarkan seperti asal, tiada apa untuk dikecilkan",
         "webcodecs": "WebCodecs, dipercepatkan perkakasan",
         "webcodecsSoftware": "WebCodecs, pengekod perisian"
     },

@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Convertez...",
-        "refineNote": "L'emprima passada ha surpassà la finamira. Recodifitgar anc ina giada per pli grond'exactadad.",
+        "refineNote": "L'emprima passa n'ha betg cuntanschì la finamira. Ajustar il bitrate e la codificaziun anc ina giada.",
         "refining": "Refinar la grondezza…",
         "start": "Convertir"
     },
@@ -41,10 +41,15 @@
         "local": "Tes file na banduna mai quest dispositiv."
     },
     "result": {
+        "alreadySmall": "Gist pli pitschen che tes finamira:",
         "convertAnother": "Convertir in auter",
         "done": "Finì:",
         "download": "Telechargiar",
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
+        "noShrink": "N'hai betg pudì far quai pli pitschen:",
+        "noShrinkDetail": "Quest film na po betg vegnir cumpress sut sia grondezza actuala, perquai è el vegnì mantegnì sco ch'el è",
+        "remuxed": "Metadata eliminada, video laschà nuntutgà",
+        "untouched": "Laschà uschia, nagut da diminuir",
         "webcodecs": "WebCodecs, accelerà da hardware",
         "webcodecsSoftware": "WebCodecs, codificatur da software"
     },

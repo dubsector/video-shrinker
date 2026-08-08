@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Convirtiendo…",
-        "refineNote": "La primera pasada superó el objetivo. Recodificando una vez más para mayor precisión.",
+        "refineNote": "La primera pasada no alcanzó el objetivo. Ajustando el bitrate y la codificación una vez más.",
         "refining": "Ajustando tamaño…",
         "start": "Convertir"
     },
@@ -41,10 +41,15 @@
         "local": "Tu archivo nunca abandona este dispositivo."
     },
     "result": {
+        "alreadySmall": "Ya es más pequeño que tu objetivo:",
         "convertAnother": "Convertir otro",
         "done": "Hecho:",
         "download": "Descargar",
         "ffmpeg": "ffmpeg.wasm, respaldo de CPU",
+        "noShrink": "No se pudo reducir:",
+        "noShrinkDetail": "Este metraje no se puede comprimir por debajo de su tamaño actual, por lo que se mantuvo tal cual",
+        "remuxed": "Metadatos eliminados, video sin cambios",
+        "untouched": "Se dejó tal cual, no hay nada que reducir",
         "webcodecs": "WebCodecs, aceleración por hardware",
         "webcodecsSoftware": "WebCodecs, codificador de software"
     },
