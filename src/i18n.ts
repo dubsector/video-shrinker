@@ -5,11 +5,19 @@ import en from './locales/en.json';
 
 export const LANGUAGE_STORAGE_KEY = 'language-preference';
 
-const localeModules = import.meta.glob<{ default: Record<string, unknown> }>('./locales/*.json');
+// English is excluded from the glob because it is also imported statically
+// below. Listing it both ways made the build warn that the dynamic import
+// could not move it into its own chunk — true, and intended, but noise on
+// every build.
+const localeModules = import.meta.glob<{ default: Record<string, unknown> }>([
+  './locales/*.json',
+  '!./locales/en.json',
+]);
 
-export const availableLanguages = Object.keys(localeModules)
-  .map((path) => path.replace('./locales/', '').replace('.json', ''))
-  .sort();
+export const availableLanguages = [
+  'en',
+  ...Object.keys(localeModules).map((path) => path.replace('./locales/', '').replace('.json', '')),
+].sort();
 
 // English ships in the main bundle so the first paint never waits on a
 // locale chunk; every other language is code-split and fetched on demand.
@@ -19,6 +27,11 @@ const lazyLocaleBackend: BackendModule = {
   type: 'backend',
   init() {},
   read(language, _namespace, callback) {
+    // Already in the bundle, so it never needs fetching.
+    if (language === 'en') {
+      callback(null, en);
+      return;
+    }
     const loader = localeModules[`./locales/${language}.json`];
     if (!loader) {
       callback(new Error(`No locale file for ${language}`), null);

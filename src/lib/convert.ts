@@ -21,7 +21,7 @@ import {
   UNDERSHOOT_RETRY_RATIO,
   UPWARD_PASS_MARGIN,
 } from './bitrate';
-import { convertWithWebCodecs } from './webcodecsEngine';
+import { convertWithWebCodecs, type VideoDimensions } from './webcodecsEngine';
 
 /**
  * Beyond the two encoders, three outcomes skip encoding: 'original' hands back
@@ -103,6 +103,11 @@ async function remuxWithoutMetadata(input: Input): Promise<Blob | null> {
   }
 }
 
+// Set when a conversion touched the ffmpeg engine, so the source can be
+// dropped from the wasm filesystem afterwards without importing that module
+// (and its 32 MB core) on the WebCodecs path that never used it.
+let usedFfmpeg = false;
+
 function isImprovement(candidate: Attempt, baseline: Attempt, targetSizeBytes: number): boolean {
   const candidateOver = candidate.blob.size > targetSizeBytes;
   const baselineOver = baseline.blob.size > targetSizeBytes;
@@ -117,12 +122,13 @@ async function attemptConversion(
   input: Input,
   durationSeconds: number,
   audioTrack: InputAudioTrack | null,
+  dimensions: VideoDimensions,
   videoBitrate: number,
   audioBitrate: number,
   phase: ConversionPhase,
   options: ConvertOptions,
 ): Promise<Attempt> {
-  const webCodecsOutcome = await convertWithWebCodecs(input, durationSeconds, audioTrack, {
+  const webCodecsOutcome = await convertWithWebCodecs(input, durationSeconds, audioTrack, dimensions, {
     videoBitrate,
     audioBitrate,
     preferHevc: options.preferHevc,
@@ -138,6 +144,7 @@ async function attemptConversion(
   // Lazy-loaded: most browsers can use WebCodecs, so the ffmpeg.wasm
   // wrapper (and its wasm binary) should only be fetched when needed.
   const { convertWithFfmpeg } = await import('./ffmpegEngine');
+  usedFfmpeg = true;
   try {
     const ffmpegResult = await convertWithFfmpeg(file, {
       videoBitrate,
@@ -204,6 +211,15 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       }
     }
 
+    // Resolved once here rather than inside each attempt: the dimensions are
+    // the same on every pass, and reading them means seeking around the file.
+    const videoTrack = await input.getPrimaryVideoTrack();
+    if (!videoTrack) throw new Error('This file has no video track to convert.');
+    const dimensions: VideoDimensions = {
+      width: await videoTrack.getDisplayWidth(),
+      height: await videoTrack.getDisplayHeight(),
+    };
+
     const plan = planBitrates(duration, targetSizeBytes, hasAudio);
     // Asking for more than the source itself carries would inflate the file
     // rather than shrink it, so no pass may exceed this.
@@ -215,6 +231,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       input,
       duration,
       audioTrack,
+      dimensions,
       videoBitrate,
       plan.audioBitrate,
       'encoding',
@@ -257,6 +274,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
         input,
         duration,
         audioTrack,
+        dimensions,
         videoBitrate,
         plan.audioBitrate,
         'refining',
@@ -291,6 +309,11 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
 
     return { ...best, videoBitrate: bestVideoBitrate, audioBitrate: plan.audioBitrate };
   } finally {
+    if (usedFfmpeg) {
+      usedFfmpeg = false;
+      // Already loaded by the time this runs, so the import is immediate.
+      await import('./ffmpegEngine').then(({ releaseFfmpegInput }) => releaseFfmpegInput());
+    }
     input.dispose();
   }
 }

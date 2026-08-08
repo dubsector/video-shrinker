@@ -39,6 +39,31 @@ export type FfmpegResult = {
   blob: Blob;
 };
 
+// The file currently sitting in the wasm filesystem. A conversion runs up to
+// three passes over the same source, and writing it in means reading the whole
+// thing into the wasm heap — on the multi-hundred-MB files this app is built
+// for, running on the devices slow enough to need this engine, doing that per
+// pass is both a long wait and another chance to hit the memory ceiling.
+// convertVideo() calls releaseFfmpegInput() once it is finished with the file.
+let writtenInput: { file: File; name: string } | null = null;
+
+async function writeInput(ffmpeg: FFmpeg, file: File): Promise<string> {
+  if (writtenInput?.file === file) return writtenInput.name;
+  await releaseFfmpegInput();
+  const name = 'input' + (file.name.match(/\.[^.]+$/)?.[0] ?? '.mp4');
+  await ffmpeg.writeFile(name, new Uint8Array(await file.arrayBuffer()));
+  writtenInput = { file, name };
+  return name;
+}
+
+/** Drops the source from the wasm filesystem. Safe to call when there isn't one. */
+export async function releaseFfmpegInput(): Promise<void> {
+  if (!writtenInput || !ffmpegPromise) return;
+  const { name } = writtenInput;
+  writtenInput = null;
+  await (await ffmpegPromise).deleteFile(name).catch(() => {});
+}
+
 export type FfmpegConvertOptions = {
   videoBitrate: number;
   audioBitrate: number;
@@ -62,11 +87,10 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
   };
   ffmpeg.on('progress', onProgressEvent);
 
-  const inputName = 'input' + (file.name.match(/\.[^.]+$/)?.[0] ?? '.mp4');
   const outputName = 'output.mp4';
 
   try {
-    await ffmpeg.writeFile(inputName, new Uint8Array(await file.arrayBuffer()));
+    const inputName = await writeInput(ffmpeg, file);
 
     const args = [
       '-i',
@@ -81,8 +105,15 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
       `${Math.round(videoBitrate * 1.2)}`,
       '-bufsize',
       `${Math.round(videoBitrate * 2)}`,
+      // This engine only runs where WebCodecs can't encode, which in practice
+      // means the slowest devices, executing x264 in wasm on the CPU — the
+      // worst place to spend cycles chasing compression efficiency. Measured
+      // on 15s of 1440p60 at a fixed bitrate: medium 13.9s at 33.4 dB PSNR,
+      // faster 11.0s at 32.3 dB, veryfast 8.0s at 31.1 dB. `faster` buys most
+      // of the time back for about a decibel; veryfast costs more picture than
+      // it is worth.
       '-preset',
-      'medium',
+      'faster',
       '-pix_fmt',
       'yuv420p',
     ];
@@ -104,7 +135,8 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
     return { blob: new Blob([bytes], { type: 'video/mp4' }) };
   } finally {
     ffmpeg.off('progress', onProgressEvent);
-    await ffmpeg.deleteFile(inputName).catch(() => {});
+    // The input deliberately stays for the next refinement pass; the caller
+    // releases it when the conversion as a whole is done.
     await ffmpeg.deleteFile(outputName).catch(() => {});
   }
 }

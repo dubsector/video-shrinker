@@ -50,6 +50,8 @@ function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Last percent actually pushed into state, so identical values don't render.
+  const lastPercent = useRef(-1);
   const shareTargetPending = useRef(location.search.includes('share-target'));
   // Set when the user cancels the share handoff: the worker may still deliver
   // the file (or an error) afterwards, and both should be dropped silently.
@@ -85,6 +87,7 @@ function App() {
     setFile(null);
     setStatus('idle');
     setProgress(0);
+    lastPercent.current = -1;
     setPhase('encoding');
     setResult(null);
     setError(null);
@@ -173,6 +176,7 @@ function App() {
     if (!file) return;
     setStatus('converting');
     setProgress(0);
+    lastPercent.current = -1;
     setPhase('encoding');
     setError(null);
     // H.265 whenever the GPU supports it, unless the user forces H.264.
@@ -183,7 +187,14 @@ function App() {
         preferHevc,
         stripMetadata,
         onProgress: (p, currentPhase) => {
-          setProgress(p);
+          // The bar only ever renders whole percent, so every sub-percent tick
+          // re-rendered the whole tree for no visible change — on the main
+          // thread, while the encoder is running and contending for it.
+          const percent = Math.round(p * 100);
+          if (percent !== lastPercent.current) {
+            lastPercent.current = percent;
+            setProgress(p);
+          }
           setPhase(currentPhase);
         },
       });

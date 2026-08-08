@@ -15,27 +15,41 @@ const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
 // still up, the update applies itself then.
 function UpdatePrompt() {
   const { t } = useTranslation();
+  const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
-    onRegisteredSW(_swUrl, registration) {
-      if (!registration) return;
-      const check = () => {
-        // Data Saver means the user asked to minimize background traffic,
-        // so skip polling; updates still arrive via the registration-time
-        // check on the next launch. Read per-check since it can be toggled.
-        const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-        if (connection?.saveData) return;
-        registration.update().catch(() => {});
-      };
-      setInterval(check, UPDATE_CHECK_INTERVAL_MS);
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') check();
-      });
+    onRegisteredSW(_swUrl, swRegistration) {
+      if (swRegistration) setRegistration(swRegistration);
     },
   });
   const [showPrompt, setShowPrompt] = useState(false);
+
+  // The timer and listener live in an effect so they are torn down with the
+  // component. They used to be registered straight from onRegisteredSW with no
+  // cleanup, which double-registered under StrictMode and ran every check
+  // twice in development.
+  useEffect(() => {
+    if (!registration) return;
+    const check = () => {
+      // Data Saver means the user asked to minimize background traffic,
+      // so skip polling; updates still arrive via the registration-time
+      // check on the next launch. Read per-check since it can be toggled.
+      const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+      if (connection?.saveData) return;
+      registration.update().catch(() => {});
+    };
+    const timer = setInterval(check, UPDATE_CHECK_INTERVAL_MS);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') check();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, [registration]);
 
   useEffect(() => {
     if (!needRefresh) {
