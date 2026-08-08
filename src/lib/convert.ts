@@ -1,12 +1,16 @@
 import {
-  ALL_FORMATS,
   BlobSource,
   BufferTarget,
   Conversion,
   Input,
   type InputAudioTrack,
+  MATROSKA,
+  MP4,
   Mp4OutputFormat,
+  MPEG_TS,
   Output,
+  QTFF,
+  WEBM,
 } from 'mediabunny';
 import {
   MIN_UPWARD_GROWTH,
@@ -53,6 +57,16 @@ type Attempt = { blob: Blob; engine: EngineUsed; codec: string; hardwareAccelera
 // (WebCodecs exposes no hard bitrate ceiling), so a single correction can still
 // land just over target; a couple of measured retries reliably converge under.
 const MAX_REFINEMENT_PASSES = 2;
+
+// Only the video containers this app can actually be handed. ALL_FORMATS also
+// registers the audio-only demuxers (WAVE, OGG, FLAC, MP3, ADTS) and HLS,
+// which no file passing the video/* check can ever match.
+//
+// AVI and MPEG-PS are deliberately absent even though the share target accepts
+// them: mediabunny ships no demuxer for either, so they always take the
+// ffmpeg.wasm path. They stay advertised so the system share sheet keeps
+// offering this app for them, at the cost of the slower engine.
+const INPUT_FORMATS = [MP4, QTFF, MATROSKA, WEBM, MPEG_TS];
 
 /**
  * Repackages the file without re-encoding it, dropping its metadata on the
@@ -158,7 +172,7 @@ async function attemptConversion(
  * it under.
  */
 export async function convertVideo(file: File, targetSizeBytes: number, options: ConvertOptions): Promise<ConvertResult> {
-  const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(file) });
+  const input = new Input({ formats: INPUT_FORMATS, source: new BlobSource(file) });
 
   try {
     const duration = await input.computeDuration();
