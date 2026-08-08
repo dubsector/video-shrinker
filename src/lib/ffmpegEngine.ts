@@ -1,11 +1,22 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-
-// Root-absolute paths would resolve against the domain root, but the site is
-// served from a subpath, so these must go through the configured base.
-const CORE_URL = `${import.meta.env.BASE_URL}ffmpeg-core/ffmpeg-core.js`;
-const WASM_URL = `${import.meta.env.BASE_URL}ffmpeg-core/ffmpeg-core.wasm`;
+import { FFMPEG_CORE_URL as CORE_URL, FFMPEG_WASM_URL as WASM_URL } from './ffmpegAssets';
 
 let ffmpegPromise: Promise<FFmpeg> | null = null;
+
+/**
+ * Fetches an asset here in the page and hands back a blob URL for it.
+ *
+ * Handing @ffmpeg/ffmpeg a plain URL makes it load the core inside a worker it
+ * creates from a blob URL, and such a worker is outside the service worker's
+ * control: its import goes straight to the network and fails offline, even
+ * with the file sitting in the cache. Fetching from here goes through the
+ * service worker as normal, and a blob URL needs no network at all to import.
+ */
+async function toBlobURL(url: string, mimeType: string): Promise<string> {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Couldn't load ${url} (${response.status}).`);
+  return URL.createObjectURL(new Blob([await response.arrayBuffer()], { type: mimeType }));
+}
 
 // FFmpeg core is loaded once and reused; it's self-hosted from this site's
 // own static assets, never fetched from a third-party CDN.
@@ -13,7 +24,11 @@ function getFFmpeg(): Promise<FFmpeg> {
   if (!ffmpegPromise) {
     ffmpegPromise = (async () => {
       const ffmpeg = new FFmpeg();
-      await ffmpeg.load({ coreURL: CORE_URL, wasmURL: WASM_URL });
+      const [coreURL, wasmURL] = await Promise.all([
+        toBlobURL(CORE_URL, 'text/javascript'),
+        toBlobURL(WASM_URL, 'application/wasm'),
+      ]);
+      await ffmpeg.load({ coreURL, wasmURL });
       return ffmpeg;
     })();
   }
