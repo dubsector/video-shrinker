@@ -99,6 +99,17 @@ export async function convertWithWebCodecs(
       throw new Error(`This file's tracks can't be converted here (${reasons}).`);
     }
 
+    // Mediabunny drops a track it can't handle instead of failing, and the
+    // conversion stays valid as long as whatever remains makes a playable
+    // file. Losing the video track therefore produces an audio-only MP4 that
+    // looks like a successful shrink — which is what a browser without HEVC
+    // decode does to every HEVC recording. Treat it as a WebCodecs failure so
+    // the ffmpeg.wasm fallback, which brings its own decoders, gets a turn.
+    const discardedVideo = conversion.discardedTracks.find((track) => track.track.isVideoTrack());
+    if (discardedVideo) {
+      throw new Error(`This browser can't handle this file's video track (${discardedVideo.reason}).`);
+    }
+
     conversion.onProgress = (progress, processedTime) => {
       options.onProgress?.({ progress, processedSeconds: processedTime, durationSeconds });
     };
