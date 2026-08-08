@@ -178,7 +178,18 @@ function App() {
     }
   }, [file, targetMb, hevcAvailable, forceH264, stripMetadata]);
 
-  const downloadName = file ? `${file.name.replace(/\.[^.]+$/, '')}-shrunk.mp4` : 'shrunk.mp4';
+  // None of the skip paths shrank anything, so "-shrunk" would be a lie. The
+  // untouched file is the source object itself, and keeps its own name and
+  // container; anything else that skipped encoding is a metadata-stripped copy.
+  const skippedEncode = result ? result.engine === 'original' || result.engine === 'remux' || result.engine === 'unshrinkable' : false;
+  const baseName = file?.name.replace(/\.[^.]+$/, '') ?? 'video';
+  const downloadName = !file
+    ? 'shrunk.mp4'
+    : result?.blob === file
+      ? file.name
+      : skippedEncode
+        ? `${baseName}-clean.mp4`
+        : `${baseName}-shrunk.mp4`;
   const codecLabel = result?.codec === 'hevc' ? 'H.265' : 'H.264';
 
   return (
@@ -311,14 +322,27 @@ function App() {
         {status === 'done' && result && resultUrl && (
           <div className="result">
             <p>
-              {t('result.done')} <strong>{codecLabel} · {formatBytes(result.blob.size)}</strong>
+              {result.engine === 'unshrinkable'
+                ? t('result.noShrink')
+                : skippedEncode
+                  ? t('result.alreadySmall')
+                  : t('result.done')}{' '}
+              <strong>
+                {skippedEncode ? formatBytes(result.blob.size) : `${codecLabel} · ${formatBytes(result.blob.size)}`}
+              </strong>
               <br />
               <span className="result-detail">
-                {result.engine === 'webcodecs'
-                  ? result.hardwareAccelerated
-                    ? t('result.webcodecs')
-                    : t('result.webcodecsSoftware')
-                  : t('result.ffmpeg')}
+                {result.engine === 'original'
+                  ? t('result.untouched')
+                  : result.engine === 'remux'
+                    ? t('result.remuxed')
+                    : result.engine === 'unshrinkable'
+                      ? t('result.noShrinkDetail')
+                      : result.engine === 'webcodecs'
+                        ? result.hardwareAccelerated
+                          ? t('result.webcodecs')
+                          : t('result.webcodecsSoftware')
+                        : t('result.ffmpeg')}
               </span>
             </p>
             <a className="download-button" href={resultUrl} download={downloadName}>

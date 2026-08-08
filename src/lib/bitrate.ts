@@ -16,8 +16,41 @@ const FIRST_PASS_MARGIN = 0.93;
 // after one correction — aiming progressively lower absorbs that drift.
 const REFINED_PASS_MARGINS = [0.97, 0.93] as const;
 
+// Landing under target is fine, but a pass this far under spent so little of
+// the budget that the user got noticeably less quality than they asked for.
+// Kept low enough that an ordinary conversion still finishes in one pass.
+export const UNDERSHOOT_RETRY_RATIO = 0.75;
+
+// Correcting upward can turn an under-target result into an overshoot, which
+// costs another pass to undo, so it aims lower than a downward pass does.
+export const UPWARD_PASS_MARGIN = 0.9;
+
+// How much an upward pass has to grow the output to be worth continuing.
+// Simple footage can be at its natural size already, where raising the bitrate
+// produces the same bytes back and further passes are pure waiting.
+export const MIN_UPWARD_GROWTH = 1.05;
+
 export function refinedPassMargin(pass: number): number {
   return REFINED_PASS_MARGINS[Math.min(pass, REFINED_PASS_MARGINS.length - 1)];
+}
+
+/**
+ * The highest video bitrate worth asking for from a given source. Requesting
+ * more than the file already carries just re-encodes its existing artifacts
+ * into more bytes, which is how a small input ends up with a larger output.
+ *
+ * Estimated from the container's overall average (size over duration) rather
+ * than measured per-track: mediabunny can compute exact packet stats, but only
+ * by reading through the file, which is far too expensive for a ceiling.
+ */
+export function sourceVideoBitrateCeiling(
+  fileBytes: number,
+  durationSeconds: number,
+  audioBitrate: number,
+): number {
+  if (durationSeconds <= 0) throw new Error('Duration must be greater than 0');
+  const sourceTotalBitrate = (fileBytes * 8) / durationSeconds;
+  return Math.max(MIN_VIDEO_BITRATE, Math.round(sourceTotalBitrate - audioBitrate));
 }
 
 export type BitratePlan = {

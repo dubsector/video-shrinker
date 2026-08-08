@@ -20,7 +20,7 @@
     "start": "Convert",
     "converting": "Converting…",
     "refining": "Refining size…",
-    "refineNote": "First pass overshot the target. Re-encoding once more for accuracy."
+    "refineNote": "The first pass missed the target. Adjusting the bitrate and encoding once more."
   },
   "errors": {
     "notVideo": "Please choose a video file.",
@@ -31,6 +31,11 @@
   },
   "result": {
     "done": "Done:",
+    "alreadySmall": "Already smaller than your target:",
+    "untouched": "Left as-is, nothing to shrink",
+    "remuxed": "Metadata stripped, video left untouched",
+    "noShrink": "Couldn't make this smaller:",
+    "noShrinkDetail": "This footage doesn't compress below its current size, so it was kept as it is",
     "webcodecs": "WebCodecs, hardware-accelerated",
     "webcodecsSoftware": "WebCodecs, software encoder",
     "ffmpeg": "ffmpeg.wasm, CPU fallback",
