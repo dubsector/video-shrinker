@@ -5,7 +5,7 @@
     "@bubblewrap/cli": "1.24.1"
   },
   "overrides": {
-    "tar": "7.5.20",
+    "tar": "7.5.22",
     "uuid": "11.1.1",
     "file-type": "21.3.4"
   }
