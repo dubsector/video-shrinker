@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Po konvertohet…",
-        "refineNote": "Kalimi i parë e tejkaloi objektivin. Po ri-enkodohet edhe një herë për saktësi.",
+        "refineNote": "Kalimi i parë nuk e arriti objektivin. Po rregullohet bitrate dhe kodimi edhe një herë.",
         "refining": "Po optimizohet madhësia…",
         "start": "Konverto"
     },
@@ -41,10 +41,15 @@
         "local": "Skedari juaj kurrë nuk e lë këtë pajisje."
     },
     "result": {
+        "alreadySmall": "Tashmë më i vogël se objektivi juaj:",
         "convertAnother": "Konverto një tjetër",
         "done": "U krye:",
         "download": "Shkarko",
         "ffmpeg": "ffmpeg.wasm, rezervë CPU",
+        "noShrink": "Nuk munda ta bëj këtë më të vogël:",
+        "noShrinkDetail": "Kjo pamje nuk kompresohet nën madhësinë e saj aktuale, ndaj është lënë ashtu siç është",
+        "remuxed": "Metadata u hoq, videoja mbeti e paprekur",
+        "untouched": "U la siç ishte, nuk ka asgjë për t'u zvogëluar",
         "webcodecs": "WebCodecs, e përshpejtuar nga hardueri",
         "webcodecsSoftware": "WebCodecs, kodues softuerik"
     },

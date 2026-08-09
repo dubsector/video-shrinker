@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Đang chuyển đổi…",
-        "refineNote": "Lần nén đầu tiên vượt quá mục tiêu. Đang mã hóa lại để đảm bảo độ chính xác.",
+        "refineNote": "Lần chạy đầu tiên không đạt mục tiêu. Đang điều chỉnh lại bitrate và mã hóa.",
         "refining": "Đang tinh chỉnh kích thước…",
         "start": "Chuyển đổi"
     },
@@ -41,10 +41,15 @@
         "local": "Tệp của bạn không bao giờ rời khỏi thiết bị này."
     },
     "result": {
+        "alreadySmall": "Đã nhỏ hơn mục tiêu của bạn:",
         "convertAnother": "Chuyển đổi tệp khác",
         "done": "Hoàn tất:",
         "download": "Tải xuống",
         "ffmpeg": "ffmpeg.wasm, dự phòng CPU",
+        "noShrink": "Không thể làm cho tệp này nhỏ hơn:",
+        "noShrinkDetail": "Đoạn phim này không thể nén xuống dưới kích thước hiện tại, vì vậy nó đã được giữ nguyên",
+        "remuxed": "Đã loại bỏ Metadata, video được giữ nguyên",
+        "untouched": "Để nguyên như cũ, không có gì để thu nhỏ",
         "webcodecs": "WebCodecs, tăng tốc phần cứng",
         "webcodecsSoftware": "WebCodecs, bộ mã hóa phần mềm"
     },

@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Umbreyti…",
-        "refineNote": "Fyrsta umferð fór yfir markið. Endurkóða einu sinni enn til að ná nákvæmni.",
+        "refineNote": "Fyrsta tilraun náði ekki markmiðinu. Bitrate og kóðun stillt á ný.",
         "refining": "Fínstillir stærð…",
         "start": "Umbreyta"
     },
@@ -41,10 +41,15 @@
         "local": "Skráin þín fer aldrei úr þessu tæki."
     },
     "result": {
+        "alreadySmall": "Nú þegar minna en markmiðið þitt:",
         "convertAnother": "Umbreyta öðru",
         "done": "Lokið:",
         "download": "Hala niður",
         "ffmpeg": "ffmpeg.wasm, CPU varaúrræði",
+        "noShrink": "Ekki hægt að minnka þetta frekar:",
+        "noShrinkDetail": "Ekki var hægt að þjappa þessu myndskeiði frekar, því var það látið óbreytt",
+        "remuxed": "Metadata fjarlægð, myndskeið látið óbreytt",
+        "untouched": "Skilið eftir eins og það er, ekkert til að minnka",
         "webcodecs": "WebCodecs, vélbúnaðarhröðun",
         "webcodecsSoftware": "WebCodecs, hugbúnaðarkóðari"
     },

@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Konverterer…",
-        "refineNote": "Første gennemgang ramte forbi målet. Genkoder en gang til for at sikre nøjagtighed.",
+        "refineNote": "Det første forsøg ramte ikke målet. Justerer bitrate og indkodning igen.",
         "refining": "Finjusterer størrelse…",
         "start": "Konverter"
     },
@@ -41,10 +41,15 @@
         "local": "Din fil forlader aldrig denne enhed."
     },
     "result": {
+        "alreadySmall": "Allerede mindre end dit mål:",
         "convertAnother": "Konverter en anden",
         "done": "Færdig:",
         "download": "Download",
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
+        "noShrink": "Kunne ikke gøre denne mindre:",
+        "noShrinkDetail": "Dette klip kan ikke komprimeres yderligere, så det er bevaret som det er",
+        "remuxed": "Metadata fjernet, video efterladt intakt",
+        "untouched": "Efterladt som det er, intet at formindske",
         "webcodecs": "WebCodecs, hardware-accelereret",
         "webcodecsSoftware": "WebCodecs, software-enkoder"
     },

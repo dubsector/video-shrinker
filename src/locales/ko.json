@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "변환 중…",
-        "refineNote": "첫 번째 패스가 목표치를 초과했습니다. 정확성을 위해 다시 인코딩 중입니다.",
+        "refineNote": "첫 번째 패스에서 목표치를 달성하지 못했습니다. 비트레이트와 인코딩을 다시 조정합니다.",
         "refining": "크기 조정 중…",
         "start": "변환"
     },
@@ -41,10 +41,15 @@
         "local": "파일은 이 기기를 절대 벗어나지 않습니다."
     },
     "result": {
+        "alreadySmall": "이미 목표 크기보다 작습니다:",
         "convertAnother": "다른 파일 변환",
         "done": "완료:",
         "download": "다운로드",
         "ffmpeg": "ffmpeg.wasm, CPU 대체 모드",
+        "noShrink": "더 작게 만들 수 없습니다:",
+        "noShrinkDetail": "이 영상은 현재 크기 이하로 압축되지 않아 그대로 유지되었습니다.",
+        "remuxed": "메타데이터가 제거되었으며, 영상은 수정되지 않았습니다.",
+        "untouched": "그대로 유지됨, 축소할 대상 없음",
         "webcodecs": "WebCodecs, 하드웨어 가속",
         "webcodecsSoftware": "WebCodecs, 소프트웨어 인코더"
     },

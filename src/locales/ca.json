@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Convertint…",
-        "refineNote": "La primera passada ha superat l'objectiu. Reencodificant una vegada més per a més precisió.",
+        "refineNote": "La primera passada no ha assolit l'objectiu. Ajustant el bitrate i la codificació una vegada més.",
         "refining": "Refinant la mida…",
         "start": "Converteix"
     },
@@ -41,10 +41,15 @@
         "local": "El teu fitxer no surt mai d'aquest dispositiu."
     },
     "result": {
+        "alreadySmall": "Ja és més petit que el teu objectiu:",
         "convertAnother": "Converteix-ne un altre",
         "done": "Fet:",
         "download": "Descarrega",
         "ffmpeg": "ffmpeg.wasm, alternativa CPU",
+        "noShrink": "No s'ha pogut fer més petit:",
+        "noShrinkDetail": "Aquest vídeo no es pot comprimir per sota de la seva mida actual, així que s'ha mantingut tal com està",
+        "remuxed": "Metadades eliminades, vídeo deixat sense canvis",
+        "untouched": "Deixat tal com està, no hi ha res a reduir",
         "webcodecs": "WebCodecs, accelerat per maquinari",
         "webcodecsSoftware": "WebCodecs, codificador de programari"
     },

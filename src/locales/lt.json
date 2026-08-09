@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Konvertuojama…",
-        "refineNote": "Pirmojo etapo metu viršytas tikslas. Norint tikslumo, koduojama dar kartą.",
+        "refineNote": "Pirmas bandymas nepasiekė tikslo. Reguliuojamas bitų dažnis ir kodavimas.",
         "refining": "Tikslinamas dydis…",
         "start": "Konvertuoti"
     },
@@ -41,10 +41,15 @@
         "local": "Jūsų failas niekada nepalieka šio įrenginio."
     },
     "result": {
+        "alreadySmall": "Jau mažesnis nei jūsų tikslas:",
         "convertAnother": "Konvertuoti kitą",
         "done": "Atlikta:",
         "download": "Atsisiųsti",
         "ffmpeg": "ffmpeg.wasm, CPU atsarginis variantas",
+        "noShrink": "Nepavyko sumažinti:",
+        "noShrinkDetail": "Šio vaizdo įrašo nepavyksta suspausti iki mažesnio dydžio, todėl jis paliktas toks, koks yra",
+        "remuxed": "Metaduomenys pašalinti, vaizdo įrašas paliktas nepaliestas",
+        "untouched": "Palikta kaip yra, nėra ką suspausti",
         "webcodecs": "WebCodecs, aparatinis spartinimas",
         "webcodecsSoftware": "WebCodecs, programinės įrangos kodavimo priemonė"
     },

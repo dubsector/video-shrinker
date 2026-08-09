@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Konvertē...",
-        "refineNote": "Pirmais mēģinājums pārsniedza mērķi. Pārkodēju vēlreiz, lai panāktu precizitāti.",
+        "refineNote": "Pirmajā piegājienā mērķis netika sasniegts. Vēlreiz pielāgo bitreitu un kodēšanu.",
         "refining": "Precizēju izmēru…",
         "start": "Konvertēt"
     },
@@ -41,10 +41,15 @@
         "local": "Jūsu fails nekad neatstāj šo ierīci."
     },
     "result": {
+        "alreadySmall": "Jau mazāks par jūsu mērķi:",
         "convertAnother": "Konvertēt citu",
         "done": "Gatavs:",
         "download": "Lejupielādēt",
         "ffmpeg": "ffmpeg.wasm, CPU rezerves risinājums",
+        "noShrink": "Neizdevās padarīt to mazāku:",
+        "noShrinkDetail": "Šo materiālu nevar saspiest zem tā pašreizējā izmēra, tāpēc tas tika atstāts nemainīts",
+        "remuxed": "Metadati noņemti, video atstāts neskarts",
+        "untouched": "Atstāts tāds, kāds ir, nav ko saspiest",
         "webcodecs": "WebCodecs, aparatūras paātrinājums",
         "webcodecsSoftware": "WebCodecs, programmatūras kodētājs"
     },

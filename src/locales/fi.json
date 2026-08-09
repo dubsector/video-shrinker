@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Muunnetaan…",
-        "refineNote": "Ensimmäinen läpiajo ylitti tavoitteen. Uudelleenkoodataan tarkkuuden parantamiseksi.",
+        "refineNote": "Ensimmäinen yritys ei saavuttanut tavoitetta. Säädetään bittivirtaa ja koodausta vielä kerran.",
         "refining": "Viimeistellään kokoa…",
         "start": "Muunna"
     },
@@ -41,10 +41,15 @@
         "local": "Tiedostosi ei poistu tältä laitteelta."
     },
     "result": {
+        "alreadySmall": "Jo valmiiksi pienempi kuin tavoitekoko:",
         "convertAnother": "Muunna toinen video",
         "done": "Valmis:",
         "download": "Lataa",
         "ffmpeg": "ffmpeg.wasm, CPU-varavaihtoehto",
+        "noShrink": "Tätä ei voinut pienentää:",
+        "noShrinkDetail": "Tämä materiaali ei pakkaudu nykyistä kokoaan pienemmäksi, joten se säilytettiin ennallaan",
+        "remuxed": "Metatiedot poistettu, video jätetty ennalleen",
+        "untouched": "Jätetty ennalleen, ei pienennettävää",
         "webcodecs": "WebCodecs, laitteistokiihdytetty",
         "webcodecsSoftware": "WebCodecs, ohjelmistokooderi"
     },

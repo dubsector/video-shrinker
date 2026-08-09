@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Pretvarjanje…",
-        "refineNote": "Prvi prehod je presegel cilj. Ponovno kodiranje za večjo natančnost.",
+        "refineNote": "Prvi prehod ni dosegel cilja. Še enkrat prilagajanje bitne hitrosti in kodiranja.",
         "refining": "Natančno določanje velikosti…",
         "start": "Pretvori"
     },
@@ -41,10 +41,15 @@
         "local": "Vaša datoteka nikoli ne zapusti te naprave."
     },
     "result": {
+        "alreadySmall": "Že manjše od vašega cilja:",
         "convertAnother": "Pretvori drugo",
         "done": "Končano:",
         "download": "Prenesi",
         "ffmpeg": "ffmpeg.wasm, nadomestna možnost CPU",
+        "noShrink": "Tega ni bilo mogoče zmanjšati:",
+        "noShrinkDetail": "Tega posnetka ni mogoče stisniti pod trenutno velikost, zato je ostal nespremenjen",
+        "remuxed": "Metapodatki odstranjeni, video ostal nespremenjen",
+        "untouched": "Puščeno nespremenjeno, nič za skrčiti",
         "webcodecs": "WebCodecs, strojno pospeševanje",
         "webcodecsSoftware": "WebCodecs, programski kodirnik"
     },

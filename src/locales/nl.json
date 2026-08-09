@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Converteren…",
-        "refineNote": "De eerste pass ging voorbij het doel. Opnieuw coderen voor nauwkeurigheid.",
+        "refineNote": "De eerste poging haalde het doel niet. De bitrate en encoding worden nogmaals aangepast.",
         "refining": "Grootte aanpassen…",
         "start": "Converteren"
     },
@@ -41,10 +41,15 @@
         "local": "Je bestand verlaat dit apparaat nooit."
     },
     "result": {
+        "alreadySmall": "Reeds kleiner dan je doelgrootte:",
         "convertAnother": "Converteer nog een video",
         "done": "Klaar:",
         "download": "Downloaden",
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
+        "noShrink": "Kon dit niet kleiner maken:",
+        "noShrinkDetail": "Dit beeldmateriaal kan niet verder worden gecomprimeerd dan de huidige grootte, dus het is behouden zoals het is.",
+        "remuxed": "Metadata verwijderd, video ongewijzigd gelaten",
+        "untouched": "Zo gelaten, niets te verkleinen",
         "webcodecs": "WebCodecs, hardwareversneld",
         "webcodecsSoftware": "WebCodecs, software-encoder"
     },

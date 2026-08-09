@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Se convertește…",
-        "refineNote": "Prima trecere a depășit ținta. Recodificare încă o dată pentru acuratețe.",
+        "refineNote": "Prima trecere a ratat ținta. Ajustez rata de biți și codificarea din nou.",
         "refining": "Rafinarea dimensiunii...",
         "start": "Convertește"
     },
@@ -41,10 +41,15 @@
         "local": "Fișierul tău nu părăsește niciodată acest dispozitiv."
     },
     "result": {
+        "alreadySmall": "Deja mai mic decât dimensiunea țintă:",
         "convertAnother": "Convertește altul",
         "done": "Finalizat:",
         "download": "Descarcă",
         "ffmpeg": "ffmpeg.wasm, alternativă CPU",
+        "noShrink": "Nu s-a putut micșora mai mult:",
+        "noShrinkDetail": "Acest material video nu poate fi comprimat sub dimensiunea sa actuală, așa că a fost păstrat ca atare",
+        "remuxed": "Metadate eliminate, video lăsat intact",
+        "untouched": "Lăsat așa cum este, nimic de micșorat",
         "webcodecs": "WebCodecs, accelerare hardware",
         "webcodecsSoftware": "WebCodecs, codificator software"
     },

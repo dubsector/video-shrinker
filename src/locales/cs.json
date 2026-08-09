@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Probíhá převod…",
-        "refineNote": "První průchod překročil cíl. Překódovávám znovu pro vyšší přesnost.",
+        "refineNote": "První průchod minul cíl. Upravuji bitrate a kódování ještě jednou.",
         "refining": "Ladění velikosti…",
         "start": "Převést"
     },
@@ -41,10 +41,15 @@
         "local": "Váš soubor nikdy neopustí toto zařízení."
     },
     "result": {
+        "alreadySmall": "Již menší než cílová velikost:",
         "convertAnother": "Převést další",
         "done": "Hotovo:",
         "download": "Stáhnout",
         "ffmpeg": "ffmpeg.wasm, záložní CPU řešení",
+        "noShrink": "Nepodařilo se zmenšit:",
+        "noShrinkDetail": "Tento záznam nelze zkomprimovat pod jeho současnou velikost, proto byl ponechán tak, jak je",
+        "remuxed": "Metadata odstraněna, video ponecháno beze změn",
+        "untouched": "Ponecháno v původním stavu, není co zmenšovat",
         "webcodecs": "WebCodecs, hardwarová akcelerace",
         "webcodecsSoftware": "WebCodecs, softwarový enkodér"
     },

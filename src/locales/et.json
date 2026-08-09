@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Teisendamine…",
-        "refineNote": "Esimene katse ületas sihtmõõtu. Täpsuse huvides kodeerin uuesti.",
+        "refineNote": "Esimene katse ei saavutanud sihtmärki. Kohandan bitikiirust ja kodeeringut uuesti.",
         "refining": "Täpsustan suurust…",
         "start": "Teisenda"
     },
@@ -41,10 +41,15 @@
         "local": "Sinu fail ei lahku kunagi sellest seadmest."
     },
     "result": {
+        "alreadySmall": "Juba väiksem kui teie sihtsuurus:",
         "convertAnother": "Teisenda veel üks",
         "done": "Valmis:",
         "download": "Laadi alla",
         "ffmpeg": "ffmpeg.wasm, protsessori kasutamine (varuvariant)",
+        "noShrink": "Seda ei saanud väiksemaks muuta:",
+        "noShrinkDetail": "Seda materjali ei saa praegusest suurusest väiksemaks tihendada, seega jäeti see endiseks",
+        "remuxed": "Metaandmed eemaldatud, video jäetud muutmata",
+        "untouched": "Jäetud muutmata, pole midagi tihendada",
         "webcodecs": "WebCodecs, riistvaraline kiirendus",
         "webcodecsSoftware": "WebCodecs, tarkvaraline kodeerija"
     },

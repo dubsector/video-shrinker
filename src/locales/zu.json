@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Iyaguqula…",
-        "refineNote": "Ukudlula kokuqala kweqe okuhlosiwe. Iphinda ikhode futhi ukuze ithole ukunemba.",
+        "refineNote": "Umzamo wokuqala awuzange ufinyelele ilitshe. Kulungiswa i-bitrate nokubhalwa futhi.",
         "refining": "Ilungisa usayizi…",
         "start": "Guqula"
     },
@@ -41,10 +41,15 @@
         "local": "Ifayela lakho alishiyi le divayisi neze."
     },
     "result": {
+        "alreadySmall": "Isivele incane kunelitshe lakho:",
         "convertAnother": "Guqula okunye",
         "done": "Kwenziwe:",
         "download": "Landa",
         "ffmpeg": "ffmpeg.wasm, CPU fallback",
+        "noShrink": "Kwehlulekile ukukwenza lokhu kube kuncane:",
+        "noShrinkDetail": "Le vidiyo ayicindezelwa ngaphansi kosayizi wayo wamanje, ngakho ishiywe injalo.",
+        "remuxed": "Imethadatha isusiwe, ividiyo ishiywe ingathintwanga",
+        "untouched": "Kushiywe kunjalo, akukho okufanele kuncishiswe",
         "webcodecs": "WebCodecs, isheshiswe ngehadiwe",
         "webcodecsSoftware": "WebCodecs, i-encoder yesofthiwe"
     },

@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Mengonversi…",
-        "refineNote": "Langkah pertama melebihi target. Melakukan penyandian ulang sekali lagi demi akurasi.",
+        "refineNote": "Langkah pertama tidak mencapai target. Menyesuaikan bitrate dan penyandian sekali lagi.",
         "refining": "Menyempurnakan ukuran…",
         "start": "Konversi"
     },
@@ -41,10 +41,15 @@
         "local": "File Anda tidak pernah meninggalkan perangkat ini."
     },
     "result": {
+        "alreadySmall": "Sudah lebih kecil dari target Anda:",
         "convertAnother": "Konversi lainnya",
         "done": "Selesai:",
         "download": "Unduh",
         "ffmpeg": "ffmpeg.wasm, cadangan CPU",
+        "noShrink": "Tidak dapat memperkecil ukuran ini:",
+        "noShrinkDetail": "Rekaman ini tidak dapat dikompresi lebih kecil dari ukuran saat ini, jadi dibiarkan apa adanya",
+        "remuxed": "Metadata dihapus, video dibiarkan tanpa perubahan",
+        "untouched": "Dibiarkan apa adanya, tidak ada yang perlu diperkecil",
         "webcodecs": "WebCodecs, akselerasi perangkat keras",
         "webcodecsSoftware": "WebCodecs, enkoder perangkat lunak"
     },

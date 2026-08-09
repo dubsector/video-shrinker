@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Bihurtzen…",
-        "refineNote": "Lehen pasaldiak helburua gainditu du. Berriro kodetzen ari da zehaztasun handiagoa lortzeko.",
+        "refineNote": "Lehen saiakerak ez du helburua bete. Bitratea eta kodetzea berriro doitzen.",
         "refining": "Tamaina doitzen…",
         "start": "Bihurtu"
     },
@@ -41,10 +41,15 @@
         "local": "Zure fitxategiak ez du inoiz gailu hau uzten."
     },
     "result": {
+        "alreadySmall": "Zure helburua baino txikiagoa da jadanik:",
         "convertAnother": "Bihurtu beste bat",
         "done": "Eginda:",
         "download": "Deskargatu",
         "ffmpeg": "ffmpeg.wasm, CPU ordezkoa",
+        "noShrink": "Ezin izan da hau txikiagoa egin:",
+        "noShrinkDetail": "Metraje honek ez du bere oraingo tamaina baino gehiago konprimatzen, beraz, zegoen bezala utzi da",
+        "remuxed": "Metadatuak kendu dira, bideoa ukitu gabe utzi da",
+        "untouched": "Dagoen bezala utzi da, ez dago zer txikitu",
         "webcodecs": "WebCodecs, hardware bidez azeleratua",
         "webcodecsSoftware": "WebCodecs, software kodetzailea"
     },

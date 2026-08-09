@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Çevrilir…",
-        "refineNote": "İlk keçid hədəfi aşdı. Dəqiqlik üçün yenidən kodlaşdırılır.",
+        "refineNote": "İlk cəhd hədəfə çatmadı. Bitrate və kodlaşdırma yenidən tənzimlənir.",
         "refining": "Ölçü dəqiqləşdirilir…",
         "start": "Çevir"
     },
@@ -41,10 +41,15 @@
         "local": "Faylınız heç vaxt bu cihazı tərk etmir."
     },
     "result": {
+        "alreadySmall": "Artıq hədəfinizdən daha kiçikdir:",
         "convertAnother": "Başqa birini çevir",
         "done": "Tamamlandı:",
         "download": "Yüklə",
         "ffmpeg": "ffmpeg.wasm, CPU ehtiyatı",
+        "noShrink": "Bunu daha da kiçiltmək mümkün olmadı:",
+        "noShrinkDetail": "Bu video hazırkı ölçüsündən daha kiçik ölçüyə sıxıla bilmir, buna görə də olduğu kimi saxlanıldı",
+        "remuxed": "Metadata silindi, video olduğu kimi saxlanıldı",
+        "untouched": "Olduğu kimi saxlanıldı, kiçildiləcək bir şey yoxdur",
         "webcodecs": "WebCodecs, aparat sürətləndirməsi ilə",
         "webcodecsSoftware": "WebCodecs, proqram təminatı enkoderi"
     },

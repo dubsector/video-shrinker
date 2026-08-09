@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "Inageuza...",
-        "refineNote": "Hatua ya kwanza imezidi lengo. Inasimba upya kwa usahihi.",
+        "refineNote": "Jaribio la kwanza halikufikia lengo. Inarekebisha bitrate na encoding tena.",
         "refining": "Inarekebisha ukubwa...",
         "start": "Badilisha"
     },
@@ -41,10 +41,15 @@
         "local": "Faili yako haitoki kamwe kwenye kifaa hiki."
     },
     "result": {
+        "alreadySmall": "Tayari ni ndogo kuliko lengo lako:",
         "convertAnother": "Badilisha nyingine",
         "done": "Imekamilika:",
         "download": "Pakua",
         "ffmpeg": "ffmpeg.wasm, mbadala wa CPU (fallback)",
+        "noShrink": "Imeshindikana kuifanya hii kuwa ndogo:",
+        "noShrinkDetail": "Video hii haiwezi kubanwa zaidi ya saizi yake ya sasa, kwa hivyo imebaki kama ilivyo",
+        "remuxed": "Metadata imeondolewa, video imeachwa bila kuguswa",
+        "untouched": "Imeachwa kama ilivyo, hakuna cha kupunguza",
         "webcodecs": "WebCodecs, iliyoharakishwa kwa maunzi",
         "webcodecsSoftware": "WebCodecs, enkoda ya programu"
     },

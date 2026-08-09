@@ -8,7 +8,7 @@
     },
     "convert": {
         "converting": "በመቀየር ላይ…",
-        "refineNote": "የመጀመሪያው ሙከራ ከታለመው መጠን በላይ አልፏል። ለትክክለኛነት እንደገና በሂደት ላይ ነው።",
+        "refineNote": "የመጀመሪያው ሙከራ ዒላማውን አልመታም። ቢትሬት እና ኢንኮዲንግን እንደገና በማስተካከል ላይ።",
         "refining": "መጠን ማስተካከል…",
         "start": "ቀይር"
     },
@@ -41,10 +41,15 @@
         "local": "ፋይልዎ ይህንን መሳሪያ ለቅቆ አይወጣም።"
     },
     "result": {
+        "alreadySmall": "ከዒላማዎ ቀድሞውኑ ያነሰ ነው:",
         "convertAnother": "ሌላ ይለውጡ",
         "done": "ተጠናቋል፦",
         "download": "አውርድ",
         "ffmpeg": "ffmpeg.wasm፣ የሲፒዩ (CPU) መጠባበቂያ",
+        "noShrink": "ይህንን ይበልጥ ማሳነስ አልተቻለም:",
+        "noShrinkDetail": "ይህ ቪዲዮ አሁን ካለው መጠን በታች መጭመቅ አይቻልም፣ ስለዚህ እንደነበረ ተጠብቋል",
+        "remuxed": "ሜታዳታ ተወግዷል፣ ቪዲዮው ሳይነካ ቀርቷል",
+        "untouched": "እንደነበረው ቀርቷል፣ የሚቀንስ ነገር የለም",
         "webcodecs": "WebCodecs፣ በሃርድዌር የተፋጠነ",
         "webcodecsSoftware": "WebCodecs፣ የሶፍትዌር ኢንኮደር"
     },
