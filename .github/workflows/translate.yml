@@ -91,31 +91,61 @@ jobs:
           git checkout -b "$BRANCH"
           git add src/locales .github/i18n/cache.json
           git commit -m "Update translations"
+          # Translating every locale takes over an hour, so main has usually
+          # moved on since checkout. main requires an up-to-date head branch,
+          # so rebase before pushing.
+          git fetch origin main
+          git rebase origin/main
           git push origin "$BRANCH"
           gh pr create \
             --title "Update translations" \
             --body "Automated translation refresh for src/locales." \
             --base main \
             --head "$BRANCH"
-          # Dispatch the required check onto the branch explicitly and wait
-          # for it. GitHub also auto-creates a pull_request run for this
-          # bot-authored PR, so filter by event to watch the run we started,
-          # not that one.
-          gh workflow run pr-checks.yml --ref "$BRANCH"
-          sleep 15
-          RUN_ID=$(gh run list --workflow=pr-checks.yml --branch "$BRANCH" --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId')
-          gh run watch "$RUN_ID" --exit-status
-          # The auto-created pull_request run blocks the merge box until it
-          # finishes (it lags the dispatched run by a few seconds), so retry
-          # the merge instead of failing on the first attempt.
+
+          latest_check_run() {
+            gh run list --workflow=pr-checks.yml --branch "$BRANCH" \
+              --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0'
+          }
+
+          # GitHub auto-creates a pull_request run for this bot-authored PR but
+          # parks it on approval, so dispatch the required check ourselves and
+          # wait for that run. Poll for a run id newer than the last one rather
+          # than sleeping a fixed amount, since a re-dispatch would otherwise
+          # match the previous pass.
+          run_checks() {
+            local prev run_id i
+            prev=$(latest_check_run)
+            run_id="$prev"
+            gh workflow run pr-checks.yml --ref "$BRANCH"
+            for i in $(seq 1 24); do
+              sleep 5
+              run_id=$(latest_check_run)
+              if [ "$run_id" != "$prev" ]; then
+                break
+              fi
+            done
+            if [ "$run_id" = "$prev" ]; then
+              echo "Dispatched check run never appeared."
+              return 1
+            fi
+            gh run watch "$run_id" --exit-status
+          }
+
+          # main can advance again while the check runs, which puts the branch
+          # behind and blocks the merge. Each pass re-syncs, re-runs the check
+          # against the new head, and retries.
           MERGED=0
-          for i in $(seq 1 10); do
+          for pass in 1 2 3; do
+            run_checks
             if gh pr merge "$BRANCH" --squash --delete-branch; then
               MERGED=1
               break
             fi
-            echo "Merge blocked, retrying in 15s ($i/10)..."
-            sleep 15
+            echo "Merge blocked, syncing with main and retrying ($pass/3)..."
+            git fetch origin main
+            git rebase origin/main
+            git push --force-with-lease origin "$BRANCH"
           done
           if [ "$MERGED" != "1" ]; then
             echo "PR never became mergeable; approve/merge it manually."
