@@ -7,14 +7,23 @@ const AUTO = 'auto';
 
 // A language's own name for itself ("Deutsch", "日本語") so every entry is
 // readable to the person who needs it, whatever language is active.
+// Building an Intl.DisplayNames costs real time and the answer never
+// changes, so every result is kept for the life of the page.
+const endonyms = new Map<string, string>();
+
 function endonym(code: string): string {
+  const cached = endonyms.get(code);
+  if (cached !== undefined) return cached;
+  let name = code;
   try {
-    const name = new Intl.DisplayNames([code], { type: 'language' }).of(code);
-    if (name && name !== code) return name.charAt(0).toLocaleUpperCase(code) + name.slice(1);
+    const named = new Intl.DisplayNames([code], { type: 'language' }).of(code);
+    if (named && named !== code) name = named.charAt(0).toLocaleUpperCase(code) + named.slice(1);
   } catch {
-    // Fall through to the raw code for locales the browser can't name.
+    // Keep the raw code for locales the browser can't name, and cache
+    // that too so the failure isn't retried on every render.
   }
-  return code;
+  endonyms.set(code, name);
+  return name;
 }
 
 function GlobeIcon() {
