@@ -1,15 +1,26 @@
-import { canEncodeVideo } from 'mediabunny';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './App.css';
 import { setAppBusy } from './lib/appBusy';
-import { convertVideo, type ConversionPhase, type ConvertResult } from './lib/convert';
+import type { ConversionPhase, ConvertResult } from './lib/convert';
 
 const MB = 1024 * 1024;
 const SIZE_PRESETS_MB = [10, 25, 50, 100];
 const DEFAULT_TARGET_MB = 25;
 
 type Status = 'idle' | 'converting' | 'done' | 'error';
+
+// mediabunny is the bulk of this app's JavaScript and nothing converts until a
+// file is picked, so the engine is fetched separately instead of being parsed
+// during startup. Both entry points below go through here: picking a file
+// starts the fetch so the Convert click has nothing left to wait for, and
+// pressing Convert awaits whatever that started. Every built chunk is
+// precached, so this costs nothing offline.
+let engineModule: Promise<typeof import('./lib/convert')> | null = null;
+function loadEngine(): Promise<typeof import('./lib/convert')> {
+  engineModule ??= import('./lib/convert');
+  return engineModule;
+}
 
 // Errors are stored as translation keys (or a raw engine message) and only
 // rendered through t(), so an error that is on screen when the user switches
@@ -39,6 +50,8 @@ function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Last percent actually pushed into state, so identical values don't render.
+  const lastPercent = useRef(-1);
   const shareTargetPending = useRef(location.search.includes('share-target'));
   // Set when the user cancels the share handoff: the worker may still deliver
   // the file (or an error) afterwards, and both should be dropped silently.
@@ -47,7 +60,10 @@ function App() {
   const cancelShareRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    canEncodeVideo('hevc', { hardwareAcceleration: 'prefer-hardware', width: 1280, height: 720, bitrate: 4_000_000 })
+    // Imported rather than called directly so the probe's own mediabunny
+    // dependency stays out of the startup bundle along with the engine.
+    import('./lib/capabilities')
+      .then(({ detectHevcHardwareSupport }) => detectHevcHardwareSupport())
       .then((supported) => setHevcAvailable(supported))
       .catch(() => setHevcAvailable(false));
   }, []);
@@ -71,6 +87,7 @@ function App() {
     setFile(null);
     setStatus('idle');
     setProgress(0);
+    lastPercent.current = -1;
     setPhase('encoding');
     setResult(null);
     setError(null);
@@ -89,6 +106,9 @@ function App() {
       }
       reset();
       setFile(chosen);
+      // Nothing waits on this; it just means the engine is usually already
+      // there by the time Convert is pressed.
+      void loadEngine();
     },
     [reset],
   );
@@ -156,16 +176,25 @@ function App() {
     if (!file) return;
     setStatus('converting');
     setProgress(0);
+    lastPercent.current = -1;
     setPhase('encoding');
     setError(null);
     // H.265 whenever the GPU supports it, unless the user forces H.264.
     const preferHevc = hevcAvailable && !forceH264;
     try {
+      const { convertVideo } = await loadEngine();
       const converted = await convertVideo(file, targetMb * MB, {
         preferHevc,
         stripMetadata,
         onProgress: (p, currentPhase) => {
-          setProgress(p);
+          // The bar only ever renders whole percent, so every sub-percent tick
+          // re-rendered the whole tree for no visible change — on the main
+          // thread, while the encoder is running and contending for it.
+          const percent = Math.round(p * 100);
+          if (percent !== lastPercent.current) {
+            lastPercent.current = percent;
+            setProgress(p);
+          }
           setPhase(currentPhase);
         },
       });

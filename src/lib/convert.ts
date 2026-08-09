@@ -1,12 +1,16 @@
 import {
-  ALL_FORMATS,
   BlobSource,
   BufferTarget,
   Conversion,
   Input,
   type InputAudioTrack,
+  MATROSKA,
+  MP4,
   Mp4OutputFormat,
+  MPEG_TS,
   Output,
+  QTFF,
+  WEBM,
 } from 'mediabunny';
 import {
   MIN_UPWARD_GROWTH,
@@ -17,7 +21,7 @@ import {
   UNDERSHOOT_RETRY_RATIO,
   UPWARD_PASS_MARGIN,
 } from './bitrate';
-import { convertWithWebCodecs } from './webcodecsEngine';
+import { convertWithWebCodecs, type VideoDimensions } from './webcodecsEngine';
 
 /**
  * Beyond the two encoders, three outcomes skip encoding: 'original' hands back
@@ -54,6 +58,16 @@ type Attempt = { blob: Blob; engine: EngineUsed; codec: string; hardwareAccelera
 // land just over target; a couple of measured retries reliably converge under.
 const MAX_REFINEMENT_PASSES = 2;
 
+// Only the video containers this app can actually be handed. ALL_FORMATS also
+// registers the audio-only demuxers (WAVE, OGG, FLAC, MP3, ADTS) and HLS,
+// which no file passing the video/* check can ever match.
+//
+// AVI and MPEG-PS are deliberately absent even though the share target accepts
+// them: mediabunny ships no demuxer for either, so they always take the
+// ffmpeg.wasm path. They stay advertised so the system share sheet keeps
+// offering this app for them, at the cost of the slower engine.
+const INPUT_FORMATS = [MP4, QTFF, MATROSKA, WEBM, MPEG_TS];
+
 /**
  * Repackages the file without re-encoding it, dropping its metadata on the
  * way. Used when the source is already under target and the only thing left
@@ -89,6 +103,11 @@ async function remuxWithoutMetadata(input: Input): Promise<Blob | null> {
   }
 }
 
+// Set when a conversion touched the ffmpeg engine, so the source can be
+// dropped from the wasm filesystem afterwards without importing that module
+// (and its 32 MB core) on the WebCodecs path that never used it.
+let usedFfmpeg = false;
+
 function isImprovement(candidate: Attempt, baseline: Attempt, targetSizeBytes: number): boolean {
   const candidateOver = candidate.blob.size > targetSizeBytes;
   const baselineOver = baseline.blob.size > targetSizeBytes;
@@ -103,12 +122,13 @@ async function attemptConversion(
   input: Input,
   durationSeconds: number,
   audioTrack: InputAudioTrack | null,
+  dimensions: VideoDimensions,
   videoBitrate: number,
   audioBitrate: number,
   phase: ConversionPhase,
   options: ConvertOptions,
 ): Promise<Attempt> {
-  const webCodecsOutcome = await convertWithWebCodecs(input, durationSeconds, audioTrack, {
+  const webCodecsOutcome = await convertWithWebCodecs(input, durationSeconds, audioTrack, dimensions, {
     videoBitrate,
     audioBitrate,
     preferHevc: options.preferHevc,
@@ -124,6 +144,7 @@ async function attemptConversion(
   // Lazy-loaded: most browsers can use WebCodecs, so the ffmpeg.wasm
   // wrapper (and its wasm binary) should only be fetched when needed.
   const { convertWithFfmpeg } = await import('./ffmpegEngine');
+  usedFfmpeg = true;
   try {
     const ffmpegResult = await convertWithFfmpeg(file, {
       videoBitrate,
@@ -158,7 +179,7 @@ async function attemptConversion(
  * it under.
  */
 export async function convertVideo(file: File, targetSizeBytes: number, options: ConvertOptions): Promise<ConvertResult> {
-  const input = new Input({ formats: ALL_FORMATS, source: new BlobSource(file) });
+  const input = new Input({ formats: INPUT_FORMATS, source: new BlobSource(file) });
 
   try {
     const duration = await input.computeDuration();
@@ -190,6 +211,15 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       }
     }
 
+    // Resolved once here rather than inside each attempt: the dimensions are
+    // the same on every pass, and reading them means seeking around the file.
+    const videoTrack = await input.getPrimaryVideoTrack();
+    if (!videoTrack) throw new Error('This file has no video track to convert.');
+    const dimensions: VideoDimensions = {
+      width: await videoTrack.getDisplayWidth(),
+      height: await videoTrack.getDisplayHeight(),
+    };
+
     const plan = planBitrates(duration, targetSizeBytes, hasAudio);
     // Asking for more than the source itself carries would inflate the file
     // rather than shrink it, so no pass may exceed this.
@@ -201,6 +231,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       input,
       duration,
       audioTrack,
+      dimensions,
       videoBitrate,
       plan.audioBitrate,
       'encoding',
@@ -243,6 +274,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
         input,
         duration,
         audioTrack,
+        dimensions,
         videoBitrate,
         plan.audioBitrate,
         'refining',
@@ -277,6 +309,11 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
 
     return { ...best, videoBitrate: bestVideoBitrate, audioBitrate: plan.audioBitrate };
   } finally {
+    if (usedFfmpeg) {
+      usedFfmpeg = false;
+      // Already loaded by the time this runs, so the import is immediate.
+      await import('./ffmpegEngine').then(({ releaseFfmpegInput }) => releaseFfmpegInput());
+    }
     input.dispose();
   }
 }

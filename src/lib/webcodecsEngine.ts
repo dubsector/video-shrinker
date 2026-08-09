@@ -30,6 +30,16 @@ export type WebCodecsConvertOptions = {
 };
 
 /**
+ * The source's display dimensions, resolved once by the caller. They don't
+ * change between refinement passes, and looking them up means seeking around
+ * the file, so re-reading them on every attempt is pure repetition.
+ */
+export type VideoDimensions = {
+  width: number;
+  height: number;
+};
+
+/**
  * Result of a WebCodecs attempt: either a successful encode, or a failure
  * carrying the reason, so a caller that subsequently also fails on the
  * ffmpeg.wasm fallback can report both causes instead of just the last one.
@@ -51,17 +61,15 @@ export async function convertWithWebCodecs(
   input: Input,
   durationSeconds: number,
   audioTrack: InputAudioTrack | null,
+  dimensions: VideoDimensions,
   options: WebCodecsConvertOptions,
 ): Promise<WebCodecsOutcome> {
-  const videoTrack = await input.getPrimaryVideoTrack();
-  if (!videoTrack) throw new Error('This file has no video track to convert.');
-
-  const width = await videoTrack.getDisplayWidth();
-  const height = await videoTrack.getDisplayHeight();
+  const { width, height } = dimensions;
 
   // Some browsers (e.g. Brave) support hardware AVC encode in general but
   // reject specific resolution/bitrate/level combinations, so the probe must
   // match what's actually about to be requested, not a generic placeholder.
+  // This one stays per-attempt for that reason: the bitrate changes each pass.
   const codec = await pickWebCodecsCodec(options.preferHevc, { width, height, bitrate: options.videoBitrate });
   if (!codec) return { ok: false, fallbackReason: 'No usable video codec available via WebCodecs in this browser.' };
 
