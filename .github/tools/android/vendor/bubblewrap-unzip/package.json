@@ -1,0 +1,11 @@
+{
+  "name": "bubblewrap-unzip",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Containment-checked replacement for extract-zip, used via an npm override for @bubblewrap/core's unzipFile",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "yauzl": "^2.10.0"
+  }
+}
