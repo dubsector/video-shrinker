@@ -134,7 +134,7 @@ jobs:
       # CodeQL scan) — it's transient on GitHub's end, so just retry.
       - name: Deploy to GitHub Pages (attempt 1)
         id: attempt1
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
         continue-on-error: true
 
       - name: Wait before retry 1
@@ -144,7 +144,7 @@ jobs:
       - name: Deploy to GitHub Pages (attempt 2)
         id: attempt2
         if: steps.attempt1.outcome == 'failure'
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
         continue-on-error: true
 
       - name: Wait before retry 2
@@ -154,4 +154,4 @@ jobs:
       - name: Deploy to GitHub Pages (attempt 3)
         id: attempt3
         if: steps.attempt1.outcome == 'failure' && steps.attempt2.outcome == 'failure'
-        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
