@@ -49,6 +49,10 @@ final class WebApp {
     private static final int TARGET_MB = 2;
 
     static final Pattern CONVERT = Pattern.compile("Convert");
+    // The web app's drop zone with no video in it, and the dialogs shown
+    // while a share is on its way (the relay's, then the web app's).
+    private static final Pattern EMPTY = Pattern.compile("Drop a video here, or click to choose one");
+    private static final Pattern PREPARING = Pattern.compile("Preparing your video");
     private static final Pattern DOWNLOAD = Pattern.compile("Download");
     private static final Pattern PROGRESS = Pattern.compile("(Paused · )?\\d+%");
     private static final Pattern ENGINE = Pattern.compile(
@@ -134,7 +138,23 @@ final class WebApp {
     }
 
     void waitForShared(Pattern name, String what) {
-        waitFor(name, 120_000, "the web app to receive " + what);
+        long end = SystemClock.uptimeMillis() + 120_000;
+        long idleSince = 0;
+        for (; ; ) {
+            checkForError();
+            if (findOnScreen(name) != null) break;
+            long now = SystemClock.uptimeMillis();
+            // What a lost share looks like: the web app open with its empty
+            // drop zone, no "Preparing your video" dialog and no error. Give
+            // a slow sender a while before calling it.
+            boolean empty = findOnScreen(EMPTY) != null && findOnScreen(PREPARING) == null;
+            idleSince = empty ? (idleSince == 0 ? now : idleSince) : 0;
+            if (idleSince != 0 && now - idleSince > 30_000) {
+                failWithScreen("the app opened with nothing attached and no error, instead of " + what);
+            }
+            if (now > end) failWithScreen("timed out waiting for the web app to receive " + what);
+            SystemClock.sleep(1_000);
+        }
         log("the web app received " + textOf(name));
         shot(what + "-shared");
     }

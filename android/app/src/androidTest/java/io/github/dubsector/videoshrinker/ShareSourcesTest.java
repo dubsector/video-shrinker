@@ -2,6 +2,7 @@ package io.github.dubsector.videoshrinker;
 
 import static org.junit.Assume.assumeTrue;
 
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -28,13 +29,16 @@ import java.util.regex.Pattern;
 
 /**
  * Shares a video to the app from the places real shares come from, and
- * checks the web app receives it each time. The emulator test can't do this:
+ * checks the web app receives it each time. The failure seen on phones is
+ * the app opening with nothing attached and no error; WebApp.waitForShared
+ * names that case when it happens. The emulator test can't do this:
  * its shell can't grant another app a gallery item, so it only ever shares
  * from the app's own files.
  *
  *  - fromGallery: an item in the system's media store (content://media/...).
- *  - fromPhotosLikeApp: another app's provider behaving like Google Photos at
- *    its most awkward, with no extension, size or type, streaming slowly.
+ *  - fromPhotosLikeApp: another app sharing from its own task, its provider
+ *    behaving like Google Photos at its most awkward: no extension, size or
+ *    type, streaming slowly. Then again with Chrome not running.
  *  - fromGooglePhotos: Google Photos itself, through its Share button, where
  *    the phone has it. Skipped when Photos isn't there or its screens can't
  *    be got through, since that says nothing about the app.
@@ -71,26 +75,16 @@ public class ShareSourcesTest {
 
     @Test
     public void fromPhotosLikeApp() throws IOException {
-        web.step("Sharing a video like Google Photos does: no extension, size or type, streamed slowly");
-        // A Pixel camera name, which Photos sometimes reports without its
-        // extension. The relay should add the one for the real type.
-        String name = "PXL_20261004_120000123";
-        File file = web.copyVideoToApp("photos-source.mp4");
-        String testPackage = web.instrumentation.getContext().getPackageName();
-        Uri source = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider", file);
-        web.app.grantUriPermission(testPackage, source, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        // About 12 seconds for the 12 MB test video, so the relay's
-        // "Preparing your video" dialog shows for a while.
-        Uri uri = new Uri.Builder()
-                .scheme(ContentResolver.SCHEME_CONTENT)
-                .authority(testPackage + ".photoslike")
-                .appendPath(name)
-                .appendQueryParameter("src", source.toString())
-                .appendQueryParameter("kbps", "1024")
-                .build();
-        // Photos shares with a wildcard type when the item's is unknown.
-        web.shareUri(uri, "video/*");
-        web.waitForShared(name + ".mp4");
+        web.step("Sharing a video like Google Photos does, from its own task");
+        shareLikePhotos("PXL_20261004_120000123");
+    }
+
+    @Test
+    public void fromPhotosLikeAppWithChromeStopped() throws IOException {
+        web.step("Sharing a video like Google Photos does, with Chrome not running");
+        web.device.pressHome();
+        web.shell("am force-stop " + WebApp.CHROME);
+        shareLikePhotos("PXL_20261004_120500456");
     }
 
     @Test
@@ -138,6 +132,41 @@ public class ShareSourcesTest {
         // or adds the extension.
         String base = name.substring(0, name.lastIndexOf('.'));
         web.waitForShared(Pattern.compile(Pattern.quote(base) + "(\\.\\w+)?"), base);
+    }
+
+    // Shares the test video from another app's task and provider the way
+    // Google Photos can at its most awkward: a Pixel camera name with no
+    // extension, no size, no type, and a slow unseekable stream, as when
+    // Photos downloads a cloud-only item. The relay should add the extension
+    // for the real type.
+    private void shareLikePhotos(String name) throws IOException {
+        File file = web.copyVideoToApp("photos-source.mp4");
+        String testPackage = web.instrumentation.getContext().getPackageName();
+        Uri source = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider", file);
+        web.app.grantUriPermission(testPackage, source, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        // About 12 seconds for the 12 MB test video, so the relay's
+        // "Preparing your video" dialog shows for a while.
+        Uri uri = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_CONTENT)
+                .authority(testPackage + ".photoslike")
+                .appendPath(name)
+                .appendQueryParameter("src", source.toString())
+                .appendQueryParameter("kbps", "1024")
+                .build();
+        // Photos shares with a wildcard type when the item's is unknown.
+        Intent share = new Intent(Intent.ACTION_SEND)
+                .setClassName(web.app, ShareRelayActivity.class.getName())
+                .setType("video/*")
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        share.setClipData(ClipData.newRawUri(null, uri));
+        web.log("sharing " + uri + " from another app's task");
+        web.device.pressHome();
+        web.app.startActivity(new Intent()
+                .setClassName(testPackage, SenderActivity.class.getName())
+                .putExtra(SenderActivity.EXTRA_SHARE, share)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        web.waitForShared(name + ".mp4");
     }
 
     // Adds the test video to the media store as a new item and returns its
