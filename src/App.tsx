@@ -97,10 +97,13 @@ function App() {
   // itself, a conversion in flight, and a result not yet downloaded (reset()
   // clears the file along with the rest). A share handoff in flight counts
   // too — the file only exists in the old worker's memory, so an auto-update
-  // reload here would drop it on the floor with no error.
+  // reload here would drop it on the floor with no error. So does an error on
+  // screen: returning to the app checks for updates, so a share that failed
+  // was often followed at once by an update that reloaded the page and wiped
+  // the error, leaving an empty app with no hint of what went wrong.
   useEffect(() => {
-    setAppBusy(file !== null || receivingShare || restoring);
-  }, [file, receivingShare, restoring]);
+    setAppBusy(file !== null || receivingShare || restoring || error !== null);
+  }, [file, receivingShare, restoring, error]);
 
   const reset = useCallback(() => {
     setFile(null);
