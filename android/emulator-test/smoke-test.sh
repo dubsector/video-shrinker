@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Smoke-tests the debug APK on a running emulator (or a USB device):
 #   1. launches the app and checks Chrome opens the web app,
-#   2. shares a video to it the way the gallery would, and checks the relay
+#   2. shares a video to it through a content URI, and checks the relay
 #      copied it and the web app received it,
 #   3. converts that video and sends the app to the background mid-encode,
 #      then checks the conversion still finishes.
@@ -88,23 +88,17 @@ ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=1
   "$OUT_DIR/$VIDEO"
 size=$(stat -c %s "$OUT_DIR/$VIDEO")
 echo "Test video: $size bytes"
-adb shell mkdir -p /sdcard/Movies
-adb push "$OUT_DIR/$VIDEO" "/sdcard/Movies/$VIDEO" > /dev/null
-adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Movies/$VIDEO" > /dev/null
-media_id() {
-  adb shell content query --uri content://media/external/video/media --projection _id:_display_name \
-    | tr -d '\r' | grep "_display_name=$VIDEO" | sed -E 's/.*_id=([0-9]+).*/\1/' | head -n1
-}
-media_indexed() { [ -n "$(media_id)" ]; }
-wait_for 30 media_indexed || true
-id=$(media_id)
-[ -n "$id" ] || fail "MediaStore never indexed the test video"
-uri="content://media/external/video/media/$id"
+# The shell can't grant another app access to a MediaStore item, so serve
+# the video from the app's own FileProvider instead. The relay still reads
+# it through a content URI and copies it, as it would from the gallery.
+adb push "$OUT_DIR/$VIDEO" "/data/local/tmp/$VIDEO" > /dev/null
+adb shell "cat /data/local/tmp/$VIDEO | run-as $PKG sh -c 'mkdir -p files/twa_splash && cat > files/twa_splash/$VIDEO'"
+uri="content://$PKG.fileprovider/twa_splash/$VIDEO"
 echo "Sharing $uri"
 # Go home first so the share arrives like it would from the gallery.
 adb shell input keyevent KEYCODE_HOME
 adb shell am start -a android.intent.action.SEND -t video/mp4 \
-  --eu android.intent.extra.STREAM "$uri" --grant-read-uri-permission \
+  --eu android.intent.extra.STREAM "$uri" \
   -n "$PKG/.ShareRelayActivity"
 relay_copied() {
   local copied
