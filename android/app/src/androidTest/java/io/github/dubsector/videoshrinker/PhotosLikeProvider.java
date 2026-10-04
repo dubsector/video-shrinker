@@ -21,12 +21,18 @@ import java.io.OutputStream;
  * stream, as when Photos downloads a cloud-only item while the receiver
  * reads it. It runs in the test package, so to the app it is another app.
  *
- * URIs look like content://AUTHORITY/NAME?src=URI&type=TYPE&size=1&kbps=N.
- * src is the video to serve (the app's FileProvider, granted to this
- * package); type and size are reported only when given; kbps throttles the
- * stream.
+ * URIs look like content://AUTHORITY/NAME?type=TYPE&size=1&kbps=N. Whatever
+ * the name, it serves the one video the test puts in the app's files
+ * (SOURCE, granted to this package); type and size are reported only when
+ * given; kbps throttles the stream.
  */
 public class PhotosLikeProvider extends ContentProvider {
+
+    static final String SOURCE_NAME = "photos-source.mp4";
+    // Fixed rather than taken from the URI: this provider is exported, so it
+    // mustn't serve whatever another app asks it for.
+    private static final Uri SOURCE =
+            Uri.parse("content://io.github.dubsector.videoshrinker.fileprovider/twa_splash/" + SOURCE_NAME);
 
     @Override
     public boolean onCreate() {
@@ -42,7 +48,7 @@ public class PhotosLikeProvider extends ContentProvider {
             if (OpenableColumns.DISPLAY_NAME.equals(projection[i])) {
                 row[i] = uri.getLastPathSegment();
             } else if (OpenableColumns.SIZE.equals(projection[i]) && uri.getQueryParameter("size") != null) {
-                row[i] = sizeOf(source(uri));
+                row[i] = sizeOf(SOURCE);
             }
         }
         cursor.addRow(row);
@@ -56,7 +62,7 @@ public class PhotosLikeProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
-        final Uri source = source(uri);
+        final Uri source = SOURCE;
         String kbps = uri.getQueryParameter("kbps");
         final long bytesPerSecond = kbps == null ? 0 : Long.parseLong(kbps) * 1024;
         final ParcelFileDescriptor[] pipe;
@@ -97,12 +103,6 @@ public class PhotosLikeProvider extends ContentProvider {
             }
         }).start();
         return pipe[0];
-    }
-
-    private static Uri source(Uri uri) {
-        String src = uri.getQueryParameter("src");
-        if (src == null) throw new IllegalArgumentException("no src in " + uri);
-        return Uri.parse(src);
     }
 
     private Long sizeOf(Uri source) {

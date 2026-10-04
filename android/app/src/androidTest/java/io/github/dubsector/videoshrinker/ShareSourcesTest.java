@@ -140,7 +140,7 @@ public class ShareSourcesTest {
     // Photos downloads a cloud-only item. The relay should add the extension
     // for the real type.
     private void shareLikePhotos(String name) throws IOException {
-        File file = web.copyVideoToApp("photos-source.mp4");
+        File file = web.copyVideoToApp(PhotosLikeProvider.SOURCE_NAME);
         String testPackage = web.instrumentation.getContext().getPackageName();
         Uri source = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider", file);
         web.app.grantUriPermission(testPackage, source, Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -150,7 +150,6 @@ public class ShareSourcesTest {
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(testPackage + ".photoslike")
                 .appendPath(name)
-                .appendQueryParameter("src", source.toString())
                 .appendQueryParameter("kbps", "1024")
                 .build();
         // Photos shares with a wildcard type when the item's is unknown.
