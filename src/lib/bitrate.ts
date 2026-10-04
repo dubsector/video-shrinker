@@ -102,3 +102,112 @@ export function refineVideoBitrate(
   const ratio = Math.min(5, Math.max(0.15, targetVideoBytes / actualVideoBytes));
   return Math.max(MIN_VIDEO_BITRATE, Math.round(previousVideoBitrate * ratio));
 }
+
+/**
+ * Bits per pixel per frame below which an encoder visibly starves: blocking,
+ * smeared motion, detail turning to mush. Below this, a smaller picture at the
+ * same bitrate looks better than a bigger one, because every pixel gets enough
+ * bits to look like something. HEVC gets by on noticeably less than AVC.
+ */
+const MIN_BITS_PER_PIXEL = { avc: 0.045, hevc: 0.03 } as const;
+
+// Steps to shrink through, by the picture's short side. Stopping on common
+// sizes keeps the result looking like a normal video to players and upload
+// targets rather than an odd one-off resolution.
+const SHORT_SIDE_LADDER = [2160, 1440, 1080, 720, 540, 480, 360] as const;
+
+// Frame rates above this are never kept: phones record slow motion at 120 or
+// 240 fps, and no one shrinking a video wants to spend the budget on frames
+// that only play back at normal speed anyway.
+const MAX_FRAME_RATE = 60;
+
+// Only rates high enough that halving them still plays smoothly get halved:
+// 60 to 30 and 50 to 25 are invisible to most people, 30 to 15 is not.
+const MIN_FRAME_RATE_TO_HALVE = 48;
+
+export type SourceGeometry = {
+  width: number;
+  height: number;
+  /** Null when the source's frame rate couldn't be determined. */
+  frameRate: number | null;
+};
+
+export type OutputGeometry = {
+  width: number;
+  height: number;
+  /** The rate to encode at, or null when the source's is unknown and its own timing should be kept. */
+  frameRate: number | null;
+};
+
+function toEven(value: number): number {
+  return Math.max(2, Math.round(value / 2) * 2);
+}
+
+/**
+ * Picks the picture size and frame rate to encode at for a given bitrate.
+ * Encoding a 1080p60 phone clip at under a megabit keeps every pixel and
+ * frame and gives each one almost nothing, which looks far worse than the
+ * same bitrate spent on 720p30. So frame rate goes first (it costs the least
+ * to lose), then the resolution steps down the ladder until each pixel gets
+ * enough bits. Never upscales, and never drops below the ladder's last rung.
+ */
+export function planOutputGeometry(
+  source: SourceGeometry,
+  videoBitrate: number,
+  codec: keyof typeof MIN_BITS_PER_PIXEL,
+): OutputGeometry {
+  const minBitsPerPixel = MIN_BITS_PER_PIXEL[codec];
+  const bitsPerPixel = (width: number, height: number, fps: number) => videoBitrate / (width * height * fps);
+
+  let frameRate = source.frameRate;
+  if (frameRate !== null && frameRate > MAX_FRAME_RATE) {
+    frameRate /= Math.ceil(frameRate / MAX_FRAME_RATE);
+  }
+  // Unknown rates are budgeted as 30, the most common one.
+  const budgetedFrameRate = frameRate ?? 30;
+  if (
+    frameRate !== null &&
+    frameRate >= MIN_FRAME_RATE_TO_HALVE &&
+    bitsPerPixel(source.width, source.height, budgetedFrameRate) < minBitsPerPixel
+  ) {
+    frameRate /= 2;
+  }
+
+  const fps = frameRate ?? budgetedFrameRate;
+  const shortSide = Math.min(source.width, source.height);
+  let scale = 1;
+  if (bitsPerPixel(source.width, source.height, fps) < minBitsPerPixel) {
+    const rungs = SHORT_SIDE_LADDER.filter((rung) => rung < shortSide);
+    const fitting = rungs.find((rung) => {
+      const s = rung / shortSide;
+      return bitsPerPixel(source.width * s, source.height * s, fps) >= minBitsPerPixel;
+    });
+    const rung = fitting ?? rungs[rungs.length - 1];
+    if (rung !== undefined) scale = rung / shortSide;
+  }
+
+  return {
+    width: scale === 1 ? source.width : toEven(source.width * scale),
+    height: scale === 1 ? source.height : toEven(source.height * scale),
+    frameRate,
+  };
+}
+
+/**
+ * The plan when the source's audio is copied across as it is rather than
+ * re-encoded: the audio's size is already fixed, so the video gets whatever
+ * the target leaves after it.
+ */
+export function planBitratesWithCopiedAudio(
+  durationSeconds: number,
+  targetSizeBytes: number,
+  copiedAudioBitrate: number,
+  marginRatio: number = FIRST_PASS_MARGIN,
+): BitratePlan {
+  if (durationSeconds <= 0) throw new Error('Duration must be greater than 0');
+  const totalBitrate = (targetSizeBytes * 8 * marginRatio) / durationSeconds;
+  return {
+    videoBitrate: Math.max(MIN_VIDEO_BITRATE, Math.round(totalBitrate - copiedAudioBitrate)),
+    audioBitrate: copiedAudioBitrate,
+  };
+}
