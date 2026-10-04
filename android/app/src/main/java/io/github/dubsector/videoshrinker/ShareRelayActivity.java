@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,9 +52,12 @@ import java.util.Locale;
 public class ShareRelayActivity extends Activity {
 
     private static final String CACHE_DIR_NAME = "shared_videos";
-    private static final String FALLBACK_NAME = "shared-video.mp4";
+    private static final String FALLBACK_NAME = "shared-video";
+    private static final String FALLBACK_TYPE = "video/mp4";
 
     private volatile boolean cancelled;
+    // Concrete MIME type of the copied video, set by copyToCache().
+    private volatile String resolvedType = FALLBACK_TYPE;
     private boolean isResumedState;
     private ProgressBar spinner;
     private TextView statusView;
@@ -195,8 +199,7 @@ public class ShareRelayActivity extends Activity {
                             if (cancelled) return;
                             Intent forward = new Intent();
                             forward.setAction(Intent.ACTION_SEND);
-                            forward.setType(getIntent().getType() != null
-                                    ? getIntent().getType() : "video/mp4");
+                            forward.setType(resolvedType);
                             forward.putExtra(Intent.EXTRA_STREAM, local);
                             forward.setClipData(ClipData.newRawUri(null, local));
                             forward.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -235,6 +238,16 @@ public class ShareRelayActivity extends Activity {
                 cursor.close();
             }
         }
+
+        // Chrome learns the file's type from FileProvider, which only looks at
+        // the extension, and drops any file whose type is not in the share
+        // target's accept list. Senders like Google Photos sometimes report a
+        // display name with no extension (or none at all), so the relayed file
+        // reached the web app as application/octet-stream and the share
+        // failed with "No video found". Name the copy after its real type.
+        String type = resolveVideoType(source);
+        resolvedType = type;
+        name = withExtensionFor(name, type);
 
         File dir = new File(getCacheDir(), CACHE_DIR_NAME);
         deleteContents(dir);
@@ -276,6 +289,49 @@ public class ShareRelayActivity extends Activity {
         }
 
         return FileProvider.getUriForFile(this, getString(R.string.providerAuthority), out);
+    }
+
+    /**
+     * The most specific video MIME type available for the shared item: the
+     * provider's own answer first, then the share intent's type, ignoring
+     * wildcards and generic types that FileProvider could not map back.
+     */
+    private String resolveVideoType(Uri source) {
+        String type = null;
+        try {
+            type = getContentResolver().getType(source);
+        } catch (Exception ignored) {
+            // Some providers throw instead of returning null.
+        }
+        if (!isConcreteVideoType(type)) type = getIntent().getType();
+        if (!isConcreteVideoType(type)) type = FALLBACK_TYPE;
+        return type.toLowerCase(Locale.ROOT);
+    }
+
+    private static boolean isConcreteVideoType(String type) {
+        return type != null && type.toLowerCase(Locale.ROOT).startsWith("video/")
+                && !type.endsWith("/*");
+    }
+
+    /**
+     * Makes sure the name ends in an extension FileProvider maps to a video
+     * type, appending one for {@code type} when it doesn't.
+     */
+    private static String withExtensionFor(String name, String type) {
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        int dot = name.lastIndexOf('.');
+        if (dot > 0 && dot < name.length() - 1) {
+            String ext = name.substring(dot + 1).toLowerCase(Locale.ROOT);
+            String extType = map.getMimeTypeFromExtension(ext);
+            if (extType != null && extType.startsWith("video/")) {
+                // Lower-case the extension: older Android versions match it
+                // case-sensitively, so "clip.MP4" would come out untyped.
+                return name.substring(0, dot + 1) + ext;
+            }
+        }
+        String ext = map.getExtensionFromMimeType(type);
+        if (ext == null) ext = "mp4";
+        return name + "." + ext;
     }
 
     private static void deleteContents(File dir) {
