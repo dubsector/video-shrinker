@@ -213,7 +213,7 @@ final class WebApp {
             SystemClock.sleep(2_000);
         }
         scrollDown();
-        String engine = textOf(ENGINE);
+        String engine = engine();
         log("finished " + when + ": " + engine);
         shot("done");
         checkEngine(engine, when);
@@ -300,6 +300,16 @@ final class WebApp {
         device.click(bounds.centerX(), bounds.centerY());
     }
 
+    // Which encoder the result names. Chrome may put the result's whole
+    // paragraph in one node ("Done: H.264 · … MB\nWebCodecs, software
+    // encoder"), so look for the engine anywhere in a node's text.
+    private String engine() {
+        String text = textOf(Pattern.compile("(?s).*(" + ENGINE.pattern() + ").*"));
+        if (text == null) return null;
+        Matcher m = ENGINE.matcher(text);
+        return m.find() ? m.group() : text;
+    }
+
     private String textOf(Pattern pattern) {
         UiObject2 found = findOnScreen(pattern);
         if (found == null) return null;
@@ -344,7 +354,24 @@ final class WebApp {
         Set<String> texts = screenTexts();
         log("FAIL: " + message);
         log("on screen: " + texts);
+        logRecentSystemLog();
         fail(message + "\nOn screen: " + texts);
+    }
+
+    // Copies what Android, the app and Chrome logged about activities and
+    // shares lately into this test's own log lines, which the run prints, so
+    // a failure can be followed without the device's full logcat.
+    private void logRecentSystemLog() {
+        Pattern relevant = Pattern.compile(
+                "ActivityTaskManager|ActivityManager: (Start|Kill|Process .* has died)|ShareRelay"
+                        + "|LauncherActivity|TwaLauncher|TrustedWebActivity|androidbrowserhelper"
+                        + "|AndroidRuntime|" + Pattern.quote(app.getPackageName()) + "|cr_.*(Share|Intent|TWA|Trusted)");
+        String[] lines = shell("logcat -d -v time -t 3000").split("\n");
+        java.util.List<String> kept = new java.util.ArrayList<>();
+        for (String line : lines) {
+            if (!line.contains(TAG) && relevant.matcher(line).find()) kept.add(line.trim());
+        }
+        for (String line : kept.subList(Math.max(0, kept.size() - 80), kept.size())) log("logcat: " + line);
     }
 
     void step(String what) {
