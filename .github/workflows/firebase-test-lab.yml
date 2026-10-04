@@ -8,9 +8,8 @@ name: Firebase Test Lab
 # It also shares videos in the ways real shares arrive (media store, a
 # Photos-like provider, Google Photos itself), which the emulator can't.
 #
-# The free Spark plan allows only a few runs a day, so this never runs on its
-# own: start it by hand, or label a PR firebase-test (each push to a labelled
-# PR runs it again). It signs in to Google Cloud without a stored key through
+# The free Spark plan allows only a few runs a day, so this only runs when
+# started by hand, never on a push or a pull request. It signs in to Google Cloud without a stored key through
 # Workload Identity Federation (the GCP_WORKLOAD_IDENTITY_PROVIDER and
 # GCP_SERVICE_ACCOUNT variables), or else with the FIREBASE_SERVICE_ACCOUNT_KEY
 # secret; see
@@ -41,24 +40,19 @@ on:
         type: choice
         options: [hardware, webcodecs, any]
         default: hardware
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
-    branches: [main]
-    paths:
-      - 'android/**'
-      - '.github/workflows/firebase-test-lab.yml'
 
 permissions:
   contents: read
 
+# A second run waits for the first instead of cancelling it, so a run that
+# has already reached a device (and used up one of the day's runs) finishes.
 concurrency:
   group: firebase-test-lab-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   test-lab:
     name: Test Lab (${{ inputs.type || 'instrumentation' }})
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'firebase-test')
     runs-on: ubuntu-latest
     timeout-minutes: 40
     permissions:

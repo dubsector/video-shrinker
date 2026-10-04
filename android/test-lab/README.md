@@ -76,9 +76,9 @@ The app loads the live site, not the branch's web build.
 
 - **Actions > Firebase Test Lab > Run workflow**, picking the branch, the
   test type and the device. `gcloud firebase test android models list` lists
-  the devices; physical ones (like `oriole`, a Pixel 6) have current Chrome.
-- Or label a pull request `firebase-test`. It then runs on every push to that
-  PR that touches `android/`, so remove the label when done.
+  the devices. Their Chrome isn't always current: the Pixel 6 (`oriole`) on
+  Android 13 had Chrome 109. Each run uses one of the day's free runs, so the
+  workflow never starts on its own.
 - Or locally, with gcloud signed in to the project:
   ```sh
   (cd android && ./gradlew assembleDebug assembleDebugAndroidTest)
