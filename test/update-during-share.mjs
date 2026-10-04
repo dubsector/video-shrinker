@@ -221,6 +221,15 @@ const scenarios = {
     await waitForText(tab, SHARED, 'the shared video never arrived')
     await stillShows(tab, SHARED, 'the shared video was lost after it arrived')
   },
+  'the new version is waiting in the same tab when the share replaces it': async (browser) => {
+    const tab = await browser.newTab()
+    await tab.openApp()
+    version++
+    await tab.checkForUpdate()
+    await tab.share(VIDEO)
+    await waitForText(tab, SHARED, 'the shared video never arrived')
+    await stillShows(tab, SHARED, 'the shared video was lost after it arrived')
+  },
   'a new version comes out after the share, and the user takes it': async (browser) => {
     const tab = await browser.newTab()
     await tab.openApp()
