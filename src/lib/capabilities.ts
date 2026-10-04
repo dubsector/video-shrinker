@@ -1,4 +1,4 @@
-import { canEncodeVideo } from 'mediabunny';
+import { canEncodeVideo, Quality } from 'mediabunny';
 
 export type WebCodecsCodec = 'avc' | 'hevc';
 
@@ -6,6 +6,9 @@ export type EncodeProbe = {
   width: number;
   height: number;
   bitrate: number;
+  /** Rate control to probe for. Defaults to variable, the encoders' own default. */
+  bitrateMode?: 'constant' | 'variable';
+  frameRate?: number;
 };
 
 // Used for the up-front capability questions asked before a file is even
@@ -13,8 +16,13 @@ export type EncodeProbe = {
 // show the H.265 toggle, and whether this browser will need the CPU fallback.
 export const GENERIC_ENCODE_PROBE: EncodeProbe = { width: 1280, height: 720, bitrate: 4_000_000 };
 
+function toEncodeOptions(probe: EncodeProbe) {
+  const { bitrate, bitrateMode, ...rest } = probe;
+  return { ...rest, quality: new Quality({ bitrate, bitrateMode }) };
+}
+
 export async function detectHevcHardwareSupport(probe: EncodeProbe = GENERIC_ENCODE_PROBE): Promise<boolean> {
-  return canEncodeVideo('hevc', { ...probe, hardwareAcceleration: 'prefer-hardware' });
+  return canEncodeVideo('hevc', { ...toEncodeOptions(probe), hardwareAcceleration: 'prefer-hardware' });
 }
 
 /**
@@ -23,7 +31,7 @@ export async function detectHevcHardwareSupport(probe: EncodeProbe = GENERIC_ENC
  * AVC is the last codec `pickWebCodecsCodec` tries.
  */
 export async function canEncodeAvc(probe: EncodeProbe = GENERIC_ENCODE_PROBE): Promise<boolean> {
-  return canEncodeVideo('avc', probe);
+  return canEncodeVideo('avc', toEncodeOptions(probe));
 }
 
 /**
@@ -39,6 +47,13 @@ export async function canEncodeAvc(probe: EncodeProbe = GENERIC_ENCODE_PROBE): P
  */
 export async function pickWebCodecsCodec(preferHevc: boolean, probe: EncodeProbe): Promise<WebCodecsCodec | null> {
   if (preferHevc && (await detectHevcHardwareSupport(probe))) return 'hevc';
-  if (await canEncodeVideo('avc', probe)) return 'avc';
+  if (await canEncodeAvc(probe)) return 'avc';
   return null;
+}
+
+/** Whether `codec` can also be encoded at a constant bitrate with the given probe. */
+export async function supportsConstantBitrate(codec: WebCodecsCodec, probe: EncodeProbe): Promise<boolean> {
+  const options = toEncodeOptions({ ...probe, bitrateMode: 'constant' });
+  // Matches how each codec is actually encoded: HEVC on hardware only.
+  return canEncodeVideo(codec, codec === 'hevc' ? { ...options, hardwareAcceleration: 'prefer-hardware' } : options);
 }

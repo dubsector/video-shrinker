@@ -3,24 +3,13 @@ import { useTranslation } from 'react-i18next';
 import './App.css';
 import { setAppBusy } from './lib/appBusy';
 import type { ConversionPhase, ConvertResult } from './lib/convert';
+import { type ConversionHandle, prepareConverter, startConversion } from './lib/converter';
 
 const MB = 1024 * 1024;
 const SIZE_PRESETS_MB = [10, 25, 50, 100];
 const DEFAULT_TARGET_MB = 25;
 
 type Status = 'idle' | 'converting' | 'done' | 'error';
-
-// mediabunny is the bulk of this app's JavaScript and nothing converts until a
-// file is picked, so the engine is fetched separately instead of being parsed
-// during startup. Both entry points below go through here: picking a file
-// starts the fetch so the Convert click has nothing left to wait for, and
-// pressing Convert awaits whatever that started. Every built chunk is
-// precached, so this costs nothing offline.
-let engineModule: Promise<typeof import('./lib/convert')> | null = null;
-function loadEngine(): Promise<typeof import('./lib/convert')> {
-  engineModule ??= import('./lib/convert');
-  return engineModule;
-}
 
 // Errors are stored as translation keys (or a raw engine message) and only
 // rendered through t(), so an error that is on screen when the user switches
@@ -53,6 +42,10 @@ function App() {
   const [status, setStatus] = useState<Status>('idle');
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState<ConversionPhase>('encoding');
+  const [paused, setPaused] = useState(false);
+  // False while the ffmpeg.wasm engine runs: it can't stop mid-encode.
+  const [pausable, setPausable] = useState(true);
+  const conversionRef = useRef<ConversionHandle | null>(null);
   const [result, setResult] = useState<ConvertResult | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<AppError | null>(null);
@@ -98,6 +91,7 @@ function App() {
     setProgress(0);
     lastPercent.current = -1;
     setPhase('encoding');
+    setPaused(false);
     setResult(null);
     setError(null);
     setResultUrl((prev) => {
@@ -115,9 +109,12 @@ function App() {
       }
       reset();
       setFile(chosen);
-      // Nothing waits on this; it just means the engine is usually already
-      // there by the time Convert is pressed.
-      void loadEngine();
+      // mediabunny is the bulk of this app's JavaScript and nothing converts
+      // until a file is picked, so the engine is fetched here rather than at
+      // startup. Nothing waits on this; it just means the engine is usually
+      // already there by the time Convert is pressed. Every built chunk is
+      // precached, so this costs nothing offline.
+      prepareConverter();
     },
     [reset],
   );
@@ -195,15 +192,18 @@ function App() {
     setProgress(0);
     lastPercent.current = -1;
     setPhase('encoding');
+    setPaused(false);
+    setPausable(true);
     setError(null);
     // H.265 whenever the GPU supports it, unless the user forces H.264.
     const preferHevc = hevcAvailable && !forceH264;
     try {
-      const { convertVideo } = await loadEngine();
-      const converted = await convertVideo(file, targetMb * MB, {
+      const conversion = await startConversion({
+        file,
+        targetSizeBytes: targetMb * MB,
         preferHevc,
         stripMetadata,
-        onProgress: (p, currentPhase) => {
+        onProgress: (p, currentPhase, canPause) => {
           // The bar only ever renders whole percent, so every sub-percent tick
           // re-rendered the whole tree for no visible change — on the main
           // thread, while the encoder is running and contending for it.
@@ -213,16 +213,30 @@ function App() {
             setProgress(p);
           }
           setPhase(currentPhase);
+          setPausable(canPause);
         },
       });
+      conversionRef.current = conversion;
+      const converted = await conversion.result;
       setResult(converted);
       setResultUrl(URL.createObjectURL(converted.blob));
       setStatus('done');
     } catch (e) {
       setError(e instanceof Error ? { message: e.message } : { key: 'errors.conversionFailed' });
       setStatus('error');
+    } finally {
+      conversionRef.current = null;
+      setPaused(false);
     }
   }, [file, targetMb, hevcAvailable, forceH264, stripMetadata]);
+
+  const togglePause = useCallback(() => {
+    const conversion = conversionRef.current;
+    if (!conversion) return;
+    if (paused) conversion.resume();
+    else conversion.pause();
+    setPaused(!paused);
+  }, [paused]);
 
   // None of the skip paths shrank anything, so "-shrunk" would be a lie. The
   // untouched file is the source object itself, and keeps its own name and
@@ -237,6 +251,7 @@ function App() {
         ? `${baseName}-clean.mp4`
         : `${baseName}-shrunk.mp4`;
   const codecLabel = result?.codec === 'hevc' ? 'H.265' : 'H.264';
+  const sizeLabel = result?.width && result.height ? ` · ${result.width}×${result.height}` : '';
 
   return (
     <div className="app">
@@ -346,7 +361,13 @@ function App() {
         </div>
 
         <button type="button" className="convert-button" disabled={!file || status === 'converting'} onClick={handleConvert}>
-          {status === 'converting' ? (phase === 'refining' ? t('convert.refining') : t('convert.converting')) : t('convert.start')}
+          {status === 'converting'
+            ? paused
+              ? t('convert.paused')
+              : phase === 'refining'
+                ? t('convert.refining')
+                : t('convert.converting')
+            : t('convert.start')}
         </button>
 
         {status === 'converting' && (
@@ -360,6 +381,17 @@ function App() {
               </div>
               <span className="progress-label">{Math.round(progress * 100)}%</span>
             </div>
+            <button
+              type="button"
+              className="link-button pause-button"
+              // A pause asked for while ffmpeg runs only lands between passes,
+              // so offer it only where it takes effect straight away; resuming
+              // always works.
+              disabled={!paused && !pausable}
+              onClick={togglePause}
+            >
+              {paused ? t('convert.resume') : t('convert.pause')}
+            </button>
           </div>
         )}
 
@@ -374,7 +406,7 @@ function App() {
                   ? t('result.alreadySmall')
                   : t('result.done')}{' '}
               <strong>
-                {skippedEncode ? formatBytes(result.blob.size) : `${codecLabel} · ${formatBytes(result.blob.size)}`}
+                {skippedEncode ? formatBytes(result.blob.size) : `${codecLabel}${sizeLabel} · ${formatBytes(result.blob.size)}`}
               </strong>
               <br />
               <span className="result-detail">

@@ -1,5 +1,7 @@
-import { BufferTarget, Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output } from 'mediabunny';
-import { pickWebCodecsCodec } from './capabilities';
+import { BufferTarget, Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output, Quality } from 'mediabunny';
+import type { OutputGeometry } from './bitrate';
+import { pickWebCodecsCodec, supportsConstantBitrate } from './capabilities';
+import type { PauseGate } from './pauseGate';
 
 export type ProgressInfo = {
   progress: number;
@@ -23,21 +25,29 @@ export type WebCodecsResult = {
 export type WebCodecsConvertOptions = {
   videoBitrate: number;
   audioBitrate: number;
+  /**
+   * Asks the encoder to hold the bitrate steady instead of letting it float.
+   * Variable bitrate spends bits where the picture needs them, so it looks
+   * better at a given size, but hardware encoders drift from the requested
+   * average by more than a target size can absorb. Correction passes trade
+   * that bit of quality for landing on target. Falls back to variable when
+   * the encoder doesn't offer constant.
+   */
+  constantBitrate: boolean;
+  /** Copies the source's audio across untouched rather than re-encoding it. */
+  copyAudio: boolean;
   preferHevc: boolean;
   /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
+  pauseGate?: PauseGate;
   onProgress?: (info: ProgressInfo) => void;
 };
 
-/**
- * The source's display dimensions, resolved once by the caller. They don't
- * change between refinement passes, and looking them up means seeking around
- * the file, so re-reading them on every attempt is pure repetition.
- */
-export type VideoDimensions = {
-  width: number;
-  height: number;
-};
+// Mediabunny's default is a key frame every 5 seconds. Each one costs several
+// times what an ordinary frame does, and this app's output gets played start
+// to finish far more than it gets scrubbed through, so spacing them out hands
+// those bytes back to the picture.
+const KEY_FRAME_INTERVAL_SECONDS = 10;
 
 /**
  * Result of a WebCodecs attempt: either a successful encode, or a failure
@@ -61,17 +71,24 @@ export async function convertWithWebCodecs(
   input: Input,
   durationSeconds: number,
   audioTrack: InputAudioTrack | null,
-  dimensions: VideoDimensions,
+  geometry: OutputGeometry,
+  resize: boolean,
   options: WebCodecsConvertOptions,
 ): Promise<WebCodecsOutcome> {
-  const { width, height } = dimensions;
+  const { width, height } = geometry;
+  const frameRate = geometry.frameRate ?? undefined;
 
   // Some browsers (e.g. Brave) support hardware AVC encode in general but
   // reject specific resolution/bitrate/level combinations, so the probe must
   // match what's actually about to be requested, not a generic placeholder.
   // This one stays per-attempt for that reason: the bitrate changes each pass.
-  const codec = await pickWebCodecsCodec(options.preferHevc, { width, height, bitrate: options.videoBitrate });
+  const probe = { width, height, bitrate: options.videoBitrate, frameRate };
+  const codec = await pickWebCodecsCodec(options.preferHevc, probe);
   if (!codec) return { ok: false, fallbackReason: 'No usable video codec available via WebCodecs in this browser.' };
+  // Checked for the codec already picked, so a correction pass never switches
+  // codec just because only the other one offers constant bitrate.
+  const bitrateMode =
+    options.constantBitrate && (await supportsConstantBitrate(codec, probe)) ? 'constant' : 'variable';
 
   const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
 
@@ -90,12 +107,34 @@ export async function convertWithWebCodecs(
     const conversion = await Conversion.init({
       input,
       output,
+      // The size budget covers one picture and one soundtrack. Extra tracks
+      // (a second language, a commentary track) would be encoded on top of it.
+      tracks: 'primary',
       video: {
         codec,
-        bitrate: options.videoBitrate,
+        quality: new Quality({ bitrate: options.videoBitrate, bitrateMode }),
         hardwareAcceleration,
+        keyFrameInterval: KEY_FRAME_INTERVAL_SECONDS,
+        // Only one of the two is needed: Mediabunny keeps the aspect ratio.
+        width: resize ? width : undefined,
+        // Set even when it matches the source. Without it the encoder isn't
+        // told the frame rate and assumes one, and a rate controller budgeting
+        // for 30 fps on 60 fps footage spends each frame's share twice.
+        frameRate,
       },
-      audio: audioTrack ? { codec: 'aac', bitrate: options.audioBitrate } : { discard: true },
+      // Left without a codec or quality, the audio is copied as it is. That is
+      // only chosen for AAC already within budget, which MP4 holds natively.
+      audio: !audioTrack
+        ? { discard: true }
+        : options.copyAudio
+          ? {}
+          : { codec: 'aac', quality: new Quality(options.audioBitrate) },
+      // Any shift keeps audio and video in sync with each other; it only moves
+      // both off the source's absolute timestamps, which nothing here needs.
+      // Without it, sources that start at an offset MP4 can't express (common
+      // with AAC priming) would have their audio silently re-encoded at a
+      // default quality instead of copied.
+      copy: { shiftTolerance: Infinity },
       // Descriptive tags (location, title, artist, etc.) are normally copied
       // over by Mediabunny by default; an empty object here replaces them
       // instead, so nothing from the source file's metadata survives.
@@ -122,7 +161,15 @@ export async function convertWithWebCodecs(
       options.onProgress?.({ progress, processedSeconds: processedTime, durationSeconds });
     };
 
-    await conversion.execute();
+    // A paused execute() returns early with the conversion still 'idle', and
+    // the next call carries on from where it stopped.
+    const gate = options.pauseGate;
+    await gate?.whenResumed();
+    await conversion.execute({ pauseSignal: gate?.signal });
+    while (gate && conversion.state !== 'done') {
+      await gate.whenResumed();
+      await conversion.execute({ pauseSignal: gate.signal });
+    }
   } catch (err) {
     // Neither isConfigSupported() nor Conversion.init() is a perfect predictor
     // of what the encoder accepts once configured (init can also reject a track

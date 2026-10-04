@@ -20,6 +20,9 @@ const buildDate = new Date()
 // https://vite.dev/config/
 export default defineConfig({
   base: '/video-shrinker/',
+  // The conversion worker loads the ffmpeg engine on demand, and only ES
+  // module workers can split code that way; the default IIFE format can't.
+  worker: { format: 'es' },
   define: {
     __BUILD_INFO__: JSON.stringify({ date: buildDate.toISOString(), commit: getCommitHash() }),
   },

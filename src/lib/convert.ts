@@ -4,6 +4,7 @@ import {
   Conversion,
   Input,
   type InputAudioTrack,
+  type InputVideoTrack,
   MATROSKA,
   MP4,
   Mp4OutputFormat,
@@ -13,15 +14,22 @@ import {
   WEBM,
 } from 'mediabunny';
 import {
+  type BitratePlan,
   MIN_UPWARD_GROWTH,
+  type OutputGeometry,
   planBitrates,
+  planBitratesWithCopiedAudio,
+  planOutputGeometry,
   refinedPassMargin,
   refineVideoBitrate,
+  type SourceGeometry,
   sourceVideoBitrateCeiling,
   UNDERSHOOT_RETRY_RATIO,
   UPWARD_PASS_MARGIN,
 } from './bitrate';
-import { convertWithWebCodecs, type VideoDimensions } from './webcodecsEngine';
+import { detectHevcHardwareSupport } from './capabilities';
+import type { PauseGate } from './pauseGate';
+import { convertWithWebCodecs } from './webcodecsEngine';
 
 /**
  * Beyond the two encoders, three outcomes skip encoding: 'original' hands back
@@ -41,16 +49,29 @@ export type ConvertResult = {
   hardwareAccelerated: boolean;
   videoBitrate: number;
   audioBitrate: number;
+  /** Output picture size, or null when encoding was skipped and the source's picture is untouched. */
+  width: number | null;
+  height: number | null;
 };
 
 export type ConvertOptions = {
   preferHevc: boolean;
   /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
-  onProgress?: (progress: number, phase: ConversionPhase) => void;
+  /** Lets the caller pause and resume. Only the WebCodecs engine can stop mid-encode. */
+  pauseGate?: PauseGate;
+  /** `pausable` is false while the ffmpeg.wasm engine runs, which has no way to pause. */
+  onProgress?: (progress: number, phase: ConversionPhase, pausable: boolean) => void;
 };
 
-type Attempt = { blob: Blob; engine: EngineUsed; codec: string; hardwareAccelerated: boolean };
+type Attempt = {
+  blob: Blob;
+  engine: EngineUsed;
+  codec: string;
+  hardwareAccelerated: boolean;
+  width: number;
+  height: number;
+};
 
 // Each corrective pass is a full re-encode, so cap how many we run after the
 // initial one. Hardware encoders don't honor a requested bitrate exactly
@@ -79,22 +100,21 @@ const INPUT_FORMATS = [MP4, QTFF, MATROSKA, WEBM, MPEG_TS];
  * callers fall back to a normal encode in that case.
  */
 async function remuxWithoutMetadata(input: Input): Promise<Blob | null> {
-  const format = new Mp4OutputFormat();
-  const [videoTrack, audioTrack] = await Promise.all([input.getPrimaryVideoTrack(), input.getPrimaryAudioTrack()]);
-
-  const videoCodec = await videoTrack?.getCodec();
-  if (!videoCodec || !format.getSupportedVideoCodecs().includes(videoCodec)) return null;
-  if (audioTrack) {
-    const audioCodec = await audioTrack.getCodec();
-    if (!audioCodec || !format.getSupportedAudioCodecs().includes(audioCodec)) return null;
-  }
-
   try {
-    const output = new Output({ format, target: new BufferTarget() });
-    // No codec, quality or bitrate on either track: that is what lets
-    // Mediabunny copy the encoded samples across rather than re-encode them.
-    const conversion = await Conversion.init({ input, output, tags: {} });
-    if (!conversion.isValid) return null;
+    const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
+    const conversion = await Conversion.init({
+      input,
+      output,
+      tracks: 'primary',
+      // 'forced' drops a track that can't be copied instead of transcoding it,
+      // so nothing here can quietly re-encode. Any shift keeps audio and video
+      // in sync with each other and only moves them off the source's absolute
+      // timestamps, which an MP4 often can't hold as they are anyway.
+      copy: { mode: 'forced', shiftTolerance: Infinity },
+      tags: {},
+    });
+    // A dropped track means the copy would lose the picture or the sound.
+    if (!conversion.isValid || conversion.discardedTracks.length > 0) return null;
     await conversion.execute();
     return output.target.buffer ? new Blob([output.target.buffer], { type: 'video/mp4' }) : null;
   } catch (err) {
@@ -117,43 +137,120 @@ function isImprovement(candidate: Attempt, baseline: Attempt, targetSizeBytes: n
   return candidate.blob.size < baseline.blob.size; // both over: prefer the smaller overshoot
 }
 
+// Packets read to estimate the source audio's bitrate: about 20 seconds of
+// AAC, enough to average out its variation without reading through the file.
+const AUDIO_STATS_PACKETS = 1000;
+
+/**
+ * The bitrate to budget for the source's audio if it can be copied across
+ * untouched, or null if it should be re-encoded. Copying skips an encode and
+ * the generation loss that comes with one, so it wins whenever the source is
+ * AAC (which MP4 holds natively) and no bigger than a re-encode would be.
+ */
+async function copiableAudioBitrate(audioTrack: InputAudioTrack, plannedAudioBitrate: number): Promise<number | null> {
+  try {
+    if ((await audioTrack.getCodec()) !== 'aac') return null;
+    const { averageBitrate } = await audioTrack.computePacketStats(AUDIO_STATS_PACKETS);
+    // Budgeted slightly high: the estimate comes from the first stretch only.
+    const budgeted = Math.ceil(averageBitrate * 1.05);
+    return Number.isFinite(budgeted) && budgeted > 0 && budgeted <= plannedAudioBitrate ? budgeted : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The source's frame rate as measured from its frame timing, or null if it can't be pinned down. */
+async function measureFrameRate(videoTrack: InputVideoTrack): Promise<number | null> {
+  try {
+    const { bestGuessFrameRate } = await videoTrack.computeFrameRateMetrics();
+    return Number.isFinite(bestGuessFrameRate) && bestGuessFrameRate > 0 ? bestGuessFrameRate : null;
+  } catch {
+    return null;
+  }
+}
+
+/** What every attempt of one conversion shares; only the bitrate and phase change between passes. */
+type ConversionContext = {
+  file: File;
+  input: Input;
+  durationSeconds: number;
+  audioTrack: InputAudioTrack | null;
+  copyAudio: boolean;
+  geometry: OutputGeometry;
+  /** Whether the geometry differs from the source's picture size. */
+  resize: boolean;
+  source: SourceGeometry;
+  options: ConvertOptions;
+};
+
 async function attemptConversion(
-  file: File,
-  input: Input,
-  durationSeconds: number,
-  audioTrack: InputAudioTrack | null,
-  dimensions: VideoDimensions,
+  context: ConversionContext,
   videoBitrate: number,
   audioBitrate: number,
   phase: ConversionPhase,
-  options: ConvertOptions,
 ): Promise<Attempt> {
-  const webCodecsOutcome = await convertWithWebCodecs(input, durationSeconds, audioTrack, dimensions, {
-    videoBitrate,
-    audioBitrate,
-    preferHevc: options.preferHevc,
-    stripMetadata: options.stripMetadata,
-    onProgress: (info) => options.onProgress?.(info.progress, phase),
-  });
+  const { file, input, durationSeconds, audioTrack, copyAudio, resize, source, options } = context;
+  let { geometry } = context;
+  const encodeWithWebCodecs = (atGeometry: OutputGeometry, atResize: boolean) =>
+    convertWithWebCodecs(input, durationSeconds, audioTrack, atGeometry, atResize, {
+      videoBitrate,
+      audioBitrate,
+      // The first pass keeps variable bitrate for its better picture; a pass
+      // that exists to correct the size is the one that needs precision.
+      constantBitrate: phase === 'refining',
+      copyAudio,
+      preferHevc: options.preferHevc,
+      stripMetadata: options.stripMetadata,
+      pauseGate: options.pauseGate,
+      onProgress: (info) => options.onProgress?.(info.progress, phase, true),
+    });
+
+  let webCodecsOutcome = await encodeWithWebCodecs(geometry, resize);
+  // The first downscaling attempt (#74) shipped a resize that made every
+  // WebCodecs encode fail, and it had to be reverted. If resizing is ever what
+  // breaks an encode again, the cost is the smaller picture rather than the
+  // conversion: the source size gets one more try before ffmpeg.wasm.
+  if (!webCodecsOutcome.ok && resize) {
+    console.warn('[video-shrinker] Resized WebCodecs encode failed, retrying at the source size:', webCodecsOutcome.fallbackReason);
+    const unresized = { ...geometry, width: source.width, height: source.height };
+    const retry = await encodeWithWebCodecs(unresized, false);
+    if (retry.ok) {
+      geometry = unresized;
+      webCodecsOutcome = retry;
+    }
+  }
 
   if (webCodecsOutcome.ok) {
     const { blob, codec, hardwareAccelerated } = webCodecsOutcome.result;
-    return { blob, engine: 'webcodecs', codec, hardwareAccelerated };
+    return { blob, engine: 'webcodecs', codec, hardwareAccelerated, width: geometry.width, height: geometry.height };
   }
 
   // Lazy-loaded: most browsers can use WebCodecs, so the ffmpeg.wasm
   // wrapper (and its wasm binary) should only be fetched when needed.
   const { convertWithFfmpeg } = await import('./ffmpegEngine');
   usedFfmpeg = true;
+  // ffmpeg can't stop mid-encode, but a pause asked for before it starts holds.
+  await options.pauseGate?.whenResumed();
+  options.onProgress?.(0, phase, false);
   try {
     const ffmpegResult = await convertWithFfmpeg(file, {
       videoBitrate,
       audioBitrate,
       hasAudio: !!audioTrack,
+      copyAudio,
+      geometry,
+      resize,
       stripMetadata: options.stripMetadata,
-      onProgress: (ratio) => options.onProgress?.(ratio, phase),
+      onProgress: (ratio) => options.onProgress?.(ratio, phase, false),
     });
-    return { blob: ffmpegResult.blob, engine: 'ffmpeg', codec: 'avc', hardwareAccelerated: false };
+    return {
+      blob: ffmpegResult.blob,
+      engine: 'ffmpeg',
+      codec: 'avc',
+      hardwareAccelerated: false,
+      width: geometry.width,
+      height: geometry.height,
+    };
   } catch (err) {
     // The WebCodecs failure reason would otherwise be lost here (it only ever
     // reached console.warn), leaving just ffmpeg's generic error on screen
@@ -169,6 +266,10 @@ async function attemptConversion(
  * ffmpeg.wasm (CPU) engine when this browser can't encode video via
  * WebCodecs at all. Nothing here ever leaves the browser.
  *
+ * When the budget is too thin for the source's picture, the frame rate and
+ * then the resolution come down until each pixel gets enough bits to look
+ * clean (see planOutputGeometry).
+ *
  * The requested bitrate is only a request to the encoder; how many bytes it
  * actually produces depends on the content and how closely this browser's
  * encoder honors the request. A corrective pass runs in either direction —
@@ -179,7 +280,15 @@ async function attemptConversion(
  * it under.
  */
 export async function convertVideo(file: File, targetSizeBytes: number, options: ConvertOptions): Promise<ConvertResult> {
-  const input = new Input({ formats: INPUT_FORMATS, source: new BlobSource(file) });
+  const input = new Input({
+    formats: INPUT_FORMATS,
+    source: new BlobSource(file, {
+      // Read-ahead runs in the background, and a file that goes unreadable
+      // mid-way (a shared video whose sending app revoked access, say) would
+      // otherwise surface as an unhandled rejection on top of the real error.
+      handleUnhandledError: (err) => console.warn('[video-shrinker] Background read failed:', err),
+    }),
+  });
 
   try {
     const duration = await input.computeDuration();
@@ -197,6 +306,8 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
         hardwareAccelerated: false,
         videoBitrate: 0,
         audioBitrate: 0,
+        width: null,
+        height: null,
       };
       if (!options.stripMetadata) return { ...untouched, blob: file };
 
@@ -211,32 +322,47 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       }
     }
 
-    // Resolved once here rather than inside each attempt: the dimensions are
-    // the same on every pass, and reading them means seeking around the file.
+    // Resolved once here rather than inside each attempt: none of it changes
+    // between passes, and reading it means seeking around the file.
     const videoTrack = await input.getPrimaryVideoTrack();
     if (!videoTrack) throw new Error('This file has no video track to convert.');
-    const dimensions: VideoDimensions = {
+    const source: SourceGeometry = {
       width: await videoTrack.getDisplayWidth(),
       height: await videoTrack.getDisplayHeight(),
+      frameRate: await measureFrameRate(videoTrack),
     };
 
-    const plan = planBitrates(duration, targetSizeBytes, hasAudio);
+    let plan: BitratePlan = planBitrates(duration, targetSizeBytes, hasAudio);
+    const copiedAudioBitrate = audioTrack ? await copiableAudioBitrate(audioTrack, plan.audioBitrate) : null;
+    if (copiedAudioBitrate !== null) plan = planBitratesWithCopiedAudio(duration, targetSizeBytes, copiedAudioBitrate);
+
+    // HEVC needs fewer bits per pixel, so it keeps a bigger picture at the
+    // same budget. Probed at the source size: if the GPU encodes HEVC there,
+    // it encodes it at anything smaller too.
+    const likelyHevc =
+      options.preferHevc &&
+      (await detectHevcHardwareSupport({ width: source.width, height: source.height, bitrate: plan.videoBitrate }));
+    const geometry = planOutputGeometry(source, plan.videoBitrate, likelyHevc ? 'hevc' : 'avc');
+    const resize = geometry.width !== source.width || geometry.height !== source.height;
+
     // Asking for more than the source itself carries would inflate the file
     // rather than shrink it, so no pass may exceed this.
     const bitrateCeiling = sourceVideoBitrateCeiling(file.size, duration, plan.audioBitrate);
 
-    let videoBitrate = Math.min(plan.videoBitrate, bitrateCeiling);
-    let attempt = await attemptConversion(
+    const context: ConversionContext = {
       file,
       input,
-      duration,
+      durationSeconds: duration,
       audioTrack,
-      dimensions,
-      videoBitrate,
-      plan.audioBitrate,
-      'encoding',
+      copyAudio: copiedAudioBitrate !== null,
+      geometry,
+      resize,
+      source,
       options,
-    );
+    };
+
+    let videoBitrate = Math.min(plan.videoBitrate, bitrateCeiling);
+    let attempt = await attemptConversion(context, videoBitrate, plan.audioBitrate, 'encoding');
     let best = attempt;
     let bestVideoBitrate = videoBitrate;
 
@@ -269,17 +395,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
 
       const sizeBeforePass = attempt.blob.size;
       videoBitrate = nextBitrate;
-      attempt = await attemptConversion(
-        file,
-        input,
-        duration,
-        audioTrack,
-        dimensions,
-        videoBitrate,
-        plan.audioBitrate,
-        'refining',
-        options,
-      );
+      attempt = await attemptConversion(context, videoBitrate, plan.audioBitrate, 'refining');
 
       if (isImprovement(attempt, best, targetSizeBytes)) {
         best = attempt;
@@ -304,10 +420,16 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
         hardwareAccelerated: false,
         videoBitrate: 0,
         audioBitrate: 0,
+        width: null,
+        height: null,
       };
     }
 
-    return { ...best, videoBitrate: bestVideoBitrate, audioBitrate: plan.audioBitrate };
+    return {
+      ...best,
+      videoBitrate: bestVideoBitrate,
+      audioBitrate: plan.audioBitrate,
+    };
   } finally {
     if (usedFfmpeg) {
       usedFfmpeg = false;

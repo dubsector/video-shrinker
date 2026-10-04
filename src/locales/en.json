@@ -20,7 +20,10 @@
     "start": "Convert",
     "converting": "Converting…",
     "refining": "Refining size…",
-    "refineNote": "The first pass missed the target. Adjusting the bitrate and encoding once more."
+    "refineNote": "The first pass missed the target. Adjusting the bitrate and encoding once more.",
+    "pause": "Pause",
+    "resume": "Resume",
+    "paused": "Paused"
   },
   "errors": {
     "notVideo": "Please choose a video file.",

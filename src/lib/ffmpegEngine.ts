@@ -1,4 +1,5 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { FFFSType, FFmpeg } from '@ffmpeg/ffmpeg';
+import type { OutputGeometry } from './bitrate';
 import { FFMPEG_CORE_URL as CORE_URL, FFMPEG_WASM_URL as WASM_URL } from './ffmpegAssets';
 
 let ffmpegPromise: Promise<FFmpeg> | null = null;
@@ -39,35 +40,44 @@ export type FfmpegResult = {
   blob: Blob;
 };
 
-// The file currently sitting in the wasm filesystem. A conversion runs up to
-// three passes over the same source, and writing it in means reading the whole
-// thing into the wasm heap — on the multi-hundred-MB files this app is built
-// for, running on the devices slow enough to need this engine, doing that per
-// pass is both a long wait and another chance to hit the memory ceiling.
-// convertVideo() calls releaseFfmpegInput() once it is finished with the file.
-let writtenInput: { file: File; name: string } | null = null;
+// Where the source is mounted. WORKERFS reads straight from the File as
+// ffmpeg asks for bytes, so the source never gets copied into the wasm heap:
+// the multi-hundred-MB files this app is built for, on the devices slow
+// enough to need this engine, used to cost their full size in memory up front
+// (and anything near 2 GB couldn't be loaded at all). The mount stays across
+// refinement passes; convertVideo() calls releaseFfmpegInput() once it is
+// finished with the file.
+const INPUT_DIR = '/input';
+let mountedInput: { file: File; path: string } | null = null;
 
-async function writeInput(ffmpeg: FFmpeg, file: File): Promise<string> {
-  if (writtenInput?.file === file) return writtenInput.name;
+async function mountInput(ffmpeg: FFmpeg, file: File): Promise<string> {
+  if (mountedInput?.file === file) return mountedInput.path;
   await releaseFfmpegInput();
+  // A fixed name rather than the user's: theirs can hold anything, and only
+  // the extension matters to ffmpeg's format probing.
   const name = 'input' + (file.name.match(/\.[^.]+$/)?.[0] ?? '.mp4');
-  await ffmpeg.writeFile(name, new Uint8Array(await file.arrayBuffer()));
-  writtenInput = { file, name };
-  return name;
+  await ffmpeg.createDir(INPUT_DIR).catch(() => {});
+  await ffmpeg.mount(FFFSType.WORKERFS, { blobs: [{ name, data: file }] }, INPUT_DIR);
+  mountedInput = { file, path: `${INPUT_DIR}/${name}` };
+  return mountedInput.path;
 }
 
-/** Drops the source from the wasm filesystem. Safe to call when there isn't one. */
+/** Unmounts the source. Safe to call when nothing is mounted. */
 export async function releaseFfmpegInput(): Promise<void> {
-  if (!writtenInput || !ffmpegPromise) return;
-  const { name } = writtenInput;
-  writtenInput = null;
-  await (await ffmpegPromise).deleteFile(name).catch(() => {});
+  if (!mountedInput || !ffmpegPromise) return;
+  mountedInput = null;
+  await (await ffmpegPromise).unmount(INPUT_DIR).catch(() => {});
 }
 
 export type FfmpegConvertOptions = {
   videoBitrate: number;
   audioBitrate: number;
   hasAudio: boolean;
+  /** Copies the source's audio across untouched rather than re-encoding it. */
+  copyAudio: boolean;
+  geometry: OutputGeometry;
+  /** Whether the geometry differs from the source's picture size. */
+  resize: boolean;
   /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
   onProgress?: (ratio: number) => void;
@@ -78,7 +88,7 @@ export type FfmpegConvertOptions = {
  * this browser can't encode video via WebCodecs at all.
  */
 export async function convertWithFfmpeg(file: File, options: FfmpegConvertOptions): Promise<FfmpegResult> {
-  const { videoBitrate, audioBitrate, hasAudio, stripMetadata, onProgress } = options;
+  const { videoBitrate, audioBitrate, hasAudio, copyAudio, geometry, resize, stripMetadata, onProgress } = options;
 
   const ffmpeg = await getFFmpeg();
 
@@ -90,7 +100,7 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
   const outputName = 'output.mp4';
 
   try {
-    const inputName = await writeInput(ffmpeg, file);
+    const inputName = await mountInput(ffmpeg, file);
 
     const args = [
       '-i',
@@ -117,7 +127,14 @@ export async function convertWithFfmpeg(file: File, options: FfmpegConvertOption
       '-pix_fmt',
       'yuv420p',
     ];
-    if (hasAudio) {
+    // ffmpeg applies rotation before filters run, so these are the same
+    // display dimensions the WebCodecs path gets. setsar=1 squares the pixels
+    // of anamorphic sources so the new size is the size that plays.
+    if (resize) args.push('-vf', `scale=${geometry.width}:${geometry.height},setsar=1`);
+    if (geometry.frameRate !== null) args.push('-r', `${geometry.frameRate}`);
+    if (hasAudio && copyAudio) {
+      args.push('-c:a', 'copy');
+    } else if (hasAudio) {
       args.push('-c:a', 'aac', '-b:a', `${audioBitrate}`);
     } else {
       args.push('-an');
