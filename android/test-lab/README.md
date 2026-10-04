@@ -45,6 +45,7 @@ The app loads the live site, not the branch's web build.
      GitHub's short-lived OIDC token is swapped for Google credentials and no
      key is stored anywhere:
      ```sh
+     gcloud services enable iamcredentials.googleapis.com sts.googleapis.com --project=PROJECT_ID
      gcloud iam workload-identity-pools create github --location=global --project=PROJECT_ID
      gcloud iam workload-identity-pools providers create-oidc video-shrinker \
        --location=global --workload-identity-pool=github --project=PROJECT_ID \
