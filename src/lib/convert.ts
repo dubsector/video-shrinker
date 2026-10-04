@@ -60,6 +60,8 @@ export type ConvertOptions = {
   stripMetadata: boolean;
   /** Lets the caller pause and resume. Only the WebCodecs engine can stop mid-encode. */
   pauseGate?: PauseGate;
+  /** Resolves once the page is in view; an encode the browser cut short waits on it before running again. */
+  whenVisible?: () => Promise<void>;
   /** `pausable` is false while the ffmpeg.wasm engine runs, which has no way to pause. */
   onProgress?: (progress: number, phase: ConversionPhase, pausable: boolean) => void;
 };
@@ -206,6 +208,17 @@ async function attemptConversion(
     });
 
   let webCodecsOutcome = await encodeWithWebCodecs(geometry, resize);
+  // An encode that was already under way has shown WebCodecs can handle this
+  // file, so failing partway is the browser taking the encoder back, not a
+  // reason to drop to ffmpeg.wasm (many times slower, and unpausable). Chrome
+  // does this to pages left in the background, behind a lock screen or
+  // another app. The pass runs again on WebCodecs once the page is back in
+  // view; only a second failure goes on to ffmpeg.
+  if (!webCodecsOutcome.ok && webCodecsOutcome.interrupted) {
+    console.warn('[video-shrinker] WebCodecs encode was interrupted, retrying it:', webCodecsOutcome.fallbackReason);
+    await options.whenVisible?.();
+    webCodecsOutcome = await encodeWithWebCodecs(geometry, resize);
+  }
   // The first downscaling attempt (#74) shipped a resize that made every
   // WebCodecs encode fail, and it had to be reverted. If resizing is ever what
   // breaks an encode again, the cost is the smaller picture rather than the
