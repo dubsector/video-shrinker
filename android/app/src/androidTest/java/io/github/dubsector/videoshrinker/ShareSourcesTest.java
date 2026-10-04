@@ -161,10 +161,12 @@ public class ShareSourcesTest {
         share.setClipData(ClipData.newRawUri(null, uri));
         web.log("sharing " + uri + " from another app's task");
         web.device.pressHome();
+        // CLEAR_TASK: an earlier test's sender is still open in its task, and
+        // NEW_TASK alone would just bring that back without sending anything.
         web.app.startActivity(new Intent()
                 .setClassName(testPackage, SenderActivity.class.getName())
                 .putExtra(SenderActivity.EXTRA_SHARE, share)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         web.waitForShared(name + ".mp4");
     }
 
