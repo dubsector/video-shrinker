@@ -137,7 +137,10 @@ const BROWSER = `(async () => {
   return {
     chrome: navigator.userAgent.match(/Chrome\\/([\\d.]+)/)?.[1] ?? navigator.userAgent,
     viewport: \`\${innerWidth}x\${innerHeight} @\${devicePixelRatio}x\`,
-    h264: await encodes('avc1.42001f'),
+    // mediabunny, and so the app, only ever asks for High profile.
+    h264High: await encodes('avc1.64001f'),
+    h264Main: await encodes('avc1.4d001f'),
+    h264Baseline: await encodes('avc1.42001f'),
     hevc: await encodes('hvc1.1.6.L93.B0'),
   }
 })()`

@@ -27,6 +27,11 @@ VIDEO=smoke-test.mp4
 
 mkdir -p "$OUT_DIR"
 
+# A wedged device (say, Android restarting itself) can leave adb waiting
+# forever. Nothing here takes anywhere near this long, so fail instead.
+ADB=$(command -v adb)
+adb() { timeout 120 "$ADB" "$@"; }
+
 step() { echo; echo "=== $*"; }
 shot() {
   adb exec-out screencap -p > "$OUT_DIR/$1.png" 2> /dev/null || true
@@ -46,6 +51,9 @@ fail() {
   echo "--- On screen:"
   adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 \
     && adb shell cat /sdcard/ui.xml | grep -oE 'text="[^"]+"' | head -40 || true
+  # Native crashes (tombstones) and Java crashes, system processes included.
+  echo "--- Crashes:"
+  grep -E ' F DEBUG   : (Cmdline|Abort message|signal |pid: )|FATAL EXCEPTION|AndroidRuntime: Process: ' "$OUT_DIR/logcat.txt" | head -30 || true
   echo "--- Logcat:"
   grep -iE "$PKG|$CHROME|ShareRelay|AndroidRuntime|lowmemorykiller|Killing|Permission Denial|SecurityException|ActivityTaskManager: START" \
     "$OUT_DIR/logcat.txt" | tail -60 || true

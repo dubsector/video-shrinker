@@ -36,22 +36,20 @@ jobs:
     name: emulator (Android ${{ matrix.android }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    # The Android the app targets (targetSdkVersion) and the latest one, side
-    # by side. One failing shouldn't hide whether the other passes.
+    # The Android the app targets (targetSdkVersion) and the newest one that
+    # runs here, side by side. One failing shouldn't hide whether the other
+    # passes. The newer images (36.1, 37.0) can't be used yet: their
+    # SurfaceFlinger aborts on "!rcEnc->featureInfo()->hasReadColorBufferDma"
+    # whenever it reads the screen back, restarting Android mid-test, at any
+    # screen size and with every emulator graphics mode tried.
     strategy:
       fail-fast: false
       matrix:
         include:
           - android: 15
             api-level: '35'
-          # With its default graphics features, the Android 17 image crashes
-          # SurfaceFlinger ("Assertion failed: !rcEnc->featureInfo()->
-          # hasReadColorBufferDma") when it reads the screen back, which
-          # restarts Android mid-test and breaks screenshots. GLDMA2 is what
-          # offers that read-back path, so turn it off there.
-          - android: 17
-            api-level: '37.0'
-            emulator-features: -feature -GLDMA2
+          - android: 16
+            api-level: '36'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -97,6 +95,9 @@ jobs:
       # Each image bundles the Chrome of its day, so a newer Android also means
       # a newer Chrome. The screen is a Pixel 9 Pro XL's.
       - name: Run smoke test on emulator
+        # Booting and both conversions take under 10 minutes; a wedged
+        # emulator shouldn't hold the job for the full 45.
+        timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         env:
           WEB_ROOT: ${{ inputs.site != 'live' && 'dist' || '' }}
@@ -107,8 +108,6 @@ jobs:
           cores: 4
           ram-size: 4096M
           disable-animations: true
-          # The action's default options, plus any per-version features.
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim ${{ matrix.emulator-features }}
           pre-emulator-launch-script: bash android/emulator-test/configure-avd.sh
           script: bash android/emulator-test/smoke-test.sh android/app/build/outputs/apk/debug/app-debug.apk
 
