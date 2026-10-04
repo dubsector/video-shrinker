@@ -8,8 +8,17 @@ again with the app sent to the background mid-encode. The emulator has no
 hardware video encoder, so the app always falls back to ffmpeg.wasm there.
 Test Lab's physical phones have one, and the test fails unless both
 conversions used WebCodecs on it (the `engine` input loosens that to any
-WebCodecs, or to anything). It refuses to run on virtual devices, which have
-no hardware encoder either. A `robo` run lets Test Lab's crawler explore instead,
+WebCodecs, or to anything). It refuses to run on virtual devices (unless only the share tests run), which have
+no hardware encoder either.
+
+`ShareSourcesTest` shares a video the ways real shares arrive, which the
+emulator test can't (its shell can't hand another app a gallery item): from
+the system media store, from a provider that acts like Google Photos at its
+most awkward (no file extension, size or type, streaming slowly), and from
+Google Photos itself through its Share button, on phones that have it. Each
+must reach the web app. The Photos one is skipped, not failed, when Photos
+is missing or its screens can't be got through. The `tests` input runs just
+one of the two classes. A `robo` run lets Test Lab's crawler explore instead,
 which mostly shows the app launches, since the crawler can't see much inside
 Chrome.
 

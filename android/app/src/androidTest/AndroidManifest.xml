@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- Stands in for Google Photos' provider in ShareSourcesTest. It lives
+             in the test package, so the app reads it as another app's. -->
+        <provider
+            android:name="io.github.dubsector.videoshrinker.PhotosLikeProvider"
+            android:authorities="${applicationId}.photoslike"
+            android:exported="true" />
+    </application>
+</manifest>

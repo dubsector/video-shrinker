@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 # Runs the app on one Firebase Test Lab device and prints what happened.
 #
-# The default, instrumentation, runs ShareAndBackgroundTest
-# (android/app/src/androidTest): launch, share a video in and convert it,
-# then convert again with the app sent to the background mid-encode. Like the
-# emulator test, but on Test Lab's devices, whose Chrome is current, so the
-# WebCodecs encoder gets exercised and not just the ffmpeg.wasm fallback.
+# The default, instrumentation, runs the tests in android/app/src/androidTest:
+#   ShareAndBackgroundTest  share a video in and convert it, then convert
+#                           again with the app sent to the background
+#                           mid-encode, both on hardware WebCodecs (which the
+#                           emulator lacks, so it falls back to ffmpeg.wasm)
+#   ShareSourcesTest        share from the media store, from a provider that
+#                           acts like Google Photos, and from Google Photos
+#                           itself where installed (the emulator test can
+#                           only share from the app's own files)
 # robo instead lets Test Lab's crawler poke at the app for a while; it can't
 # see much past Chrome opening, so it mostly shows the app launches.
 #
@@ -23,6 +27,8 @@
 #   ENGINE                    what each conversion must have used: hardware
 #                             (WebCodecs on a hardware encoder, the default),
 #                             webcodecs (software encoder too) or any
+#   TESTS                     all (default), convert (ShareAndBackgroundTest)
+#                             or share (ShareSourcesTest)
 #   TIMEOUT                   longest the run may take (default 15m)
 #   OUT_DIR                   where results are downloaded (test-lab-output)
 set -euo pipefail
@@ -47,7 +53,7 @@ form=$(gcloud firebase test android models describe "$DEVICE_MODEL" --format='va
 echo "Form: $form"
 # Virtual devices have no hardware video encoder, so the app falls back to
 # ffmpeg.wasm there, which the test fails on (see ENGINE below).
-if [ "$TYPE" = instrumentation ] && [ "$form" != PHYSICAL ] && [ "${ENGINE:-hardware}" != any ]; then
+if [ "$TYPE" = instrumentation ] && [ "${TESTS:-all}" != share ] && [ "$form" != PHYSICAL ] && [ "${ENGINE:-hardware}" != any ]; then
   echo "$DEVICE_MODEL is a $form device, with no hardware encoder; pick a physical one, or set ENGINE=any" >&2
   exit 2
 fi
@@ -74,6 +80,12 @@ case "$TYPE" in
       --environment-variables "engine=${ENGINE:-hardware}"
       --other-files "/data/local/tmp/smoke-test.mp4=$OUT_DIR/smoke-test.mp4,/data/local/tmp/chrome-command-line=$OUT_DIR/chrome-command-line"
       --directories-to-pull /sdcard/test-lab)
+    case "${TESTS:-all}" in
+      all) ;;
+      convert) args+=(--test-targets "class io.github.dubsector.videoshrinker.ShareAndBackgroundTest") ;;
+      share) args+=(--test-targets "class io.github.dubsector.videoshrinker.ShareSourcesTest") ;;
+      *) echo "TESTS must be all, convert or share" >&2; exit 2 ;;
+    esac
     ;;
   robo)
     args+=(--type robo)
