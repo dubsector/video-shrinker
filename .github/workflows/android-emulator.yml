@@ -23,8 +23,6 @@ on:
         type: choice
         options: [branch, live]
         default: branch
-  push:
-    branches: [feat/android-emulator-smoke-test, test/survive-backgrounding-emulator]
 
 permissions:
   contents: read
