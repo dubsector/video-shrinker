@@ -60,6 +60,11 @@ app_crashed() {
 
 step "Preparing the device"
 adb wait-for-device
+# Soon after boot the Play Store starts updating Chrome, WebView and Play
+# services, and installing any of them kills Chrome partway through the test.
+# Nothing here needs the Play Store, so switch it off first.
+adb shell pm disable-user --user 0 com.android.vending > /dev/null \
+  || echo "Could not disable the Play Store; Chrome may be updated mid-test"
 chrome_path=$(adb shell pm path "$CHROME" | tr -d '\r')
 [ -n "$chrome_path" ] || fail "Chrome is not installed; use a google_apis_playstore image"
 echo "Chrome $(adb shell dumpsys package "$CHROME" | grep -m1 versionName | tr -d '\r ')"
