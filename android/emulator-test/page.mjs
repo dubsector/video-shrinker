@@ -134,6 +134,8 @@ async function main() {
       case 'finished': {
         const end = Date.now() + 15 * 60_000
         let lastLog = 0
+        let reloaded = false
+        let idleSince = null
         for (;;) {
           const state = await app.evaluate(STATE).catch(() => null)
           if (state) {
@@ -142,9 +144,19 @@ async function main() {
               if (state.error) throw new Error(`the app showed an error: ${state.error}`)
               break
             }
-            if (!state.sameDocument) {
+            // A reload while backgrounded is allowed as long as the app picks
+            // the conversion back up by itself; sitting idle means it was lost.
+            if (!state.sameDocument && !reloaded) {
+              reloaded = true
+              log('page reloaded while in the background', state)
+            }
+            const idle = !state.progress && state.button?.trim() === 'Convert'
+            idleSince = idle ? (idleSince ?? Date.now()) : null
+            if (idleSince && Date.now() - idleSince > 60_000) {
               log('lost', state)
-              throw new Error('the page was reloaded while converting, so the conversion was lost')
+              throw new Error(reloaded
+                ? 'the page reloaded in the background and the conversion did not resume'
+                : 'the conversion stopped without a result')
             }
             if (Date.now() - lastLog > 30_000) {
               lastLog = Date.now()
