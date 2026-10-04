@@ -45,8 +45,18 @@ jobs:
       # (Cli.ts's loadOrCreateConfig), which hangs on a non-TTY runner.
       # Pre-seeding the config with the paths setup-java/setup-android
       # already installed skips that prompt entirely.
+      #
+      # Bubblewrap also rejects an SDK without a tools/ or bin/ folder
+      # ("The provided androidSdk isn't correct") and looks for sdkmanager
+      # in one of them. The runner images no longer ship the old tools/
+      # folder, so link it to the command-line tools that provide sdkmanager.
       - name: Configure Bubblewrap JDK/SDK paths
         run: |
+          if [ ! -e "$ANDROID_HOME/tools" ] && [ ! -e "$ANDROID_HOME/bin" ]; then
+            cmdline_tools=$(dirname "$(dirname "$(readlink -f "$(command -v sdkmanager)")")")
+            ln -s "$cmdline_tools" "$ANDROID_HOME/tools"
+          fi
+          test -x "$ANDROID_HOME/tools/bin/sdkmanager" || test -x "$ANDROID_HOME/bin/sdkmanager"
           mkdir -p ~/.bubblewrap
           echo "{\"jdkPath\":\"$JAVA_HOME\",\"androidSdkPath\":\"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
 
