@@ -42,10 +42,19 @@ async function connect() {
     pending.delete(msg.id)
     resolve(msg)
   }
+  // The connection only drops when the tab or Chrome itself goes away, and
+  // nothing sent afterwards is ever answered, so fail straight away.
+  let closed = false
+  ws.onclose = () => {
+    closed = true
+    for (const resolve of pending.values()) resolve({ error: { message: CLOSED } })
+    pending.clear()
+  }
 
   // Evaluates an expression in the page and returns its value. Gives up after
   // timeoutMs, since a frozen background page never answers.
   async function evaluate(expression, timeoutMs = 15_000) {
+    if (closed) throw new Error(CLOSED)
     const id = nextId++
     const reply = new Promise((resolve) => pending.set(id, resolve))
     ws.send(JSON.stringify({
@@ -66,15 +75,24 @@ async function connect() {
   async function waitFor(expression, timeoutMs, what) {
     const end = Date.now() + timeoutMs
     for (;;) {
-      const value = await evaluate(expression).catch(() => null)
+      const value = await evaluate(expression).catch(unlessClosed)
       if (value) return value
       if (Date.now() > end) throw new Error(`timed out waiting for ${what}`)
       await sleep(2000)
     }
   }
 
-  return { page, evaluate, waitFor, close: () => ws.close() }
+  // For polling: a page that didn't answer this time may next time, unless
+  // the connection is gone.
+  function unlessClosed(err) {
+    if (closed) throw err
+    return null
+  }
+
+  return { page, evaluate, waitFor, unlessClosed, close: () => ws.close() }
 }
+
+const CLOSED = 'lost the DevTools connection: the tab closed or Chrome quit'
 
 // Set on the page when the conversion starts. If it is gone later, the page
 // was reloaded (or Chrome was killed) and the conversion with it.
@@ -163,12 +181,26 @@ async function main() {
         break
       }
       case 'finished': {
-        const end = Date.now() + 15 * 60_000
+        // The whole conversion takes a minute or two on the emulator.
+        const end = Date.now() + 5 * 60_000
         let lastLog = 0
         let reloaded = false
         let idleSince = null
+        // Last time the page answered with a progress it hadn't shown before.
+        let lastProgress = null
+        let movedAt = Date.now()
         for (;;) {
-          const state = await app.evaluate(STATE).catch(() => null)
+          const state = await app.evaluate(STATE).catch(app.unlessClosed)
+          if (state && state.progress !== lastProgress) {
+            lastProgress = state.progress
+            movedAt = Date.now()
+          }
+          if (Date.now() - movedAt > 90_000) {
+            log('stuck', state)
+            throw new Error(state
+              ? `the conversion made no progress for 90 seconds (stuck at ${state.progress ?? 'no progress'})`
+              : 'the page stopped responding for 90 seconds')
+          }
           if (state) {
             if (state.result || state.error) {
               log('finished', state)
