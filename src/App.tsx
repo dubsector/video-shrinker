@@ -4,6 +4,8 @@ import './App.css';
 import { setAppBusy } from './lib/appBusy';
 import type { ConversionPhase, ConvertResult } from './lib/convert';
 import { type ConversionHandle, prepareConverter, startConversion } from './lib/converter';
+import { keepScreenOn } from './lib/keepScreenOn';
+import { clearJob, fromSavedResult, loadJob, saveFile, saveState, type SavedSettings, toSavedResult } from './lib/savedJob';
 
 const MB = 1024 * 1024;
 const SIZE_PRESETS_MB = [10, 25, 50, 100];
@@ -49,12 +51,24 @@ function App() {
   const [result, setResult] = useState<ConvertResult | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
   const [error, setError] = useState<AppError | null>(null);
+  // Set when the page came back from being thrown away mid-conversion.
+  const [notice, setNotice] = useState<string | null>(null);
+  // Set to restart a conversion the page lost, once the restored file and
+  // settings have rendered; holds how many restarts in a row this makes.
+  const autoRestart = useRef<number | null>(null);
+  // How many restarts in a row the next conversion is; zero unless it is one.
+  const restartCount = useRef(0);
+  // Set once the user picks a video, which then wins over anything restored.
+  const fileChosen = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   // Last percent actually pushed into state, so identical values don't render.
   const lastPercent = useRef(-1);
   const shareTargetPending = useRef(location.search.includes('share-target'));
+  // Kept apart from the above, which the share handoff clears before the
+  // restore below gets to look.
+  const launchedByShare = useRef(location.search.includes('share-target'));
   // Set when the user cancels the share handoff: the worker may still deliver
   // the file (or an error) afterwards, and both should be dropped silently.
   // Never reset — a new share launch is a fresh navigation.
@@ -87,6 +101,7 @@ function App() {
 
   const reset = useCallback(() => {
     setFile(null);
+    setNotice(null);
     setStatus('idle');
     setProgress(0);
     lastPercent.current = -1;
@@ -98,6 +113,7 @@ function App() {
       if (prev) URL.revokeObjectURL(prev);
       return null;
     });
+    void clearJob();
   }, []);
 
   const handleFile = useCallback(
@@ -108,7 +124,9 @@ function App() {
         return;
       }
       reset();
+      fileChosen.current = true;
       setFile(chosen);
+      void saveFile(chosen);
       // mediabunny is the bulk of this app's JavaScript and nothing converts
       // until a file is picked, so the engine is fetched here rather than at
       // startup. Nothing waits on this; it just means the engine is usually
@@ -188,6 +206,10 @@ function App() {
 
   const handleConvert = useCallback(async () => {
     if (!file) return;
+    const restarts = restartCount.current;
+    restartCount.current = 0;
+    const settings: SavedSettings = { targetMb, forceH264, stripMetadata };
+    void saveState({ settings, converting: true, restarts, result: null });
     setStatus('converting');
     setProgress(0);
     lastPercent.current = -1;
@@ -221,14 +243,73 @@ function App() {
       setResult(converted);
       setResultUrl(URL.createObjectURL(converted.blob));
       setStatus('done');
+      setNotice(null);
+      void saveState({ settings, converting: false, restarts: 0, result: toSavedResult(converted, file) });
     } catch (e) {
       setError(e instanceof Error ? { message: e.message } : { key: 'errors.conversionFailed' });
       setStatus('error');
+      void saveState({ settings, converting: false, restarts: 0, result: null });
     } finally {
       conversionRef.current = null;
       setPaused(false);
     }
   }, [file, targetMb, hevcAvailable, forceH264, stripMetadata]);
+
+  // Brings back whatever the last page was holding when the browser threw it
+  // away in the background: the video and settings, a result not yet
+  // downloaded, or a conversion that was running, which starts over by
+  // itself. Only once in a row, though: if the conversion itself is what gets
+  // the page killed (running out of memory, say), restarting it on every
+  // reload would never end.
+  const restoreChecked = useRef(false);
+  useEffect(() => {
+    if (restoreChecked.current) return;
+    restoreChecked.current = true;
+    // A video shared into the app replaces whatever was saved.
+    if (launchedByShare.current) {
+      void clearJob();
+      return;
+    }
+    void loadJob().then((saved) => {
+      // Nothing saved, or the user picked something while this was loading.
+      if (!saved || fileChosen.current) return;
+      setFile(saved.file);
+      prepareConverter();
+      const state = saved.state;
+      if (!state) return;
+      setTargetMb(state.settings.targetMb);
+      setForceH264(state.settings.forceH264);
+      setStripMetadata(state.settings.stripMetadata);
+      if (state.result) {
+        const restored = fromSavedResult(state.result, saved.file);
+        setResult(restored);
+        setResultUrl(URL.createObjectURL(restored.blob));
+        setStatus('done');
+      } else if (state.converting) {
+        if (state.restarts < 1) {
+          setNotice('notice.restarted');
+          autoRestart.current = state.restarts + 1;
+        } else {
+          setNotice('notice.interruptedAgain');
+          void saveState({ ...state, converting: false });
+        }
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (autoRestart.current === null || !file) return;
+    restartCount.current = autoRestart.current;
+    autoRestart.current = null;
+    void handleConvert();
+  }, [file, handleConvert]);
+
+  // Stops the screen timing out and locking partway through. Pressing the
+  // power button still locks it; the steps above cover that.
+  useEffect(() => {
+    if (status !== 'converting' || paused) return;
+    return keepScreenOn();
+  }, [status, paused]);
 
   const togglePause = useCallback(() => {
     const conversion = conversionRef.current;
@@ -394,6 +475,8 @@ function App() {
             </button>
           </div>
         )}
+
+        {notice && <div className="message notice">{t(notice)}</div>}
 
         {error && <div className="message error">{'key' in error ? t(error.key, error.params) : error.message}</div>}
 
