@@ -34,14 +34,42 @@ The app loads the live site, not the branch's web build.
    ```sh
    gcloud services enable testing.googleapis.com toolresults.googleapis.com --project=PROJECT_ID
    ```
-3. Under **IAM & Admin > Service Accounts**, create a service account (say
-   `test-lab-runner`) with the **Editor** role, which is what Firebase's
-   CI instructions use: Test Lab needs to write results to a storage bucket
-   it creates, and the script reads them back. Keep this project for testing
-   only. On the account's **Keys** tab, add a JSON key and download it.
-4. In this repository's **Settings > Secrets and variables > Actions**, add a
-   repository secret named `FIREBASE_SERVICE_ACCOUNT_KEY` holding the whole
-   JSON file. The project ID is read from the key.
+3. Under **IAM & Admin > Service Accounts**, pick the account the workflow
+   acts as (a new `test-lab-runner`, or the project's
+   `firebase-adminsdk-…` account) and give it the **Editor** role, which is
+   what Firebase's CI instructions use: Test Lab writes results to a storage
+   bucket it creates, and the script uploads the APKs there and reads the
+   results back. Keep this project for testing only.
+4. Let the workflow sign in as that account. Either:
+   - **Without a key (preferred):** set up Workload Identity Federation, so
+     GitHub's short-lived OIDC token is swapped for Google credentials and no
+     key is stored anywhere:
+     ```sh
+     gcloud iam workload-identity-pools create github --location=global --project=PROJECT_ID
+     gcloud iam workload-identity-pools providers create-oidc video-shrinker \
+       --location=global --workload-identity-pool=github --project=PROJECT_ID \
+       --issuer-uri=https://token.actions.githubusercontent.com \
+       --attribute-mapping=google.subject=assertion.sub,attribute.repository=assertion.repository \
+       --attribute-condition="assertion.repository == 'dubsector/video-shrinker'"
+     gcloud iam service-accounts add-iam-policy-binding SERVICE_ACCOUNT_EMAIL --project=PROJECT_ID \
+       --role=roles/iam.workloadIdentityUser \
+       --member="principalSet://iam.googleapis.com/projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github/attribute.repository/dubsector/video-shrinker"
+     ```
+     Then, under this repository's **Settings > Secrets and variables >
+     Actions > Variables**, add `GCP_WORKLOAD_IDENTITY_PROVIDER` set to
+     `projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github/providers/video-shrinker`
+     and `GCP_SERVICE_ACCOUNT` set to the account's email. The attribute
+     condition keeps any other repository from using the pool.
+   - **With a key:** on the account's **Keys** tab, add a JSON key, and add
+     it whole as a repository secret named `FIREBASE_SERVICE_ACCOUNT_KEY`.
+     The project ID is read from the key.
+
+   When both are set, the workflow uses Workload Identity Federation.
+5. Optionally, keep results in a bucket of your own by setting a
+   `TEST_LAB_RESULTS_BUCKET` variable (say `gs://video-shrinker-test-results`)
+   and granting the account **Storage Object Admin** on it. Test Lab only
+   accepts a bucket of your own on a project with billing turned on, so on the
+   free Spark plan leave this unset and Test Lab's own bucket is used.
 
 ## Running it
 

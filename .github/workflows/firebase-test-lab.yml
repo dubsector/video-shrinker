@@ -10,7 +10,10 @@ name: Firebase Test Lab
 #
 # The free Spark plan allows only a few runs a day, so this never runs on its
 # own: start it by hand, or label a PR firebase-test (each push to a labelled
-# PR runs it again). It needs the FIREBASE_SERVICE_ACCOUNT_KEY secret; see
+# PR runs it again). It signs in to Google Cloud without a stored key through
+# Workload Identity Federation (the GCP_WORKLOAD_IDENTITY_PROVIDER and
+# GCP_SERVICE_ACCOUNT variables), or else with the FIREBASE_SERVICE_ACCOUNT_KEY
+# secret; see
 # android/test-lab/README.md.
 on:
   workflow_dispatch:
@@ -58,13 +61,19 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'firebase-test')
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    permissions:
+      contents: read
+      # Lets Workload Identity Federation swap the job's OIDC token for
+      # short-lived Google credentials.
+      id-token: write
     steps:
-      - name: Check for the service account key
+      - name: Check for Google Cloud credentials
         env:
+          HAS_WIF: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && vars.GCP_SERVICE_ACCOUNT != '' }}
           HAS_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
         run: |
-          if [ "$HAS_KEY" != "true" ]; then
-            echo "::error::The FIREBASE_SERVICE_ACCOUNT_KEY secret is missing; see android/test-lab/README.md"
+          if [ "$HAS_WIF" != "true" ] && [ "$HAS_KEY" != "true" ]; then
+            echo "::error::Set the GCP_WORKLOAD_IDENTITY_PROVIDER and GCP_SERVICE_ACCOUNT variables, or the FIREBASE_SERVICE_ACCOUNT_KEY secret; see android/test-lab/README.md"
             exit 1
           fi
 
@@ -92,7 +101,15 @@ jobs:
         if: inputs.type != 'robo'
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
 
-      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+      # Keyless sign-in when it's set up, the JSON key otherwise.
+      - if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER != ''
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER == ''
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
 
@@ -106,6 +123,7 @@ jobs:
           TESTS: ${{ inputs.tests || 'all' }}
           ENGINE: ${{ inputs.engine || 'hardware' }}
           RESULTS_DIR: run-${{ github.run_id }}-${{ github.run_attempt }}
+          RESULTS_BUCKET: ${{ vars.TEST_LAB_RESULTS_BUCKET }}
         run: bash android/test-lab/run-firebase-test.sh "$TYPE"
 
       - name: Upload results

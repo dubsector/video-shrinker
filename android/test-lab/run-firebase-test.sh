@@ -31,6 +31,8 @@
 #                             or share (ShareSourcesTest)
 #   TIMEOUT                   longest the run may take (default 15m)
 #   OUT_DIR                   where results are downloaded (test-lab-output)
+#   RESULTS_BUCKET            a bucket of your own for the results, instead of
+#                             the one Test Lab creates (needs billing)
 set -euo pipefail
 
 TYPE=${1:-instrumentation}
@@ -63,6 +65,7 @@ args=(--app "$APP_APK"
   --timeout "$TIMEOUT"
   --results-history-name video-shrinker
   --results-dir "$RESULTS_DIR")
+[ -z "${RESULTS_BUCKET:-}" ] || args+=(--results-bucket "$RESULTS_BUCKET")
 
 case "$TYPE" in
   instrumentation)
@@ -100,7 +103,8 @@ status=0
 gcloud firebase test android run "${args[@]}" 2>&1 | tee "$OUT_DIR/gcloud.log" || status=${PIPESTATUS[0]}
 
 # gcloud names the bucket it stored the results in as a console link.
-bucket=$(grep -oE 'storage/browser/[^/]+' "$OUT_DIR/gcloud.log" | head -1 | cut -d/ -f3 || true)
+bucket=${RESULTS_BUCKET:-}; bucket=${bucket#gs://}
+[ -n "$bucket" ] || bucket=$(grep -oE 'storage/browser/[^/]+' "$OUT_DIR/gcloud.log" | head -1 | cut -d/ -f3 || true)
 report=$(grep -oE 'https://console\.firebase\.google\.com/[^] ]+' "$OUT_DIR/gcloud.log" | head -1 || true)
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   {
