@@ -36,8 +36,11 @@ async function connect() {
   const pending = new Map()
   ws.onmessage = (event) => {
     const msg = JSON.parse(event.data)
-    pending.get(msg.id)?.(msg)
+    // Events carry no id; only answers to our own requests resolve anything.
+    const resolve = pending.get(msg.id)
+    if (typeof resolve !== 'function') return
     pending.delete(msg.id)
+    resolve(msg)
   }
 
   // Evaluates an expression in the page and returns its value. Gives up after
@@ -77,6 +80,11 @@ async function connect() {
 // was reloaded (or Chrome was killed) and the conversion with it.
 const MARKER = '__smokeTestConverting'
 
+// JSON.stringify leaves characters that can still end or break out of the
+// surrounding page source, so escape those too before embedding a value.
+const UNSAFE = { '<': '\\u003C', '>': '\\u003E', '\u2028': '\\u2028', '\u2029': '\\u2029' }
+const literal = (value) => JSON.stringify(value).replace(/[<>\u2028\u2029]/g, (c) => UNSAFE[c])
+
 const STATE = `(() => ({
   url: location.href,
   build: document.querySelector('.build-info')?.textContent ?? null,
@@ -109,7 +117,7 @@ async function main() {
       }
       case 'shared': {
         const state = await app.waitFor(
-          `(() => { const s = ${STATE}; return (s.file === ${JSON.stringify(arg)} || s.error) ? s : null })()`,
+          `(() => { const s = ${STATE}; return (s.file === ${literal(arg)} || s.error) ? s : null })()`,
           120_000, 'the shared video to show up')
         log('shared', state)
         if (state.error) throw new Error(`the app showed an error: ${state.error}`)
