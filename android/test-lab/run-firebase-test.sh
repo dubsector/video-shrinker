@@ -79,8 +79,10 @@ case "$TYPE" in
     # signing key would fail (leaving a Custom Tab with a URL bar).
     echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
       > "$OUT_DIR/chrome-command-line"
-    args+=(--type instrumentation --test "$TEST_APK"
-      --environment-variables "engine=${ENGINE:-hardware}"
+    # Orchestrator runs each test in its own instrumentation with the app's
+    # data cleared, so one test can't leave anything behind for the next.
+    args+=(--type instrumentation --test "$TEST_APK" --use-orchestrator
+      --environment-variables "engine=${ENGINE:-hardware},clearPackageData=true"
       --other-files "/data/local/tmp/smoke-test.mp4=$OUT_DIR/smoke-test.mp4,/data/local/tmp/chrome-command-line=$OUT_DIR/chrome-command-line"
       --directories-to-pull /sdcard/test-lab)
     case "${TESTS:-all}" in
