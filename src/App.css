@@ -414,15 +414,6 @@ main {
   font-size: 14px;
 }
 
-.link-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pause-button {
-  align-self: center;
-}
-
 footer {
   flex: 1;
   display: flex;

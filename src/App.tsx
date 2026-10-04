@@ -441,14 +441,24 @@ function App() {
           </label>
         </div>
 
-        <button type="button" className="convert-button" disabled={!file || status === 'converting'} onClick={handleConvert}>
-          {status === 'converting'
-            ? paused
-              ? t('convert.paused')
-              : phase === 'refining'
-                ? t('convert.refining')
-                : t('convert.converting')
-            : t('convert.start')}
+        {/* While converting, the same button pauses and resumes. A pause asked
+            for while ffmpeg runs would only land between passes, so there it
+            stays disabled and just says what is happening; resuming always works. */}
+        <button
+          type="button"
+          className="convert-button"
+          disabled={!file || (status === 'converting' && !paused && !pausable)}
+          onClick={status === 'converting' ? togglePause : handleConvert}
+        >
+          {status !== 'converting'
+            ? t('convert.start')
+            : paused
+              ? t('convert.resume')
+              : pausable
+                ? t('convert.pause')
+                : phase === 'refining'
+                  ? t('convert.refining')
+                  : t('convert.converting')}
         </button>
 
         {status === 'converting' && (
@@ -460,19 +470,11 @@ function App() {
               <div className="progress-track">
                 <div className="progress-bar" style={{ width: `${Math.round(progress * 100)}%` }} />
               </div>
-              <span className="progress-label">{Math.round(progress * 100)}%</span>
+              <span className="progress-label">
+                {paused ? `${t('convert.paused')} · ` : ''}
+                {Math.round(progress * 100)}%
+              </span>
             </div>
-            <button
-              type="button"
-              className="link-button pause-button"
-              // A pause asked for while ffmpeg runs only lands between passes,
-              // so offer it only where it takes effect straight away; resuming
-              // always works.
-              disabled={!paused && !pausable}
-              onClick={togglePause}
-            >
-              {paused ? t('convert.resume') : t('convert.pause')}
-            </button>
           </div>
         )}
 
