@@ -171,18 +171,12 @@
             android:label="@string/launcherName"
             android:exported="true"
             android:excludeFromRecents="true"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode">
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density|keyboardHidden|uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="video/mp4" />
-                <data android:mimeType="video/webm" />
-                <data android:mimeType="video/quicktime" />
-                <data android:mimeType="video/x-msvideo" />
-                <data android:mimeType="video/x-matroska" />
-                <data android:mimeType="video/mpeg" />
-                <data android:mimeType="video/3gpp" />
+                <data android:mimeType="video/*" />
             </intent-filter>
         </activity>
 

@@ -31,6 +31,15 @@ function formatBytes(bytes: number): string {
   return `${(bytes / MB).toFixed(2)} MB`;
 }
 
+// Shares can arrive with an empty or generic type when the sending app
+// doesn't report one, so fall back to the extension before rejecting.
+const VIDEO_EXTENSIONS = /\.(mp4|m4v|mov|webm|mkv|avi|mpe?g|3gp|3g2|ts|mts|m2ts|wmv|flv|ogv)$/i;
+
+function looksLikeVideo(file: File): boolean {
+  if (file.type.startsWith('video/')) return true;
+  return (file.type === '' || file.type === 'application/octet-stream') && VIDEO_EXTENSIONS.test(file.name);
+}
+
 function App() {
   const { t } = useTranslation();
   const [file, setFile] = useState<File | null>(null);
@@ -100,7 +109,7 @@ function App() {
   const handleFile = useCallback(
     (chosen: File | null) => {
       if (!chosen) return;
-      if (!chosen.type.startsWith('video/')) {
+      if (!looksLikeVideo(chosen)) {
         setError({ key: 'errors.notVideo' });
         return;
       }
@@ -160,7 +169,15 @@ function App() {
       shareTargetPending.current = false;
       history.replaceState(null, '', location.pathname);
       setReceivingShare(true);
-      sw.controller?.postMessage('share-ready');
+      // controller can be null right after the worker activates (or after a
+      // hard reload); the worker only needs the message to come from this
+      // page, so fall back to the active registration instead of waiting
+      // out the handshake timer.
+      if (sw.controller) {
+        sw.controller.postMessage('share-ready');
+      } else {
+        void sw.ready.then((registration) => registration.active?.postMessage('share-ready'));
+      }
       handshakeTimer = window.setTimeout(() => {
         setReceivingShare(false);
         setError({ key: 'errors.shareNeverArrived' });
