@@ -20,6 +20,9 @@
 #                             `gcloud firebase test android models list` has
 #                             the choices; the free plan allows a few runs a
 #                             day on each of physical and virtual devices.
+#   ENGINE                    what each conversion must have used: hardware
+#                             (WebCodecs on a hardware encoder, the default),
+#                             webcodecs (software encoder too) or any
 #   TIMEOUT                   longest the run may take (default 15m)
 #   OUT_DIR                   where results are downloaded (test-lab-output)
 set -euo pipefail
@@ -40,7 +43,14 @@ mkdir -p "$OUT_DIR"
 
 echo "Device: $DEVICE_MODEL, Android API $OS_VERSION"
 # Fails early, with the reason, if the device isn't offered.
-gcloud firebase test android models describe "$DEVICE_MODEL" --format='value(name,form,supportedVersionIds.list())'
+form=$(gcloud firebase test android models describe "$DEVICE_MODEL" --format='value(form)')
+echo "Form: $form"
+# Virtual devices have no hardware video encoder, so the app falls back to
+# ffmpeg.wasm there, which the test fails on (see ENGINE below).
+if [ "$TYPE" = instrumentation ] && [ "$form" != PHYSICAL ] && [ "${ENGINE:-hardware}" != any ]; then
+  echo "$DEVICE_MODEL is a $form device, with no hardware encoder; pick a physical one, or set ENGINE=any" >&2
+  exit 2
+fi
 
 args=(--app "$APP_APK"
   --device "model=$DEVICE_MODEL,version=$OS_VERSION,locale=en,orientation=portrait"
@@ -61,6 +71,7 @@ case "$TYPE" in
     echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
       > "$OUT_DIR/chrome-command-line"
     args+=(--type instrumentation --test "$TEST_APK"
+      --environment-variables "engine=${ENGINE:-hardware}"
       --other-files "/data/local/tmp/smoke-test.mp4=$OUT_DIR/smoke-test.mp4,/data/local/tmp/chrome-command-line=$OUT_DIR/chrome-command-line"
       --directories-to-pull /sdcard/test-lab)
     ;;

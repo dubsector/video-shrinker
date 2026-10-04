@@ -4,9 +4,12 @@
 Lab device through `run-firebase-test.sh`. By default it runs
 `ShareAndBackgroundTest` (in `android/app/src/androidTest`), the emulator
 test's scenario on a real phone: share a video in, convert it, then convert
-again with the app sent to the background mid-encode. Test Lab's phones have a
-current Chrome, so this covers the WebCodecs encoder, which the emulator's
-Chrome is too old for. A `robo` run lets Test Lab's crawler explore instead,
+again with the app sent to the background mid-encode. The emulator has no
+hardware video encoder, so the app always falls back to ffmpeg.wasm there.
+Test Lab's physical phones have one, and the test fails unless both
+conversions used WebCodecs on it (the `engine` input loosens that to any
+WebCodecs, or to anything). It refuses to run on virtual devices, which have
+no hardware encoder either. A `robo` run lets Test Lab's crawler explore instead,
 which mostly shows the app launches, since the crawler can't see much inside
 Chrome.
 

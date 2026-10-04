@@ -48,6 +48,11 @@ import java.util.regex.Pattern;
  * to /data/local/tmp by the test run (see .github/workflows/firebase-test-lab.yml).
  * Screenshots go to /sdcard/test-lab; what was seen is logged under the
  * TestLabSmoke tag.
+ *
+ * Each conversion must have used WebCodecs on a hardware encoder: that is
+ * what the emulator can't test, since it has none and the app falls back to
+ * ffmpeg.wasm there. The instrumentation argument engine=webcodecs also
+ * accepts WebCodecs' software encoder, and engine=any accepts anything.
  */
 @RunWith(AndroidJUnit4.class)
 public class ShareAndBackgroundTest {
@@ -202,8 +207,34 @@ public class ShareAndBackgroundTest {
             SystemClock.sleep(2_000);
         }
         scrollDown();
-        log("finished " + when + ": " + textOf(ENGINE));
+        String engine = textOf(ENGINE);
+        log("finished " + when + ": " + engine);
         shot("done");
+        checkEngine(engine, when);
+    }
+
+    // The point of running on real phones: the conversion has to have gone
+    // through WebCodecs, on a hardware encoder unless the run asks for less
+    // (instrumentation argument engine=webcodecs, or engine=any).
+    private void checkEngine(String engine, String when) {
+        String wanted = InstrumentationRegistry.getArguments().getString("engine", "hardware");
+        boolean ok;
+        switch (wanted) {
+            case "any":
+                ok = true;
+                break;
+            case "webcodecs":
+                ok = engine != null && engine.startsWith("WebCodecs");
+                break;
+            default:
+                ok = "WebCodecs, hardware-accelerated".equals(engine);
+                break;
+        }
+        if (!ok) {
+            failWithScreen("the conversion " + when + " used " + (engine == null ? "an unknown engine" : "\"" + engine + "\"")
+                    + ", not " + ("webcodecs".equals(wanted) ? "WebCodecs" : "hardware WebCodecs")
+                    + " (engine=" + wanted + "); the app's console says why it fell back");
+        }
     }
 
     private void launch(boolean fresh) {

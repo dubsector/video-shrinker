@@ -3,7 +3,8 @@ name: Firebase Test Lab
 # Runs the app on one Firebase Test Lab device with
 # android/test-lab/run-firebase-test.sh: by default the share, convert and
 # background test in android/app/src/androidTest, on a real phone with a
-# current Chrome, which covers the WebCodecs encoder the emulator test can't.
+# hardware video encoder. The emulator has none, so there the app always falls
+# back to ffmpeg.wasm; here the test fails unless WebCodecs did the encoding.
 #
 # The free Spark plan allows only a few runs a day, so this never runs on its
 # own: start it by hand, or label a PR firebase-test (each push to a labelled
@@ -18,13 +19,18 @@ on:
         options: [instrumentation, robo]
         default: instrumentation
       device_model:
-        description: Device model ID (`gcloud firebase test android models list`)
+        description: Device model ID; instrumentation needs a physical one (`gcloud firebase test android models list`)
         type: string
         default: oriole
       os_version:
         description: Android API level
         type: string
         default: '33'
+      engine:
+        description: What each conversion must have used
+        type: choice
+        options: [hardware, webcodecs, any]
+        default: hardware
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches: [main]
@@ -90,6 +96,7 @@ jobs:
           TYPE: ${{ inputs.type || 'instrumentation' }}
           DEVICE_MODEL: ${{ inputs.device_model || 'oriole' }}
           OS_VERSION: ${{ inputs.os_version || '33' }}
+          ENGINE: ${{ inputs.engine || 'hardware' }}
           RESULTS_DIR: run-${{ github.run_id }}-${{ github.run_attempt }}
         run: bash android/test-lab/run-firebase-test.sh "$TYPE"
 
