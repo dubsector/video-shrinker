@@ -1,5 +1,6 @@
 import type { ConversionPhase, ConvertResult } from './convert';
 import type { ConvertRequest, ConvertResponse } from './convert.worker';
+import { whenPageVisible } from './pageVisibility';
 import { PauseGate } from './pauseGate';
 
 export type ConversionRequest = {
@@ -60,6 +61,7 @@ function runInPage(request: ConversionRequest): ConversionHandle {
       preferHevc: request.preferHevc,
       stripMetadata: request.stripMetadata,
       pauseGate: gate,
+      whenVisible: whenPageVisible,
       onProgress: request.onProgress,
     }),
   );
@@ -73,11 +75,14 @@ function runInWorker(request: ConversionRequest): ConversionHandle {
   // resume keep reaching whatever is actually running.
   let controls = { pause: () => post({ type: 'pause' }), resume: () => post({ type: 'resume' }) };
 
+  const reportVisibility = () => post({ type: 'visibility', visible: document.visibilityState === 'visible' });
+
   const result = new Promise<ConvertResult>((resolve, reject) => {
     let started = false;
     const cleanup = () => {
       target.removeEventListener('message', onMessage);
       target.removeEventListener('error', onError);
+      document.removeEventListener('visibilitychange', reportVisibility);
     };
     const onMessage = (event: MessageEvent<ConvertResponse>) => {
       started = true;
@@ -110,8 +115,10 @@ function runInWorker(request: ConversionRequest): ConversionHandle {
     };
     target.addEventListener('message', onMessage);
     target.addEventListener('error', onError);
+    document.addEventListener('visibilitychange', reportVisibility);
   });
 
+  reportVisibility();
   post({
     type: 'convert',
     file: request.file,
