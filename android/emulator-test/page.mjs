@@ -81,6 +81,10 @@ const STATE = `(() => ({
   url: location.href,
   build: document.querySelector('.build-info')?.textContent ?? null,
   sameDocument: !!window.${MARKER},
+  // How this document came to be, to tell a discard apart from an update reload.
+  navigation: performance.getEntriesByType('navigation')[0]?.type ?? null,
+  wasDiscarded: document.wasDiscarded ?? null,
+  events: JSON.parse(sessionStorage.getItem('${MARKER}Events') ?? '[]'),
   visibility: document.visibilityState,
   file: document.querySelector('.file-info strong')?.textContent ?? null,
   button: document.querySelector('.convert-button')?.textContent ?? null,
@@ -120,7 +124,25 @@ async function main() {
           return true
         })()`)
         await sleep(500)
-        await app.evaluate(`window.${MARKER} = true, document.querySelector('.convert-button').click(), true`)
+        // Lifecycle and service worker events are kept in sessionStorage,
+        // which survives a reload of the tab, to explain any reset later.
+        await app.evaluate(`(() => {
+          window.${MARKER} = true
+          const note = (event) => {
+            const key = '${MARKER}Events'
+            const events = JSON.parse(sessionStorage.getItem(key) ?? '[]')
+            events.push(\`\${new Date().toISOString().slice(11, 19)} \${event}\`)
+            sessionStorage.setItem(key, JSON.stringify(events))
+          }
+          for (const type of ['visibilitychange', 'freeze', 'resume']) {
+            document.addEventListener(type, () => note(\`\${type} \${document.visibilityState}\`))
+          }
+          navigator.serviceWorker.addEventListener('controllerchange', () => note('controllerchange'))
+          window.addEventListener('pagehide', (e) => note(\`pagehide persisted=\${e.persisted}\`))
+          window.addEventListener('beforeunload', () => note('beforeunload'))
+          document.querySelector('.convert-button').click()
+          return true
+        })()`)
         const state = await app.waitFor(
           `(() => { const s = ${STATE}; return (s.progress || s.result || s.error) ? s : null })()`,
           60_000, 'the conversion to start')
