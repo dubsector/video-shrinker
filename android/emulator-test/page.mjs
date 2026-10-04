@@ -62,10 +62,13 @@ async function connect() {
       method: 'Runtime.evaluate',
       params: { expression, returnByValue: true, awaitPromise: true },
     }))
-    const msg = await Promise.race([
-      reply,
-      sleep(timeoutMs).then(() => { throw new Error('the page did not respond') }),
-    ])
+    // The timer is cleared once the page answers: left running, it would keep
+    // this process alive for the rest of timeoutMs after the work is done.
+    let timer
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('the page did not respond')), timeoutMs)
+    })
+    const msg = await Promise.race([reply, timeout]).finally(() => clearTimeout(timer))
     if (msg.error) throw new Error(msg.error.message)
     if (msg.result.exceptionDetails) throw new Error(msg.result.exceptionDetails.exception?.description ?? 'page exception')
     return msg.result.result.value

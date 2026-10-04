@@ -110,7 +110,7 @@ shot 1-launched
 
 step "Sharing a video to the app"
 ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=12" \
-  -vf "noise=alls=25:allf=t" -c:v libx264 -pix_fmt yuv420p -b:v 8M -maxrate 8M -bufsize 8M \
+  -vf "noise=alls=25:allf=t" -c:v libx264 -preset ultrafast -pix_fmt yuv420p -b:v 8M -maxrate 8M -bufsize 8M \
   "$OUT_DIR/$VIDEO"
 size=$(stat -c %s "$OUT_DIR/$VIDEO")
 echo "Test video: $size bytes"

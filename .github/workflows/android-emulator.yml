@@ -53,10 +53,14 @@ jobs:
 
       - uses: gradle/actions/wrapper-validation@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
 
+      # Caching Gradle's downloads is fine here: this only builds a debug APK
+      # for a throwaway emulator. The release build (android-build.yml) never
+      # restores a cache, so nothing cached can end up in what ships.
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
 
