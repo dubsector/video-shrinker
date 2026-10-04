@@ -219,9 +219,14 @@ final class WebApp {
         checkEngine(engine, when);
     }
 
+    // Encoder mismatches found so far; see checkEngines().
+    private final java.util.List<String> wrongEngines = new java.util.ArrayList<>();
+
     // The point of running on real phones: the conversion has to have gone
     // through WebCodecs, on a hardware encoder unless the run asks for less
-    // (instrumentation argument engine=webcodecs, or engine=any).
+    // (instrumentation argument engine=webcodecs, or engine=any). A mismatch
+    // is only noted here, so the rest of the test (the background part, say)
+    // still runs; checkEngines() fails on it at the end.
     private void checkEngine(String engine, String when) {
         String wanted = InstrumentationRegistry.getArguments().getString("engine", "hardware");
         boolean ok;
@@ -237,10 +242,17 @@ final class WebApp {
                 break;
         }
         if (!ok) {
-            failWithScreen("the conversion " + when + " used " + (engine == null ? "an unknown engine" : "\"" + engine + "\"")
+            String problem = "the conversion " + when + " used " + (engine == null ? "an unknown engine" : "\"" + engine + "\"")
                     + ", not " + ("webcodecs".equals(wanted) ? "WebCodecs" : "hardware WebCodecs")
-                    + " (engine=" + wanted + "); the app's console says why it fell back");
+                    + " (engine=" + wanted + "); the app's console says why it fell back";
+            log("WRONG ENCODER: " + problem);
+            wrongEngines.add(problem);
         }
+    }
+
+    // Fails if any conversion so far used the wrong encoder.
+    void checkEngines() {
+        if (!wrongEngines.isEmpty()) fail(String.join("; ", wrongEngines));
     }
 
     // --- Finding things on screen ----------------------------------------
