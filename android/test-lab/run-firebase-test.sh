@@ -20,7 +20,7 @@
 # Build first: (cd android && ./gradlew assembleDebug assembleDebugAndroidTest)
 # Needs gcloud signed in to the Firebase project, and ffmpeg for the test
 # video. Settings, from the environment:
-#   DEVICE_MODEL, OS_VERSION  the device (default: oriole, a Pixel 6, on 33).
+#   DEVICE_MODEL, OS_VERSION  the device (default: komodo, a Pixel 9 Pro XL, on 35).
 #                             `gcloud firebase test android models list` has
 #                             the choices; the free plan allows a few runs a
 #                             day on each of physical and virtual devices.
@@ -40,8 +40,8 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 APK_DIR="$HERE/../app/build/outputs/apk"
 APP_APK="$APK_DIR/debug/app-debug.apk"
 TEST_APK="$APK_DIR/androidTest/debug/app-debug-androidTest.apk"
-DEVICE_MODEL=${DEVICE_MODEL:-oriole}
-OS_VERSION=${OS_VERSION:-33}
+DEVICE_MODEL=${DEVICE_MODEL:-komodo}
+OS_VERSION=${OS_VERSION:-35}
 TIMEOUT=${TIMEOUT:-15m}
 OUT_DIR=${OUT_DIR:-test-lab-output}
 RESULTS_DIR=${RESULTS_DIR:-run-$(date -u +%Y%m%d-%H%M%S)}
