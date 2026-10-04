@@ -7,8 +7,10 @@
 #      then checks the conversion still finishes.
 #
 # Usage: android/emulator-test/smoke-test.sh path/to/app-debug.apk
-# Needs adb, ffmpeg and Node 22+ on PATH. Screenshots, logcat and the page
-# driver's log are written to $OUT_DIR (default: emulator-test-output).
+# Needs adb, ffmpeg, openssl and Node 22+ on PATH. With WEB_ROOT set to a
+# web build (dist/), the app loads that build instead of the live site.
+# Screenshots, logcat and the page driver's log are written to $OUT_DIR
+# (default: emulator-test-output).
 set -euo pipefail
 
 APK=${1:?usage: smoke-test.sh path/to/app-debug.apk}
@@ -36,7 +38,7 @@ fail() {
     "$OUT_DIR/logcat.txt" | tail -60 || true
   exit 1
 }
-trap 'adb logcat -d > "$OUT_DIR/logcat.txt" 2>/dev/null || true' EXIT
+trap 'adb logcat -d > "$OUT_DIR/logcat.txt" 2>/dev/null || true; kill $(jobs -p) 2>/dev/null || true' EXIT
 
 # Waits up to $1 seconds for the command in the remaining arguments to succeed.
 wait_for() {
@@ -61,12 +63,31 @@ adb wait-for-device
 chrome_path=$(adb shell pm path "$CHROME" | tr -d '\r')
 [ -n "$chrome_path" ] || fail "Chrome is not installed; use a google_apis_playstore image"
 echo "Chrome $(adb shell dumpsys package "$CHROME" | grep -m1 versionName | tr -d '\r ')"
-# Chrome only reads this command-line file when it is the debug app. The
+# Chrome only reads its command-line file when it is the debug app. The
 # debug APK is signed with a key the site's assetlinks.json doesn't list, so
 # skip the Digital Asset Links check to get a real verified TWA, and skip
 # Chrome's first-run screens.
+flags=(_ --disable-fre --no-default-browser-check --no-first-run
+  --disable-digital-asset-link-verification-for-url=https://dubsector.github.io)
+if [ -n "${WEB_ROOT:-}" ]; then
+  # Serve WEB_ROOT (a `npm run build` output) in place of the live site:
+  # Chrome resolves dubsector.github.io to a local HTTPS server reached over
+  # adb reverse, and trusts its throwaway certificate by key.
+  openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=dubsector.github.io \
+    -keyout "$OUT_DIR/key.pem" -out "$OUT_DIR/cert.pem" 2> /dev/null
+  spki=$(openssl x509 -in "$OUT_DIR/cert.pem" -pubkey -noout | openssl pkey -pubin -outform der \
+    | openssl dgst -sha256 -binary | base64)
+  node "$HERE/serve.mjs" "$WEB_ROOT" "$OUT_DIR/cert.pem" "$OUT_DIR/key.pem" 4443 > "$OUT_DIR/server.log" 2>&1 &
+  adb reverse tcp:4443 tcp:4443
+  flags+=("\"--host-resolver-rules=MAP dubsector.github.io 127.0.0.1:4443\""
+    "--ignore-certificate-errors-spki-list=$spki")
+  echo "Serving $WEB_ROOT as https://dubsector.github.io"
+else
+  echo "Using the live site"
+fi
+echo "${flags[*]}" > "$OUT_DIR/chrome-command-line"
+adb push "$OUT_DIR/chrome-command-line" /data/local/tmp/chrome-command-line > /dev/null
 adb shell am set-debug-app --persistent "$CHROME"
-adb shell "echo '_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io' > /data/local/tmp/chrome-command-line"
 adb shell am force-stop "$CHROME"
 adb logcat -c
 adb logcat -b crash -c || true

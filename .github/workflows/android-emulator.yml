@@ -2,17 +2,29 @@ name: Android Emulator Test
 
 # Builds the debug APK and runs android/emulator-test/smoke-test.sh on an
 # emulator: launch, share a video in, convert it, and survive being sent to
-# the background mid-encode. The web app it loads is the live site, so this
-# checks the Android wrapper against what users actually get.
+# the background mid-encode. By default the app loads this branch's own web
+# build (served locally in place of dubsector.github.io), so a PR is tested
+# with its own changes; a manual run can pick the live site instead.
 on:
   pull_request:
     branches: [main]
     paths:
       - 'android/**'
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'package.json'
+      - 'vite.config.ts'
       - '.github/workflows/android-emulator.yml'
   workflow_dispatch:
+    inputs:
+      site:
+        description: Web app to load in the emulator
+        type: choice
+        options: [branch, live]
+        default: branch
   push:
-    branches: [feat/android-emulator-smoke-test]
+    branches: [feat/android-emulator-smoke-test, test/survive-backgrounding-emulator]
 
 permissions:
   contents: read
@@ -43,6 +55,11 @@ jobs:
         with:
           node-version: 24
 
+      # npm ci can't be used: see pr-checks.yml.
+      - name: Build web app
+        if: inputs.site != 'live'
+        run: npm install && npm run build
+
       - name: Build debug APK
         working-directory: android
         run: ./gradlew assembleDebug
@@ -60,6 +77,8 @@ jobs:
       # The Play Store image is the one that ships Chrome, which the app needs.
       - name: Run smoke test on emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          WEB_ROOT: ${{ inputs.site != 'live' && 'dist' || '' }}
         with:
           api-level: 34
           target: google_apis_playstore

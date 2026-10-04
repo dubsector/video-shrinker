@@ -79,6 +79,7 @@ const MARKER = '__smokeTestConverting'
 
 const STATE = `(() => ({
   url: location.href,
+  build: document.querySelector('.build-info')?.textContent ?? null,
   sameDocument: !!window.${MARKER},
   visibility: document.visibilityState,
   file: document.querySelector('.file-info strong')?.textContent ?? null,
