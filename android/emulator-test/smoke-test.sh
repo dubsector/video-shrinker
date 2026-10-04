@@ -27,6 +27,13 @@ fail() {
   echo "FAIL: $*" >&2
   shot failure
   adb logcat -d > "$OUT_DIR/logcat.txt" || true
+  # Print the likely-relevant bits too, so the job log alone is enough to debug.
+  echo "--- On screen:"
+  adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 \
+    && adb shell cat /sdcard/ui.xml | grep -oE 'text="[^"]+"' | head -40 || true
+  echo "--- Logcat:"
+  grep -iE "$PKG|ShareRelay|AndroidRuntime|Permission Denial|SecurityException|ActivityTaskManager: START" \
+    "$OUT_DIR/logcat.txt" | tail -60 || true
   exit 1
 }
 trap 'adb logcat -d > "$OUT_DIR/logcat.txt" 2>/dev/null || true' EXIT
@@ -98,13 +105,16 @@ echo "Sharing $uri"
 adb shell input keyevent KEYCODE_HOME
 adb shell am start -a android.intent.action.SEND -t video/mp4 \
   --eu android.intent.extra.STREAM "$uri" --grant-read-uri-permission \
-  -n "$PKG/.ShareRelayActivity" > /dev/null
+  -n "$PKG/.ShareRelayActivity"
 relay_copied() {
   local copied
   copied=$(adb shell run-as "$PKG" stat -c %s "cache/shared_videos/$VIDEO" 2>/dev/null | tr -d '\r')
   [ "$copied" = "$size" ]
 }
-wait_for 60 relay_copied || fail "the share relay did not copy the video into the app's cache"
+wait_for 60 relay_copied || {
+  adb shell run-as "$PKG" ls -la cache cache/shared_videos || true
+  fail "the share relay did not copy the video into the app's cache"
+}
 echo "Relay copied $size bytes"
 wait_for 60 chrome_in_front || fail "Chrome never came to the front after the share"
 app_crashed && fail "the app crashed handling the share"
