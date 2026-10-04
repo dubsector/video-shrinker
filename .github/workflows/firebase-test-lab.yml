@@ -25,11 +25,11 @@ on:
       device_model:
         description: Device model ID; instrumentation needs a physical one (`gcloud firebase test android models list`)
         type: string
-        default: oriole
+        default: komodo
       os_version:
         description: Android API level
         type: string
-        default: '33'
+        default: '35'
       tests:
         description: Which instrumentation tests (convert = share + background, share = share sources)
         type: choice
@@ -112,8 +112,8 @@ jobs:
       - name: Run on Test Lab
         env:
           TYPE: ${{ inputs.type || 'instrumentation' }}
-          DEVICE_MODEL: ${{ inputs.device_model || 'oriole' }}
-          OS_VERSION: ${{ inputs.os_version || '33' }}
+          DEVICE_MODEL: ${{ inputs.device_model || 'komodo' }}
+          OS_VERSION: ${{ inputs.os_version || '35' }}
           TESTS: ${{ inputs.tests || 'all' }}
           ENGINE: ${{ inputs.engine || 'hardware' }}
           RESULTS_DIR: run-${{ github.run_id }}-${{ github.run_attempt }}
