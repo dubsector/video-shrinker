@@ -119,6 +119,26 @@ const STATE = `(() => ({
   error: document.querySelector('.message.error')?.textContent ?? null,
 }))()`
 
+// What the app has to work with here: without WebCodecs H.264 or HEVC it
+// converts with the much slower ffmpeg.wasm fallback.
+const BROWSER = `(async () => {
+  const encodes = async (codec) => {
+    if (typeof VideoEncoder === 'undefined') return 'no VideoEncoder'
+    try {
+      const config = { codec, width: 1280, height: 720, bitrate: 4_000_000, framerate: 30 }
+      return (await VideoEncoder.isConfigSupported(config)).supported
+    } catch (err) {
+      return String(err)
+    }
+  }
+  return {
+    chrome: navigator.userAgent.match(/Chrome\\/([\\d.]+)/)?.[1] ?? navigator.userAgent,
+    viewport: \`\${innerWidth}x\${innerHeight} @\${devicePixelRatio}x\`,
+    h264: await encodes('avc1.42001f'),
+    hevc: await encodes('hvc1.1.6.L93.B0'),
+  }
+})()`
+
 async function main() {
   const [command, arg] = process.argv.slice(2)
   const app = await connect()
@@ -131,6 +151,7 @@ async function main() {
         // before it controls the page would be lost.
         await app.waitFor(`!!navigator.serviceWorker.controller`, 90_000, 'the service worker to take control')
         log('loaded', await app.evaluate(STATE))
+        log('browser', await app.evaluate(BROWSER))
         break
       }
       case 'shared': {

@@ -73,17 +73,20 @@ jobs:
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
 
       # The Play Store image is the one that ships Chrome, which the app needs.
+      # Each image bundles the Chrome of its day, so a newer Android is also
+      # what keeps Chrome current. The screen is a Pixel 9 Pro XL's.
       - name: Run smoke test on emulator
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         env:
           WEB_ROOT: ${{ inputs.site != 'live' && 'dist' || '' }}
         with:
-          api-level: 34
+          api-level: '37.0'
           target: google_apis_playstore
           arch: x86_64
           cores: 4
           ram-size: 4096M
           disable-animations: true
+          pre-emulator-launch-script: bash android/emulator-test/configure-avd.sh
           script: bash android/emulator-test/smoke-test.sh android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload screenshots and logs
