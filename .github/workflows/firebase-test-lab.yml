@@ -1,0 +1,130 @@
+name: Firebase Test Lab
+
+# Runs the app on one Firebase Test Lab device with
+# android/test-lab/run-firebase-test.sh: by default the share, convert and
+# background test in android/app/src/androidTest, on a real phone with a
+# hardware video encoder. The emulator has none, so there the app always falls
+# back to ffmpeg.wasm; here the test fails unless WebCodecs did the encoding.
+# It also shares videos in the ways real shares arrive (media store, a
+# Photos-like provider, Google Photos itself), which the emulator can't.
+#
+# The free Spark plan allows only a few runs a day, so this only runs when
+# started by hand, never on a push or a pull request. It signs in to Google Cloud without a stored key through
+# Workload Identity Federation (the GCP_WORKLOAD_IDENTITY_PROVIDER and
+# GCP_SERVICE_ACCOUNT variables), or else with the FIREBASE_SERVICE_ACCOUNT_KEY
+# secret; see
+# android/test-lab/README.md.
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: What to run
+        type: choice
+        options: [instrumentation, robo]
+        default: instrumentation
+      device_model:
+        description: Device model ID; instrumentation needs a physical one (`gcloud firebase test android models list`)
+        type: string
+        default: oriole
+      os_version:
+        description: Android API level
+        type: string
+        default: '33'
+      tests:
+        description: Which instrumentation tests (convert = share + background, share = share sources)
+        type: choice
+        options: [all, convert, share]
+        default: all
+      engine:
+        description: What each conversion must have used
+        type: choice
+        options: [hardware, webcodecs, any]
+        default: hardware
+
+permissions:
+  contents: read
+
+# A second run waits for the first instead of cancelling it, so a run that
+# has already reached a device (and used up one of the day's runs) finishes.
+concurrency:
+  group: firebase-test-lab-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test-lab:
+    name: Test Lab (${{ inputs.type || 'instrumentation' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      # Lets Workload Identity Federation swap the job's OIDC token for
+      # short-lived Google credentials.
+      id-token: write
+    steps:
+      - name: Check for Google Cloud credentials
+        env:
+          HAS_WIF: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER != '' && vars.GCP_SERVICE_ACCOUNT != '' }}
+          HAS_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY != '' }}
+        run: |
+          if [ "$HAS_WIF" != "true" ] && [ "$HAS_KEY" != "true" ]; then
+            echo "::error::Set the GCP_WORKLOAD_IDENTITY_PROVIDER and GCP_SERVICE_ACCOUNT variables, or the FIREBASE_SERVICE_ACCOUNT_KEY secret; see android/test-lab/README.md"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: gradle/actions/wrapper-validation@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+
+      # Caching Gradle's downloads is fine here, as in android-emulator.yml:
+      # this only builds debug APKs for a test device.
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+
+      - name: Build debug APKs
+        working-directory: android
+        run: ./gradlew assembleDebug assembleDebugAndroidTest
+
+      - name: Install ffmpeg
+        if: inputs.type != 'robo'
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+
+      # Keyless sign-in when it's set up, the JSON key otherwise.
+      - if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER != ''
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - if: vars.GCP_WORKLOAD_IDENTITY_PROVIDER == ''
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: Run on Test Lab
+        env:
+          TYPE: ${{ inputs.type || 'instrumentation' }}
+          DEVICE_MODEL: ${{ inputs.device_model || 'oriole' }}
+          OS_VERSION: ${{ inputs.os_version || '33' }}
+          TESTS: ${{ inputs.tests || 'all' }}
+          ENGINE: ${{ inputs.engine || 'hardware' }}
+          RESULTS_DIR: run-${{ github.run_id }}-${{ github.run_attempt }}
+          RESULTS_BUCKET: ${{ vars.TEST_LAB_RESULTS_BUCKET }}
+        run: bash android/test-lab/run-firebase-test.sh "$TYPE"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: firebase-test-lab-${{ github.run_number }}
+          path: test-lab-output/
+          if-no-files-found: ignore
+          retention-days: 14

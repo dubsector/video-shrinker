@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!-- Stand in for Google Photos in ShareSourcesTest. They live in the
+             test package, so to the app they are another app: the provider
+             serves the video, and the activity shares it from its own task,
+             as a gallery's share sheet does. -->
+        <provider
+            android:name="io.github.dubsector.videoshrinker.PhotosLikeProvider"
+            android:authorities="${applicationId}.photoslike"
+            android:exported="true" />
+        <activity
+            android:name="io.github.dubsector.videoshrinker.SenderActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    </application>
+</manifest>
