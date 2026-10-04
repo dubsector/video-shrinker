@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 # Smoke-tests the debug APK on a running emulator (or a USB device):
 #   1. launches the app and checks Chrome opens the web app,
-#   2. shares a video to it through a content URI, and checks the relay
-#      copied it and the web app received it,
-#   3. converts that video and sends the app to the background mid-encode,
-#      then checks the conversion still finishes.
+#   2. shares a video to it through a content URI, checks the relay copied
+#      it and the web app received it, and converts it with the app kept in
+#      front,
+#   3. shares it again, converts it and sends the app to the background
+#      mid-encode, then checks the conversion still finishes.
+# Comparing the two conversions tells a problem with backgrounding apart
+# from one with converting at all. What the page and its workers log goes to
+# console.log, so a fallback to ffmpeg.wasm comes with its reason.
 #
 # Usage: android/emulator-test/smoke-test.sh path/to/app-debug.apk
 # Needs adb, ffmpeg, openssl and Node 22+ on PATH. With WEB_ROOT set to a
@@ -24,10 +28,19 @@ VIDEO=smoke-test.mp4
 mkdir -p "$OUT_DIR"
 
 step() { echo; echo "=== $*"; }
-shot() { adb exec-out screencap -p > "$OUT_DIR/$1.png" || true; }
+shot() {
+  adb exec-out screencap -p > "$OUT_DIR/$1.png" 2> /dev/null || true
+  # A failed capture leaves its error message where the image should be.
+  head -c 4 "$OUT_DIR/$1.png" | grep -q PNG || mv "$OUT_DIR/$1.png" "$OUT_DIR/$1.screencap-error.txt"
+}
+app_console() {
+  echo "--- App console:"
+  grep -vE '^\s*$' "$OUT_DIR/console.log" 2> /dev/null | tail -40 || true
+}
 fail() {
   echo "FAIL: $*" >&2
   shot failure
+  app_console
   adb logcat -d > "$OUT_DIR/logcat.txt" || true
   # Print the likely-relevant bits too, so the job log alone is enough to debug.
   echo "--- On screen:"
@@ -108,53 +121,77 @@ adb forward tcp:9222 localabstract:chrome_devtools_remote
 node "$HERE/page.mjs" loaded | tee -a "$OUT_DIR/page.log" || fail "the web app did not load in Chrome"
 shot 1-launched
 
-step "Sharing a video to the app"
+# Everything the page and its workers log, for the rest of the test.
+node "$HERE/page.mjs" console > "$OUT_DIR/console.log" 2>&1 &
+
 ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=12" \
   -vf "noise=alls=25:allf=t" -c:v libx264 -preset ultrafast -pix_fmt yuv420p -b:v 8M -maxrate 8M -bufsize 8M \
   "$OUT_DIR/$VIDEO"
 size=$(stat -c %s "$OUT_DIR/$VIDEO")
 echo "Test video: $size bytes"
-# The shell can't grant another app access to a MediaStore item, so serve
-# the video from the app's own FileProvider instead. The relay still reads
-# it through a content URI and copies it, as it would from the gallery.
 adb push "$OUT_DIR/$VIDEO" "/data/local/tmp/$VIDEO" > /dev/null
-adb shell "cat /data/local/tmp/$VIDEO | run-as $PKG sh -c 'mkdir -p files/twa_splash && cat > files/twa_splash/$VIDEO'"
-uri="content://$PKG.fileprovider/twa_splash/$VIDEO"
-echo "Sharing $uri"
-# Go home first so the share arrives like it would from the gallery.
-adb shell input keyevent KEYCODE_HOME
-adb shell am start -a android.intent.action.SEND -t video/mp4 \
-  --eu android.intent.extra.STREAM "$uri" \
-  -n "$PKG/.ShareRelayActivity"
+
 relay_copied() {
   local copied
-  copied=$(adb shell run-as "$PKG" stat -c %s "cache/shared_videos/$VIDEO" 2>/dev/null | tr -d '\r')
+  copied=$(adb shell run-as "$PKG" stat -c %s "cache/shared_videos/$1" 2>/dev/null | tr -d '\r')
   [ "$copied" = "$size" ]
 }
-wait_for 60 relay_copied || {
-  adb shell run-as "$PKG" ls -la cache cache/shared_videos || true
-  fail "the share relay did not copy the video into the app's cache"
-}
-echo "Relay copied $size bytes"
-wait_for 60 chrome_in_front || fail "Chrome never came to the front after the share"
-app_crashed && fail "the app crashed handling the share"
-node "$HERE/page.mjs" shared "$VIDEO" | tee -a "$OUT_DIR/page.log" || fail "the web app never received the shared video"
-shot 2-shared
 
-step "Converting, with the app sent to the background mid-encode"
+# Shares the test video to the app as $1 and waits for the web app to show
+# it. Each share uses a new name, so it can't be mistaken for the video
+# already on screen.
+share() {
+  local name=$1
+  # The shell can't grant another app access to a MediaStore item, so serve
+  # the video from the app's own FileProvider instead. The relay still reads
+  # it through a content URI and copies it, as it would from the gallery.
+  adb shell "cat /data/local/tmp/$VIDEO | run-as $PKG sh -c 'mkdir -p files/twa_splash && cat > files/twa_splash/$name'"
+  local uri="content://$PKG.fileprovider/twa_splash/$name"
+  echo "Sharing $uri"
+  # Go home first so the share arrives like it would from the gallery.
+  adb shell input keyevent KEYCODE_HOME
+  adb shell am start -a android.intent.action.SEND -t video/mp4 \
+    --eu android.intent.extra.STREAM "$uri" \
+    -n "$PKG/.ShareRelayActivity"
+  wait_for 60 relay_copied "$name" || {
+    adb shell run-as "$PKG" ls -la cache cache/shared_videos || true
+    fail "the share relay did not copy $name into the app's cache"
+  }
+  echo "Relay copied $size bytes"
+  wait_for 60 chrome_in_front || fail "Chrome never came to the front after sharing $name"
+  app_crashed && fail "the app crashed handling the share"
+  node "$HERE/page.mjs" shared "$name" | tee -a "$OUT_DIR/page.log" || fail "the web app never received $name"
+}
+
+step "Sharing a video and converting it with the app kept in front"
+share stay.mp4
+shot 2-stay-shared
 node "$HERE/page.mjs" convert | tee -a "$OUT_DIR/page.log" || fail "the conversion did not start"
-shot 3-converting
+shot 3-stay-converting
+node "$HERE/page.mjs" finished | tee -a "$OUT_DIR/page.log" || fail "the conversion did not finish with the app in front"
+app_crashed && fail "the app crashed during the conversion"
+shot 4-stay-done
+
+step "Sharing it again and converting it with the app sent to the background mid-encode"
+share leave.mp4
+shot 5-leave-shared
+node "$HERE/page.mjs" convert | tee -a "$OUT_DIR/page.log" || fail "the conversion did not start"
+shot 6-leave-converting
 chrome_pid=$(adb shell pidof "$CHROME" | tr -d '\r')
 adb shell input keyevent KEYCODE_HOME
 sleep 20
-shot 4-background
+shot 7-leave-background
 node "$HERE/page.mjs" progress | tee -a "$OUT_DIR/page.log" || true
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 > /dev/null
 wait_for 30 chrome_in_front || fail "the app did not come back to the front"
 echo "Chrome pid before backgrounding: $chrome_pid, after: $(adb shell pidof "$CHROME" | tr -d '\r')"
 node "$HERE/page.mjs" finished | tee -a "$OUT_DIR/page.log" || fail "the conversion did not finish after backgrounding"
 app_crashed && fail "the app crashed during the conversion"
-shot 5-done
+shot 8-leave-done
 
+echo
+echo "--- Results:"
+grep -E '^\[page\] (browser|finished):' "$OUT_DIR/page.log" | sed -E 's/.*"(chrome|result)":"([^"]*)".*/\1: \2/'
+app_console
 echo
 echo "PASS"

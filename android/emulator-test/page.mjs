@@ -1,7 +1,7 @@
 // Drives the web app inside the emulator's Chrome over the DevTools protocol.
 // smoke-test.sh forwards Chrome's DevTools socket to localhost:9222 first.
 //
-// Usage: node page.mjs <loaded | shared NAME | convert | progress | finished>
+// Usage: node page.mjs <loaded | shared NAME | convert | progress | finished | console>
 // Prints what it saw and exits non-zero if the check fails.
 
 const DEVTOOLS = 'http://127.0.0.1:9222'
@@ -142,8 +142,48 @@ const BROWSER = `(async () => {
   }
 })()`
 
+// Prints what the app's page and its workers log, with exceptions, until
+// killed. The conversion runs in a worker, whose console is only reachable by
+// attaching to it as a child target. Reconnects if the tab goes away.
+async function watchConsole() {
+  for (;;) {
+    const page = await findPage(10 * 60_000)
+    const ws = new WebSocket(page.webSocketDebuggerUrl)
+    let nextId = 1
+    const send = (method, params = {}, sessionId) =>
+      ws.send(JSON.stringify({ id: nextId++, method, params, ...(sessionId && { sessionId }) }))
+    const sources = new Map()
+    const print = (sessionId, kind, text) =>
+      console.log(`${new Date().toISOString().slice(11, 19)} [${sources.get(sessionId) ?? 'page'}] ${kind}: ${text}`)
+    await new Promise((resolve) => {
+      ws.onopen = () => {
+        send('Runtime.enable')
+        send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: false, flatten: true })
+        print(undefined, 'watching', page.url)
+      }
+      ws.onmessage = (event) => {
+        const { method, params, sessionId } = JSON.parse(event.data)
+        if (method === 'Target.attachedToTarget') {
+          sources.set(params.sessionId, params.targetInfo.type)
+          send('Runtime.enable', {}, params.sessionId)
+        } else if (method === 'Runtime.consoleAPICalled') {
+          print(sessionId, params.type, params.args.map((a) => a.value ?? a.description ?? a.type).join(' '))
+        } else if (method === 'Runtime.exceptionThrown') {
+          const details = params.exceptionDetails
+          print(sessionId, 'exception', details.exception?.description ?? details.text)
+        }
+      }
+      ws.onclose = resolve
+      ws.onerror = resolve
+    })
+    print(undefined, 'lost the page', 'reconnecting')
+    await sleep(2000)
+  }
+}
+
 async function main() {
   const [command, arg] = process.argv.slice(2)
+  if (command === 'console') return watchConsole()
   const app = await connect()
   const log = (label, value) => console.log(`[page] ${label}: ${JSON.stringify(value)}`)
   try {
@@ -178,6 +218,8 @@ async function main() {
         // which survives a reload of the tab, to explain any reset later.
         await app.evaluate(`(() => {
           window.${MARKER} = true
+          // Start fresh: an earlier conversion in this tab left its own events.
+          sessionStorage.removeItem('${MARKER}Events')
           const note = (event) => {
             const key = '${MARKER}Events'
             const events = JSON.parse(sessionStorage.getItem(key) ?? '[]')

@@ -44,8 +44,14 @@ jobs:
         include:
           - android: 15
             api-level: '35'
+          # With its default graphics features, the Android 17 image crashes
+          # SurfaceFlinger ("Assertion failed: !rcEnc->featureInfo()->
+          # hasReadColorBufferDma") when it reads the screen back, which
+          # restarts Android mid-test and breaks screenshots. GLDMA2 is what
+          # offers that read-back path, so turn it off there.
           - android: 17
             api-level: '37.0'
+            emulator-features: -feature -GLDMA2
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -101,6 +107,8 @@ jobs:
           cores: 4
           ram-size: 4096M
           disable-animations: true
+          # The action's default options, plus any per-version features.
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim ${{ matrix.emulator-features }}
           pre-emulator-launch-script: bash android/emulator-test/configure-avd.sh
           script: bash android/emulator-test/smoke-test.sh android/app/build/outputs/apk/debug/app-debug.apk
 
