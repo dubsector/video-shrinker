@@ -47,6 +47,7 @@ public class ShareAndBackgroundTest {
         web.shot("background");
         web.launch(false);
         web.waitForResult("after backgrounding", true);
+        web.checkEngines();
         web.log("PASS");
     }
 
