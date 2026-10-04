@@ -34,6 +34,29 @@ const STATE_KEY = 'state';
 const MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
 let dbPromise: Promise<IDBDatabase> | null = null;
+let ownership: Promise<boolean> | null = null;
+
+/**
+ * Whether this page is the one that keeps the saved job. There is only one,
+ * and a second copy of the app open alongside would otherwise restore the
+ * first one's video and run the same conversion twice, then overwrite what
+ * the first one saved. The first page to ask holds a lock for as long as it
+ * lives; the browser lets go of it when the page is closed or thrown away, so
+ * the page that replaces it gets the job back.
+ */
+function ownsSavedJob(): Promise<boolean> {
+  ownership ??= navigator.locks
+    ? new Promise<boolean>((resolve) => {
+        navigator.locks
+          .request('video-shrinker-saved-job', { ifAvailable: true }, (lock) => {
+            resolve(lock !== null);
+            return lock ? new Promise<never>(() => {}) : undefined;
+          })
+          .catch(() => resolve(true));
+      })
+    : Promise.resolve(true);
+  return ownership;
+}
 
 function openDb(): Promise<IDBDatabase> {
   dbPromise ??= new Promise((resolve, reject) => {
@@ -68,7 +91,11 @@ function warn(err: unknown): void {
 let queue: Promise<void> = Promise.resolve();
 
 function serial(write: () => Promise<void>): Promise<void> {
-  queue = queue.then(write).catch(warn);
+  queue = queue
+    .then(async () => {
+      if (await ownsSavedJob()) await write();
+    })
+    .catch(warn);
   return queue;
 }
 
@@ -115,6 +142,7 @@ export function clearJob(): Promise<void> {
 
 export async function loadJob(): Promise<SavedJob | null> {
   try {
+    if (!(await ownsSavedJob())) return null;
     const saved = await run<{ file: File; savedAt: number } | undefined>('readonly', (store) => store.get(FILE_KEY));
     if (!saved?.file) return null;
     if (Date.now() - saved.savedAt > MAX_AGE_MS) {

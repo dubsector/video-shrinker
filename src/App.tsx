@@ -60,6 +60,9 @@ function App() {
   const restartCount = useRef(0);
   // Set once the user picks a video, which then wins over anything restored.
   const fileChosen = useRef(false);
+  // True until the saved job has been looked for, so an update can't reload
+  // the page in the moment before a restored video lands.
+  const [restoring, setRestoring] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -96,8 +99,8 @@ function App() {
   // too — the file only exists in the old worker's memory, so an auto-update
   // reload here would drop it on the floor with no error.
   useEffect(() => {
-    setAppBusy(file !== null || receivingShare);
-  }, [file, receivingShare]);
+    setAppBusy(file !== null || receivingShare || restoring);
+  }, [file, receivingShare, restoring]);
 
   const reset = useCallback(() => {
     setFile(null);
@@ -267,10 +270,12 @@ function App() {
     restoreChecked.current = true;
     // A video shared into the app replaces whatever was saved.
     if (launchedByShare.current) {
+      setRestoring(false);
       void clearJob();
       return;
     }
     void loadJob().then((saved) => {
+      setRestoring(false);
       // Nothing saved, or the user picked something while this was loading.
       if (!saved || fileChosen.current) return;
       setFile(saved.file);
