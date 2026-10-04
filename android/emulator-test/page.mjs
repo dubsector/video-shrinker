@@ -1,7 +1,7 @@
 // Drives the web app inside the emulator's Chrome over the DevTools protocol.
 // smoke-test.sh forwards Chrome's DevTools socket to localhost:9222 first.
 //
-// Usage: node page.mjs <loaded | shared NAME | convert | progress | finished>
+// Usage: node page.mjs <loaded | shared NAME | convert | progress | finished | console>
 // Prints what it saw and exits non-zero if the check fails.
 
 const DEVTOOLS = 'http://127.0.0.1:9222'
@@ -62,10 +62,13 @@ async function connect() {
       method: 'Runtime.evaluate',
       params: { expression, returnByValue: true, awaitPromise: true },
     }))
-    const msg = await Promise.race([
-      reply,
-      sleep(timeoutMs).then(() => { throw new Error('the page did not respond') }),
-    ])
+    // The timer is cleared once the page answers: left running, it would keep
+    // this process alive for the rest of timeoutMs after the work is done.
+    let timer
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('the page did not respond')), timeoutMs)
+    })
+    const msg = await Promise.race([reply, timeout]).finally(() => clearTimeout(timer))
     if (msg.error) throw new Error(msg.error.message)
     if (msg.result.exceptionDetails) throw new Error(msg.result.exceptionDetails.exception?.description ?? 'page exception')
     return msg.result.result.value
@@ -119,8 +122,71 @@ const STATE = `(() => ({
   error: document.querySelector('.message.error')?.textContent ?? null,
 }))()`
 
+// What the app has to work with here: without WebCodecs H.264 or HEVC it
+// converts with the much slower ffmpeg.wasm fallback.
+const BROWSER = `(async () => {
+  const encodes = async (codec) => {
+    if (typeof VideoEncoder === 'undefined') return 'no VideoEncoder'
+    try {
+      const config = { codec, width: 1280, height: 720, bitrate: 4_000_000, framerate: 30 }
+      return (await VideoEncoder.isConfigSupported(config)).supported
+    } catch (err) {
+      return String(err)
+    }
+  }
+  return {
+    chrome: navigator.userAgent.match(/Chrome\\/([\\d.]+)/)?.[1] ?? navigator.userAgent,
+    viewport: \`\${innerWidth}x\${innerHeight} @\${devicePixelRatio}x\`,
+    // mediabunny, and so the app, only ever asks for High profile.
+    h264High: await encodes('avc1.64001f'),
+    h264Main: await encodes('avc1.4d001f'),
+    h264Baseline: await encodes('avc1.42001f'),
+    hevc: await encodes('hvc1.1.6.L93.B0'),
+  }
+})()`
+
+// Prints what the app's page and its workers log, with exceptions, until
+// killed. The conversion runs in a worker, whose console is only reachable by
+// attaching to it as a child target. Reconnects if the tab goes away.
+async function watchConsole() {
+  for (;;) {
+    const page = await findPage(10 * 60_000)
+    const ws = new WebSocket(page.webSocketDebuggerUrl)
+    let nextId = 1
+    const send = (method, params = {}, sessionId) =>
+      ws.send(JSON.stringify({ id: nextId++, method, params, ...(sessionId && { sessionId }) }))
+    const sources = new Map()
+    const print = (sessionId, kind, text) =>
+      console.log(`${new Date().toISOString().slice(11, 19)} [${sources.get(sessionId) ?? 'page'}] ${kind}: ${text}`)
+    await new Promise((resolve) => {
+      ws.onopen = () => {
+        send('Runtime.enable')
+        send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: false, flatten: true })
+        print(undefined, 'watching', page.url)
+      }
+      ws.onmessage = (event) => {
+        const { method, params, sessionId } = JSON.parse(event.data)
+        if (method === 'Target.attachedToTarget') {
+          sources.set(params.sessionId, params.targetInfo.type)
+          send('Runtime.enable', {}, params.sessionId)
+        } else if (method === 'Runtime.consoleAPICalled') {
+          print(sessionId, params.type, params.args.map((a) => a.value ?? a.description ?? a.type).join(' '))
+        } else if (method === 'Runtime.exceptionThrown') {
+          const details = params.exceptionDetails
+          print(sessionId, 'exception', details.exception?.description ?? details.text)
+        }
+      }
+      ws.onclose = resolve
+      ws.onerror = resolve
+    })
+    print(undefined, 'lost the page', 'reconnecting')
+    await sleep(2000)
+  }
+}
+
 async function main() {
   const [command, arg] = process.argv.slice(2)
+  if (command === 'console') return watchConsole()
   const app = await connect()
   const log = (label, value) => console.log(`[page] ${label}: ${JSON.stringify(value)}`)
   try {
@@ -131,6 +197,7 @@ async function main() {
         // before it controls the page would be lost.
         await app.waitFor(`!!navigator.serviceWorker.controller`, 90_000, 'the service worker to take control')
         log('loaded', await app.evaluate(STATE))
+        log('browser', await app.evaluate(BROWSER))
         break
       }
       case 'shared': {
@@ -154,6 +221,8 @@ async function main() {
         // which survives a reload of the tab, to explain any reset later.
         await app.evaluate(`(() => {
           window.${MARKER} = true
+          // Start fresh: an earlier conversion in this tab left its own events.
+          sessionStorage.removeItem('${MARKER}Events')
           const note = (event) => {
             const key = '${MARKER}Events'
             const events = JSON.parse(sessionStorage.getItem(key) ?? '[]')
