@@ -32,7 +32,7 @@ fail() {
   adb shell uiautomator dump /sdcard/ui.xml > /dev/null 2>&1 \
     && adb shell cat /sdcard/ui.xml | grep -oE 'text="[^"]+"' | head -40 || true
   echo "--- Logcat:"
-  grep -iE "$PKG|ShareRelay|AndroidRuntime|Permission Denial|SecurityException|ActivityTaskManager: START" \
+  grep -iE "$PKG|$CHROME|ShareRelay|AndroidRuntime|lowmemorykiller|Killing|Permission Denial|SecurityException|ActivityTaskManager: START" \
     "$OUT_DIR/logcat.txt" | tail -60 || true
   exit 1
 }
@@ -118,12 +118,14 @@ shot 2-shared
 step "Converting, with the app sent to the background mid-encode"
 node "$HERE/page.mjs" convert | tee -a "$OUT_DIR/page.log" || fail "the conversion did not start"
 shot 3-converting
+chrome_pid=$(adb shell pidof "$CHROME" | tr -d '\r')
 adb shell input keyevent KEYCODE_HOME
 sleep 20
 shot 4-background
 node "$HERE/page.mjs" progress | tee -a "$OUT_DIR/page.log" || true
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 > /dev/null
 wait_for 30 chrome_in_front || fail "the app did not come back to the front"
+echo "Chrome pid before backgrounding: $chrome_pid, after: $(adb shell pidof "$CHROME" | tr -d '\r')"
 node "$HERE/page.mjs" finished | tee -a "$OUT_DIR/page.log" || fail "the conversion did not finish after backgrounding"
 app_crashed && fail "the app crashed during the conversion"
 shot 5-done

@@ -73,8 +73,13 @@ async function connect() {
   return { page, evaluate, waitFor, close: () => ws.close() }
 }
 
+// Set on the page when the conversion starts. If it is gone later, the page
+// was reloaded (or Chrome was killed) and the conversion with it.
+const MARKER = '__smokeTestConverting'
+
 const STATE = `(() => ({
   url: location.href,
+  sameDocument: !!window.${MARKER},
   visibility: document.visibilityState,
   file: document.querySelector('.file-info strong')?.textContent ?? null,
   button: document.querySelector('.convert-button')?.textContent ?? null,
@@ -114,7 +119,7 @@ async function main() {
           return true
         })()`)
         await sleep(500)
-        await app.evaluate(`document.querySelector('.convert-button').click(), true`)
+        await app.evaluate(`window.${MARKER} = true, document.querySelector('.convert-button').click(), true`)
         const state = await app.waitFor(
           `(() => { const s = ${STATE}; return (s.progress || s.result || s.error) ? s : null })()`,
           60_000, 'the conversion to start')
@@ -127,11 +132,28 @@ async function main() {
         break
       }
       case 'finished': {
-        const state = await app.waitFor(
-          `(() => { const s = ${STATE}; return (s.result || s.error) ? s : null })()`,
-          15 * 60_000, 'the conversion to finish')
-        log('finished', state)
-        if (state.error) throw new Error(`the app showed an error: ${state.error}`)
+        const end = Date.now() + 15 * 60_000
+        let lastLog = 0
+        for (;;) {
+          const state = await app.evaluate(STATE).catch(() => null)
+          if (state) {
+            if (state.result || state.error) {
+              log('finished', state)
+              if (state.error) throw new Error(`the app showed an error: ${state.error}`)
+              break
+            }
+            if (!state.sameDocument) {
+              log('lost', state)
+              throw new Error('the page was reloaded while converting, so the conversion was lost')
+            }
+            if (Date.now() - lastLog > 30_000) {
+              lastLog = Date.now()
+              log('still converting', state)
+            }
+          }
+          if (Date.now() > end) throw new Error('timed out waiting for the conversion to finish')
+          await sleep(2000)
+        }
         break
       }
       default:
