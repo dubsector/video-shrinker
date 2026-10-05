@@ -24,7 +24,7 @@
 # Build first: (cd android && ./gradlew assembleDebug assembleDebugAndroidTest)
 # Needs gcloud signed in to the Firebase project, and ffmpeg for the test
 # video. Settings, from the environment:
-#   DEVICE_MODEL, OS_VERSION  the device (default: komodo, a Pixel 9 Pro XL, on 35).
+#   DEVICE_MODEL, OS_VERSION  the device (default: grizzly, a Pixel 11 Pro, on 37).
 #                             `gcloud firebase test android models list` has
 #                             the choices; the free plan allows a few runs a
 #                             day on each of physical and virtual devices.
@@ -37,6 +37,9 @@
 #                             MediumPhone.arm, or else the first virtual
 #                             device offered), on OS_VERSION when it has it,
 #                             else its newest
+#   MIN_CHROME                the oldest Chrome major version the run counts as
+#                             current (default 153); the summary warns when
+#                             the device's Chrome is older
 #   ENGINE                    what each conversion must have used: hardware
 #                             (WebCodecs on a hardware encoder, the default),
 #                             webcodecs (software encoder too) or any
@@ -54,8 +57,9 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 APK_DIR="$HERE/../app/build/outputs/apk"
 APP_APK="$APK_DIR/debug/app-debug.apk"
 TEST_APK="$APK_DIR/androidTest/debug/app-debug-androidTest.apk"
-DEVICE_MODEL=${DEVICE_MODEL:-komodo}
-OS_VERSION=${OS_VERSION:-35}
+DEVICE_MODEL=${DEVICE_MODEL:-grizzly}
+OS_VERSION=${OS_VERSION:-37}
+MIN_CHROME=${MIN_CHROME:-153}
 TIMEOUT=${TIMEOUT:-15m}
 OUT_DIR=${OUT_DIR:-test-lab-output}
 RESULTS_DIR=${RESULTS_DIR:-run-$(date -u +%Y%m%d-%H%M%S)}
@@ -185,17 +189,6 @@ fi
 bucket=${RESULTS_BUCKET:-}; bucket=${bucket#gs://}
 [ -n "$bucket" ] || bucket=$(grep -oE 'storage/browser/[^/]+' "$OUT_DIR/gcloud.log" | head -1 | cut -d/ -f3 || true)
 report=$(grep -oE 'https://console\.firebase\.google\.com/[^] ]+' "$OUT_DIR/gcloud.log" | head -1 || true)
-if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
-  {
-    echo "## Firebase Test Lab ($TYPE)"
-    [ -z "$fell_back" ] || echo "> [!WARNING]"$'\n'"> Fell back to a virtual device: $fell_back."$'\n'
-    echo "- Device: $DEVICE_MODEL, Android API $OS_VERSION ($([ -n "$fell_back" ] && echo virtual || echo "${form,,}"))"
-    echo "- Engine required: $ENGINE"
-    echo "- Result: $([ "$status" -eq 0 ] && echo passed || echo "failed (gcloud exit code $status)")"
-    [ -z "$report" ] || echo "- [Full report, with video, in the Firebase console]($report)"
-  } >> "$GITHUB_STEP_SUMMARY"
-fi
-
 if [ -n "$bucket" ]; then
   # Print what the test logged, so the job log alone is enough to debug.
   gcloud storage cp --recursive "gs://$bucket/$RESULTS_DIR" "$OUT_DIR/" > /dev/null 2>&1 \
@@ -206,4 +199,34 @@ if [ -n "$bucket" ]; then
   echo "--- Crashes:"
   find "$OUT_DIR" -name logcat -exec grep -hE 'FATAL EXCEPTION|AndroidRuntime: Process: ' -A3 {} + 2> /dev/null | head -30 || true
 fi
+
+# The tests log the device's Chrome version. Test Lab's phones don't always
+# have a current Chrome (the Pixel 9 Pro XL had 128), and a run on an old one
+# can pass while the share is broken on current Chrome.
+chrome=$(find "$OUT_DIR" -name logcat -exec grep -hoE 'TestLabSmoke.*Chrome [0-9][0-9.]*' {} + 2> /dev/null \
+  | grep -oE 'Chrome [0-9][0-9.]*' | head -1 | cut -d' ' -f2 || true)
+old_chrome=
+if [ -n "$chrome" ]; then
+  echo "Chrome on the device: $chrome"
+  if [ "${chrome%%.*}" -lt "$MIN_CHROME" ]; then
+    old_chrome="Chrome on $DEVICE_MODEL is $chrome, older than $MIN_CHROME, so this run doesn't show how the app behaves on current Chrome"
+    echo "::warning::$old_chrome"
+  fi
+elif [ "$TYPE" = instrumentation ]; then
+  echo "Couldn't tell which Chrome the device has (no test log)"
+fi
+
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+  {
+    echo "## Firebase Test Lab ($TYPE)"
+    [ -z "$old_chrome" ] || echo "> [!WARNING]"$'\n'"> $old_chrome."$'\n'
+    [ -z "$fell_back" ] || echo "> [!WARNING]"$'\n'"> Fell back to a virtual device: $fell_back."$'\n'
+    echo "- Device: $DEVICE_MODEL, Android API $OS_VERSION ($([ -n "$fell_back" ] && echo virtual || echo "${form,,}"))"
+    echo "- Engine required: $ENGINE"
+    echo "- Chrome on the device: ${chrome:-unknown}"
+    echo "- Result: $([ "$status" -eq 0 ] && echo passed || echo "failed (gcloud exit code $status)")"
+    [ -z "$report" ] || echo "- [Full report, with video, in the Firebase console]($report)"
+  } >> "$GITHUB_STEP_SUMMARY"
+fi
+
 exit "$status"

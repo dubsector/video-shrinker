@@ -287,13 +287,41 @@ public class ShareRelayActivity extends Activity {
         }
         File out = new File(dir, name);
 
+        // A sender can hand over a stream that ends early, or at once, with
+        // no error: forwarding that short file let the browser drop it and
+        // the web app open with "No video found". Read it again a couple of
+        // times. A short copy that never fills up still goes on, since the
+        // stated size can be off (a sender that strips location data as it
+        // shares); only nothing at all is an error.
+        long copied = 0;
+        for (int attempt = 1; ; attempt++) {
+            copied = copyOnce(source, out, total);
+            boolean complete = copied > 0 && (total <= 0 || copied >= total);
+            if (complete) break;
+            if (attempt == 3) {
+                if (copied > 0) break;
+                out.delete();
+                throw new IOException("the sharing app sent no video data");
+            }
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                throw new IOException("Interrupted");
+            }
+        }
+
+        return FileProvider.getUriForFile(this, getString(R.string.providerAuthority), out);
+    }
+
+    /** Copies {@code source} to {@code out}, returning how many bytes came. */
+    private long copyOnce(Uri source, File out, long total) throws IOException {
         InputStream in = getContentResolver().openInputStream(source);
         if (in == null) throw new IOException("The sharing app did not provide the video data");
+        long copied = 0;
         try {
             OutputStream os = new FileOutputStream(out);
             try {
                 byte[] buffer = new byte[256 * 1024];
-                long copied = 0;
                 long lastUpdate = 0;
                 int read;
                 while ((read = in.read(buffer)) != -1) {
@@ -318,8 +346,7 @@ public class ShareRelayActivity extends Activity {
         } finally {
             in.close();
         }
-
-        return FileProvider.getUriForFile(this, getString(R.string.providerAuthority), out);
+        return copied;
     }
 
     /**
@@ -403,9 +430,19 @@ public class ShareRelayActivity extends Activity {
      * Launches LauncherActivity with the relayed share. Starting an activity
      * from the background is restricted on Android 10+, so if the user left
      * mid-copy the forward is held until this activity is visible again.
+     *
+     * NEW_TASK and CLEAR_TOP make sure the share is delivered when the app
+     * is already open. Without them LauncherActivity restarts itself with
+     * NEW_TASK alone, and if the open app's task was itself started by a
+     * share (its root intent SEND of the same type), Android takes the new
+     * share for that same launch: it brings the old screen to the front and
+     * drops the video without a word. CLEAR_TOP makes Android start a fresh
+     * LauncherActivity on top of the task instead, as when the app was
+     * opened from its icon.
      */
     private void forward(Intent forward) {
         forward.setClass(this, LauncherActivity.class);
+        forward.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (isResumedState) {
             startActivity(forward);
             finish();

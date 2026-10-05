@@ -15,12 +15,17 @@
  */
 package io.github.dubsector.videoshrinker;
 
+import android.content.ClipData;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
+import androidx.browser.trusted.sharing.ShareData;
 
+import java.util.List;
 
 public class LauncherActivity
         extends com.google.androidbrowserhelper.trusted.LauncherActivity {
@@ -50,5 +55,33 @@ public class LauncherActivity
         
 
         return uri;
+    }
+
+    /**
+     * Chrome 153 and later only hand a shared file to the web app when the
+     * app that launched the Trusted Web Activity could read it at launch.
+     * On Android 15+ it asks Android, which can only answer for files named
+     * in the launch intent's EXTRA_STREAM or ClipData. The share library
+     * passes them only inside its own share-data bundle, so Chrome counted
+     * every relayed video as unreadable and posted the share with no file
+     * at all ("No video found ... [received nothing]"). Name them in the
+     * launch intent too.
+     */
+    @Override
+    public void startActivity(Intent intent, Bundle options) {
+        exposeSharedFiles(intent);
+        super.startActivity(intent, options);
+    }
+
+    private static void exposeSharedFiles(Intent intent) {
+        Bundle bundle = intent.getBundleExtra(TrustedWebActivityIntentBuilder.EXTRA_SHARE_DATA);
+        if (bundle == null) return;
+        List<Uri> uris = ShareData.fromBundle(bundle).uris;
+        if (uris == null || uris.isEmpty()) return;
+        ClipData clip = ClipData.newRawUri(null, uris.get(0));
+        for (int i = 1; i < uris.size(); i++) clip.addItem(new ClipData.Item(uris.get(i)));
+        intent.setClipData(clip);
+        intent.putExtra(Intent.EXTRA_STREAM, uris.get(0));
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
     }
 }

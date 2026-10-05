@@ -24,6 +24,11 @@ on:
         type: choice
         options: [branch, live]
         default: branch
+      chrome:
+        description: Browser for the share tests
+        type: choice
+        options: [image, chromium]
+        default: image
 
 permissions:
   contents: read
@@ -56,7 +61,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: gradle/actions/wrapper-validation@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+      - uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
 
       # Caching Gradle's downloads is fine here: this only builds a debug APK
       # for a throwaway emulator. The release build (android-build.yml) never
@@ -91,6 +96,22 @@ jobs:
 
       - name: Install ffmpeg
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+
+      # The images' own Chrome (124 on Android 15, 133 on 16) predates the
+      # caller check Chrome 153 added to shared files, and can't update
+      # without a Google account. Chromium's snapshot builds come from
+      # Google's own storage and support Trusted Web Activities. They exist
+      # only for ARM, so the x86_64 emulator runs them translated. Pinned to
+      # one known-good revision (Chromium 157).
+      - name: Download Chromium
+        if: inputs.chrome == 'chromium'
+        env:
+          REVISION: '1711652'
+        run: |
+          curl -sSfo chrome-android.zip "https://storage.googleapis.com/chromium-browser-snapshots/Android_Arm64/$REVISION/chrome-android.zip"
+          unzip -q -j chrome-android.zip chrome-android/apks/ChromePublic.apk -d "$RUNNER_TEMP"
+          rm chrome-android.zip
+          echo "CHROME_APK=$RUNNER_TEMP/ChromePublic.apk" >> "$GITHUB_ENV"
 
       # The Play Store image is the one that ships Chrome, which the app needs.
       # Each image bundles the Chrome of its day, so a newer Android also means
