@@ -28,6 +28,15 @@
 #                             `gcloud firebase test android models list` has
 #                             the choices; the free plan allows a few runs a
 #                             day on each of physical and virtual devices.
+#   VIRTUAL_FALLBACK          1 (default) to run again once on a virtual
+#                             device when Test Lab refuses the physical one
+#                             for lack of quota, with ENGINE relaxed to any
+#                             (virtual devices have no hardware encoder); 0
+#                             to just fail
+#   VIRTUAL_DEVICE_MODEL      the virtual device for that (default
+#                             MediumPhone.arm, or else the first virtual
+#                             device offered), on OS_VERSION when it has it,
+#                             else its newest
 #   ENGINE                    what each conversion must have used: hardware
 #                             (WebCodecs on a hardware encoder, the default),
 #                             webcodecs (software encoder too) or any
@@ -66,10 +75,8 @@ if [ "$TYPE" = instrumentation ] && [ "${TESTS:-all}" = all -o "${TESTS:-all}" =
 fi
 
 args=(--app "$APP_APK"
-  --device "model=$DEVICE_MODEL,version=$OS_VERSION,locale=en,orientation=portrait"
   --timeout "$TIMEOUT"
-  --results-history-name video-shrinker
-  --results-dir "$RESULTS_DIR")
+  --results-history-name video-shrinker)
 [ -z "${RESULTS_BUCKET:-}" ] || args+=(--results-bucket "$RESULTS_BUCKET")
 
 case "$TYPE" in
@@ -112,7 +119,6 @@ case "$TYPE" in
     # Orchestrator runs each test in its own instrumentation with the app's
     # data cleared, so one test can't leave anything behind for the next.
     args+=(--type instrumentation --test "$TEST_APK" --use-orchestrator
-      --environment-variables "engine=${ENGINE:-hardware},clearPackageData=true"
       --other-files "/data/local/tmp/smoke-test.mp4=$OUT_DIR/smoke-test.mp4,/data/local/tmp/chrome-command-line=$OUT_DIR/chrome-command-line,/data/local/tmp/chrome-command-line-live=$OUT_DIR/chrome-command-line-live,/data/local/tmp/chrome-command-line-local=$OUT_DIR/chrome-command-line-local,/data/local/tmp/site.zip=$OUT_DIR/site.zip,/data/local/tmp/site-cert.p12=$OUT_DIR/site-cert.p12"
       --directories-to-pull /sdcard/test-lab)
     case "${TESTS:-all}" in
@@ -132,8 +138,48 @@ case "$TYPE" in
     ;;
 esac
 
-status=0
-gcloud firebase test android run "${args[@]}" 2>&1 | tee "$OUT_DIR/gcloud.log" || status=${PIPESTATUS[0]}
+# Runs on one device: run_on MODEL VERSION ENGINE RESULTS_DIR.
+run_on() {
+  local extra=(--device "model=$1,version=$2,locale=en,orientation=portrait" --results-dir "$4")
+  [ "$TYPE" != instrumentation ] || extra+=(--environment-variables "engine=$3,clearPackageData=true")
+  status=0
+  gcloud firebase test android run "${args[@]}" "${extra[@]}" 2>&1 | tee "$OUT_DIR/gcloud.log" || status=${PIPESTATUS[0]}
+}
+
+# The virtual device to fall back on: VIRTUAL_DEVICE_MODEL if Test Lab offers
+# it, else its first virtual device; on OS_VERSION if offered, else the newest.
+pick_virtual() {
+  local model=${VIRTUAL_DEVICE_MODEL:-MediumPhone.arm} versions
+  if ! versions=$(gcloud firebase test android models describe "$model" --format='value(supportedVersionIds)' 2> /dev/null) || [ -z "$versions" ]; then
+    model=$(gcloud firebase test android models list --filter='form=VIRTUAL' --format='value(id)' | head -1)
+    [ -n "$model" ] || return 1
+    versions=$(gcloud firebase test android models describe "$model" --format='value(supportedVersionIds)')
+  fi
+  versions=$(tr ';, ' '\n\n\n' <<< "$versions" | grep -E '^[0-9]+$' | sort -n)
+  [ -n "$versions" ] || return 1
+  VIRTUAL_MODEL=$model
+  if grep -qx "$OS_VERSION" <<< "$versions"; then VIRTUAL_VERSION=$OS_VERSION; else VIRTUAL_VERSION=$(tail -1 <<< "$versions"); fi
+}
+
+ENGINE=${ENGINE:-hardware}
+run_on "$DEVICE_MODEL" "$OS_VERSION" "$ENGINE" "$RESULTS_DIR"
+
+# The free plan's physical and virtual quotas are separate, so when the day's
+# physical runs are used up a virtual device can usually still run.
+fell_back=
+if [ "$status" -ne 0 ] && [ "$form" = PHYSICAL ] && [ "${VIRTUAL_FALLBACK:-1}" = 1 ] \
+  && grep -qiE 'insufficient testing quota|quota (exceeded|exhausted)|RESOURCE_EXHAUSTED' "$OUT_DIR/gcloud.log"; then
+  mv "$OUT_DIR/gcloud.log" "$OUT_DIR/gcloud-physical.log"
+  if pick_virtual; then
+    fell_back="$DEVICE_MODEL had no testing quota left, so this ran on a virtual device, with any encoder accepted (virtual devices have no hardware encoder)"
+    echo "::warning::$fell_back: $VIRTUAL_MODEL, Android API $VIRTUAL_VERSION"
+    DEVICE_MODEL=$VIRTUAL_MODEL OS_VERSION=$VIRTUAL_VERSION ENGINE=any RESULTS_DIR=$RESULTS_DIR-virtual
+    run_on "$DEVICE_MODEL" "$OS_VERSION" "$ENGINE" "$RESULTS_DIR"
+  else
+    echo "::warning::$DEVICE_MODEL had no testing quota left, and no virtual device to fall back on was found"
+    cp "$OUT_DIR/gcloud-physical.log" "$OUT_DIR/gcloud.log"
+  fi
+fi
 
 # gcloud names the bucket it stored the results in as a console link.
 bucket=${RESULTS_BUCKET:-}; bucket=${bucket#gs://}
@@ -142,7 +188,9 @@ report=$(grep -oE 'https://console\.firebase\.google\.com/[^] ]+' "$OUT_DIR/gclo
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   {
     echo "## Firebase Test Lab ($TYPE)"
-    echo "- Device: $DEVICE_MODEL, Android API $OS_VERSION"
+    [ -z "$fell_back" ] || echo "> [!WARNING]"$'\n'"> Fell back to a virtual device: $fell_back."$'\n'
+    echo "- Device: $DEVICE_MODEL, Android API $OS_VERSION ($([ -n "$fell_back" ] && echo virtual || echo "${form,,}"))"
+    echo "- Engine required: $ENGINE"
     echo "- Result: $([ "$status" -eq 0 ] && echo passed || echo "failed (gcloud exit code $status)")"
     [ -z "$report" ] || echo "- [Full report, with video, in the Firebase console]($report)"
   } >> "$GITHUB_STEP_SUMMARY"

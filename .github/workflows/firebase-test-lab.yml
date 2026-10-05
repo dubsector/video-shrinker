@@ -9,7 +9,9 @@ name: Firebase Test Lab
 # Photos-like provider, Google Photos itself), which the emulator can't.
 #
 # The free Spark plan allows only a few runs a day, so this only runs when
-# started by hand, never on a push or a pull request. It signs in to Google Cloud without a stored key through
+# started by hand, never on a push or a pull request. When the day's physical
+# runs are used up, it runs on a virtual device instead (a separate quota),
+# and the job summary says so. It signs in to Google Cloud without a stored key through
 # Workload Identity Federation (the GCP_WORKLOAD_IDENTITY_PROVIDER and
 # GCP_SERVICE_ACCOUNT variables), or else with the FIREBASE_SERVICE_ACCOUNT_KEY
 # secret; see
@@ -40,6 +42,10 @@ on:
         type: choice
         options: [hardware, webcodecs, any]
         default: hardware
+      virtual_fallback:
+        description: If the day's physical-device quota is used up, run again on a virtual device (any encoder accepted there)
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -128,6 +134,7 @@ jobs:
           OS_VERSION: ${{ inputs.os_version || '35' }}
           TESTS: ${{ inputs.tests || 'all' }}
           ENGINE: ${{ inputs.engine || 'hardware' }}
+          VIRTUAL_FALLBACK: ${{ inputs.virtual_fallback == false && '0' || '1' }}
           RESULTS_DIR: run-${{ github.run_id }}-${{ github.run_attempt }}
           RESULTS_BUCKET: ${{ vars.TEST_LAB_RESULTS_BUCKET }}
         run: bash android/test-lab/run-firebase-test.sh "$TYPE"

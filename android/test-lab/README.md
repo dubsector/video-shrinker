@@ -11,6 +11,15 @@ conversions used WebCodecs on it (the `engine` input loosens that to any
 WebCodecs, or to anything). It refuses to run on virtual devices (unless only the share tests run), which have
 no hardware encoder either.
 
+The free plan's daily quota for physical devices is small, and separate from
+the one for virtual devices. When Test Lab refuses the physical run with
+"Insufficient testing quota", the script runs again once on a virtual device
+(`MediumPhone.arm` by default, `VIRTUAL_DEVICE_MODEL` to change it) with the
+engine check relaxed to `any`, and the job summary starts with a warning that
+it fell back. A pass there shows the share and update flows work, not that
+the hardware encoder was used. The Google Photos share is usually skipped on
+a virtual device. Turn the `virtual_fallback` input off to fail instead.
+
 `ShareSourcesTest` shares a video the ways real shares arrive, which the
 emulator test can't (its shell can't hand another app a gallery item): from
 the system media store, from a provider that acts like Google Photos at its
