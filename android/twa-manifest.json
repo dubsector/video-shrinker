@@ -16,8 +16,8 @@
     "path": "./android.keystore",
     "alias": "video-shrinker"
   },
-  "appVersionCode": 8,
-  "appVersion": "8",
+  "appVersionCode": 9,
+  "appVersion": "9",
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://dubsector.github.io/video-shrinker/manifest.webmanifest",
