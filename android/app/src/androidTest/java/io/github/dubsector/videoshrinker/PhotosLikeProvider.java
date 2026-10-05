@@ -14,9 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Serves a video the awkward ways Google Photos can: under a display name
@@ -24,17 +21,14 @@ import java.util.Set;
  * stream, as when Photos downloads a cloud-only item while the receiver
  * reads it. It runs in the test package, so to the app it is another app.
  *
- * URIs look like content://AUTHORITY/NAME?type=TYPE&size=1&kbps=N&emptyFirst=1. Whatever
+ * URIs look like content://AUTHORITY/NAME?type=TYPE&size=1&kbps=N. Whatever
  * the name, it serves the one video the test puts in the app's files
  * (SOURCE, granted to this package); type and size are reported only when
- * given; kbps throttles the stream; emptyFirst makes the first read of a
- * name end at once with no data, as a sender's stream sometimes does.
+ * given; kbps throttles the stream.
  */
 public class PhotosLikeProvider extends ContentProvider {
 
     static final String SOURCE_NAME = "photos-source.mp4";
-    // Names already served empty once (see emptyFirst).
-    private static final Set<String> EMPTIED = Collections.synchronizedSet(new HashSet<String>());
     // Fixed rather than taken from the URI: this provider is exported, so it
     // mustn't serve whatever another app asks it for.
     private static final Uri SOURCE =
@@ -76,15 +70,6 @@ public class PhotosLikeProvider extends ContentProvider {
             pipe = ParcelFileDescriptor.createReliablePipe();
         } catch (IOException e) {
             throw new FileNotFoundException(e.toString());
-        }
-        if (uri.getQueryParameter("emptyFirst") != null && EMPTIED.add(uri.getLastPathSegment())) {
-            // A stream that ends at once with no error, the first time only.
-            try {
-                pipe[1].close();
-            } catch (IOException ignored) {
-                // Nothing to close.
-            }
-            return pipe[0];
         }
         new Thread(new Runnable() {
             @Override

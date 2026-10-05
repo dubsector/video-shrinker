@@ -11,10 +11,7 @@
 #
 # Usage: android/emulator-test/share-tests.sh
 # Run from the repository root with an emulator attached. Needs adb and
-# ffmpeg. With CHROME_APK set to a Chromium build's ChromePublic.apk, the
-# tests run in that instead of the emulator image's own Chrome, which is
-# too old to have Chrome 153's share check; the image's Chrome is turned
-# off so the app opens in Chromium. Screenshots, logcat and the test report go to $OUT_DIR (default:
+# ffmpeg. Screenshots, logcat and the test report go to $OUT_DIR (default:
 # emulator-test-output/share-tests).
 set -euo pipefail
 
@@ -28,13 +25,6 @@ ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=1
   "$OUT_DIR/smoke-test.mp4"
 adb push "$OUT_DIR/smoke-test.mp4" /data/local/tmp/smoke-test.mp4 > /dev/null
 rm "$OUT_DIR/smoke-test.mp4"
-# And one the size of a phone's longer clips: 150 seconds at 8 Mbit/s.
-ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=150" \
-  -vf "noise=alls=25:allf=t" \
-  -c:v libx264 -preset ultrafast -pix_fmt yuv420p -b:v 8M -maxrate 8M -bufsize 8M \
-  "$OUT_DIR/big-video.mp4"
-adb push "$OUT_DIR/big-video.mp4" /data/local/tmp/big-video.mp4 > /dev/null
-rm "$OUT_DIR/big-video.mp4"
 # Chrome's flags, as on Test Lab: skip its first-run screens and the Digital
 # Asset Links check, which the debug signing key would fail.
 echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
@@ -44,18 +34,8 @@ adb shell rm -rf /sdcard/test-lab
 adb logcat -G 16M || true
 adb logcat -c || true
 
-chrome=com.android.chrome
-if [ -n "${CHROME_APK:-}" ]; then
-  echo "ABIs: $(adb shell getprop ro.product.cpu.abilist | tr -d '\r')"
-  adb install -r -g "$CHROME_APK" > /dev/null
-  adb shell pm disable-user --user 0 com.android.chrome > /dev/null
-  chrome=$(adb shell pm list packages org.chromium.chrome | head -1 | tr -d '\r' | sed 's/^package://')
-  echo "Testing in $chrome $(adb shell dumpsys package "$chrome" | grep -m1 versionName | tr -d '\r ')"
-fi
-
 status=0
 (cd android && ./gradlew connectedDebugAndroidTest \
-  -Pandroid.testInstrumentationRunnerArguments.chrome="$chrome" \
   -Pandroid.testInstrumentationRunnerArguments.class=io.github.dubsector.videoshrinker.ShareSourcesTest \
   -Pandroid.testInstrumentationRunnerArguments.engine=any) || status=$?
 

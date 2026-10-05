@@ -2,8 +2,8 @@ name: Android Emulator Test
 
 # Builds the debug APK and runs android/emulator-test/smoke-test.sh on an
 # emulator: launch, share a video in, convert it, and survive being sent to
-# the background mid-encode. Then runs the Test Lab share tests
-# (android/emulator-test/share-tests.sh) on a fresh emulator. By default the app loads this branch's own web
+# the background mid-encode. Alongside it, in its own job, runs the Test Lab
+# share tests (android/emulator-test/share-tests.sh). By default the app loads this branch's own web
 # build (served locally in place of dubsector.github.io), so a PR is tested
 # with its own changes; a manual run can pick the live site instead.
 on:
@@ -24,11 +24,6 @@ on:
         type: choice
         options: [branch, live]
         default: branch
-      chrome:
-        description: Browser for the share tests
-        type: choice
-        options: [image, chromium]
-        default: image
 
 permissions:
   contents: read
@@ -39,7 +34,7 @@ concurrency:
 
 jobs:
   emulator:
-    name: emulator (Android ${{ matrix.android }})
+    name: emulator ${{ matrix.suite }} (Android ${{ matrix.android }})
     runs-on: ubuntu-latest
     timeout-minutes: 75
     # The Android the app targets (targetSdkVersion, 16) and the one before
@@ -47,10 +42,13 @@ jobs:
     # passes. The newer images (36.1, 37.0) can't be used yet: their
     # SurfaceFlinger aborts on "!rcEnc->featureInfo()->hasReadColorBufferDma"
     # whenever it reads the screen back, restarting Android mid-test, at any
-    # screen size and with every emulator graphics mode tried.
+    # screen size and with every emulator graphics mode tried. The smoke test
+    # and the share tests run as separate jobs, at the same time.
     strategy:
       fail-fast: false
       matrix:
+        suite: [smoke, share]
+        android: [15, 16]
         include:
           - android: 15
             api-level: '35'
@@ -80,7 +78,7 @@ jobs:
 
       # npm ci can't be used: see pr-checks.yml.
       - name: Build web app
-        if: inputs.site != 'live'
+        if: matrix.suite == 'smoke' && inputs.site != 'live'
         run: npm install && npm run build
 
       - name: Build debug APKs
@@ -97,26 +95,11 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
 
-      # The images' own Chrome (124 on Android 15, 133 on 16) predates the
-      # caller check Chrome 153 added to shared files, and can't update
-      # without a Google account. Chromium's snapshot builds come from
-      # Google's own storage and support Trusted Web Activities. They exist
-      # only for ARM, so the x86_64 emulator runs them translated. Pinned to
-      # one known-good revision (Chromium 157).
-      - name: Download Chromium
-        if: inputs.chrome == 'chromium'
-        env:
-          REVISION: '1711652'
-        run: |
-          curl -sSfo chrome-android.zip "https://storage.googleapis.com/chromium-browser-snapshots/Android_Arm64/$REVISION/chrome-android.zip"
-          unzip -q -j chrome-android.zip chrome-android/apks/ChromePublic.apk -d "$RUNNER_TEMP"
-          rm chrome-android.zip
-          echo "CHROME_APK=$RUNNER_TEMP/ChromePublic.apk" >> "$GITHUB_ENV"
-
       # The Play Store image is the one that ships Chrome, which the app needs.
       # Each image bundles the Chrome of its day, so a newer Android also means
       # a newer Chrome. The screen is a Pixel 9 Pro XL's.
       - name: Run smoke test on emulator
+        if: matrix.suite == 'smoke'
         # Booting and both conversions take under 10 minutes; a wedged
         # emulator shouldn't hold the job for the full 45.
         timeout-minutes: 20
@@ -135,12 +118,11 @@ jobs:
 
       # The share tests Firebase Test Lab runs on a real phone, here for free:
       # media store, a Google-Photos-like sender, ClipData-only and
-      # several-item shares. Run even when the smoke test failed, on a fresh
-      # emulator, so one doesn't hide the other.
+      # several-item shares. They load the live site.
       # Kept from failing the job while it settles: on Android 15 one share
       # in a run sometimes never reaches the app, a different one each time.
       - name: Run share tests on emulator
-        if: success() || failure()
+        if: matrix.suite == 'share'
         continue-on-error: true
         timeout-minutes: 25
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
@@ -158,7 +140,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: emulator-test-${{ github.run_number }}-android-${{ matrix.android }}
+          name: emulator-test-${{ github.run_number }}-${{ matrix.suite }}-android-${{ matrix.android }}
           path: |
             emulator-test-output/*.png
             emulator-test-output/*.txt

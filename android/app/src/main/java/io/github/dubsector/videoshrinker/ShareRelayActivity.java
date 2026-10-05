@@ -287,27 +287,11 @@ public class ShareRelayActivity extends Activity {
         }
         File out = new File(dir, name);
 
-        // A sender can hand over a stream that ends early, or at once, with
-        // no error: forwarding that short file let the browser drop it and
-        // the web app open with "No video found". Read it again a couple of
-        // times. A short copy that never fills up still goes on, since the
-        // stated size can be off (a sender that strips location data as it
-        // shares); only nothing at all is an error.
-        long copied = 0;
-        for (int attempt = 1; ; attempt++) {
-            copied = copyOnce(source, out, total);
-            boolean complete = copied > 0 && (total <= 0 || copied >= total);
-            if (complete) break;
-            if (attempt == 3) {
-                if (copied > 0) break;
-                out.delete();
-                throw new IOException("the sharing app sent no video data");
-            }
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                throw new IOException("Interrupted");
-            }
+        // A stream that ends at once with no error would otherwise forward an
+        // empty file, which the browser drops without a word.
+        if (copyOnce(source, out, total) == 0) {
+            out.delete();
+            throw new IOException("the sharing app sent no video data");
         }
 
         return FileProvider.getUriForFile(this, getString(R.string.providerAuthority), out);
