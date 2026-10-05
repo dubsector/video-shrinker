@@ -2,7 +2,8 @@ name: Android Emulator Test
 
 # Builds the debug APK and runs android/emulator-test/smoke-test.sh on an
 # emulator: launch, share a video in, convert it, and survive being sent to
-# the background mid-encode. By default the app loads this branch's own web
+# the background mid-encode. Then runs the Test Lab share tests
+# (android/emulator-test/share-tests.sh) on a fresh emulator. By default the app loads this branch's own web
 # build (served locally in place of dubsector.github.io), so a PR is tested
 # with its own changes; a manual run can pick the live site instead.
 on:
@@ -35,7 +36,7 @@ jobs:
   emulator:
     name: emulator (Android ${{ matrix.android }})
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     # The Android the app targets (targetSdkVersion) and the newest one that
     # runs here, side by side. One failing shouldn't hide whether the other
     # passes. The newer images (36.1, 37.0) can't be used yet: their
@@ -77,9 +78,9 @@ jobs:
         if: inputs.site != 'live'
         run: npm install && npm run build
 
-      - name: Build debug APK
+      - name: Build debug APKs
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug assembleDebugAndroidTest
 
       # The hosted Linux runners have KVM, but only root can open it by default.
       - name: Enable KVM
@@ -111,6 +112,27 @@ jobs:
           pre-emulator-launch-script: bash android/emulator-test/configure-avd.sh
           script: bash android/emulator-test/smoke-test.sh android/app/build/outputs/apk/debug/app-debug.apk
 
+      # The share tests Firebase Test Lab runs on a real phone, here for free:
+      # media store, a Google-Photos-like sender, ClipData-only and
+      # several-item shares. Run even when the smoke test failed, on a fresh
+      # emulator, so one doesn't hide the other.
+      # Kept from failing the job while it settles: on Android 15 one share
+      # in a run sometimes never reaches the app, a different one each time.
+      - name: Run share tests on emulator
+        if: success() || failure()
+        continue-on-error: true
+        timeout-minutes: 25
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis_playstore
+          arch: x86_64
+          cores: 4
+          ram-size: 4096M
+          disable-animations: true
+          pre-emulator-launch-script: bash android/emulator-test/configure-avd.sh
+          script: bash android/emulator-test/share-tests.sh
+
       - name: Upload screenshots and logs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -120,5 +142,6 @@ jobs:
             emulator-test-output/*.png
             emulator-test-output/*.txt
             emulator-test-output/*.log
+            emulator-test-output/share-tests/
           if-no-files-found: warn
           retention-days: 14
