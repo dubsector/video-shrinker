@@ -2,9 +2,11 @@ package io.github.dubsector.videoshrinker;
 
 import static org.junit.Assume.assumeTrue;
 
+import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -40,6 +42,11 @@ import java.util.regex.Pattern;
  *  - fromPhotosLikeApp: another app sharing from its own task, its provider
  *    behaving like Google Photos at its most awkward: no extension, size or
  *    type, streaming slowly. Then again with Chrome not running.
+ *  - againWhileOpenFromAShare: a second share while the app is still open
+ *    from a first one, which used to just bring back the first.
+ *  - bigVideoWithAppClosed: a 150 MB video into the app after it was
+ *    swiped away, where the run pushed one.
+ *  - senderStreamEndsEarlyOnce: the sender's first stream ends with no data.
  *  - withOnlyClipData / severalItemsPhotoFirst: shares whose video isn't
  *    the first EXTRA_STREAM item, which the relay used to pass on untouched.
  *  - fromGooglePhotos: Google Photos itself, through its Share button, where
@@ -88,6 +95,62 @@ public class ShareSourcesTest {
         web.device.pressHome();
         web.shell("am force-stop " + WebApp.CHROME);
         shareLikePhotos("PXL_20261004_120500456");
+    }
+
+    // The bug caught on a phone: with the app still open from an earlier
+    // share, a second share of the same type only brought that old screen
+    // back, and the new video never arrived. Opening the app from its icon
+    // (as setUp does) hides it, so close that first and open the app with a
+    // share instead.
+    @Test
+    public void againWhileOpenFromAShare() throws IOException {
+        web.step("Sharing a video like Google Photos does, with the app not open");
+        web.device.pressHome();
+        ActivityManager am = (ActivityManager) web.app.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        shareLikePhotos("PXL_20261005_163900111");
+        web.step("Sharing another while the app is still open from the first");
+        shareLikePhotos("PXL_20261005_164000222");
+    }
+
+    // A share of a phone-sized video (the one caught failing was 141 MB)
+    // into the app after it was swiped away, from another app's task. The
+    // other tests share a 12 MB clip.
+    @Test
+    public void bigVideoWithAppClosed() throws IOException {
+        String size = web.shell("stat -c %s " + WebApp.BIG_VIDEO).trim();
+        assumeTrue("no big test video at " + WebApp.BIG_VIDEO, size.matches("\\d+") && Long.parseLong(size) > 0);
+        web.step("Sharing a " + Long.parseLong(size) / (1024 * 1024) + " MB video with the app closed");
+        web.device.pressHome();
+        ActivityManager am = (ActivityManager) web.app.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        web.shell("am force-stop " + WebApp.CHROME);
+        String name = "PXL_20261005_163931000.mp4";
+        Uri uri = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider",
+                web.copyVideoToApp(WebApp.BIG_VIDEO, name));
+        String testPackage = web.instrumentation.getContext().getPackageName();
+        web.app.grantUriPermission(testPackage, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Intent share = new Intent(Intent.ACTION_SEND)
+                .setClassName(web.app, ShareRelayActivity.class.getName())
+                .setType("video/mp4")
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        share.setClipData(ClipData.newRawUri(null, uri));
+        web.log("sharing " + uri + " from another app's task");
+        web.app.startActivity(new Intent()
+                .setClassName(testPackage, SenderActivity.class.getName())
+                .putExtra(SenderActivity.EXTRA_SHARE, share)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        web.waitForShared(name);
+    }
+
+    // A sender whose first stream ends at once with no data. The relay used
+    // to forward the empty file, which the browser dropped, so the web app
+    // opened with "No video found".
+    @Test
+    public void senderStreamEndsEarlyOnce() throws IOException {
+        web.step("Sharing a video whose first read ends at once, like Google Photos does");
+        shareLikePhotos("PXL_20261005_163931999", "emptyFirst");
     }
 
     @Test
@@ -170,18 +233,23 @@ public class ShareSourcesTest {
     // Photos downloads a cloud-only item. The relay should add the extension
     // for the real type.
     private void shareLikePhotos(String name) throws IOException {
+        shareLikePhotos(name, null);
+    }
+
+    private void shareLikePhotos(String name, String flag) throws IOException {
         File file = web.copyVideoToApp(PhotosLikeProvider.SOURCE_NAME);
         String testPackage = web.instrumentation.getContext().getPackageName();
         Uri source = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider", file);
         web.app.grantUriPermission(testPackage, source, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         // About 12 seconds for the 12 MB test video, so the relay's
         // "Preparing your video" dialog shows for a while.
-        Uri uri = new Uri.Builder()
+        Uri.Builder builder = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(testPackage + ".photoslike")
                 .appendPath(name)
-                .appendQueryParameter("kbps", "1024")
-                .build();
+                .appendQueryParameter("kbps", "1024");
+        if (flag != null) builder.appendQueryParameter(flag, "1");
+        Uri uri = builder.build();
         // Photos shares with a wildcard type when the item's is unknown.
         Intent share = new Intent(Intent.ACTION_SEND)
                 .setClassName(web.app, ShareRelayActivity.class.getName())
