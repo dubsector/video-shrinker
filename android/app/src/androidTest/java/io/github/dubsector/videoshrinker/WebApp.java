@@ -43,10 +43,7 @@ import java.util.regex.Pattern;
 final class WebApp {
 
     static final String TAG = "TestLabSmoke";
-    // The browser the app opens in: Chrome, or another build the run
-    // installed in its place (share-tests.sh with CHROME_APK set).
-    static final String CHROME = InstrumentationRegistry.getArguments()
-            .getString("chrome", "com.android.chrome");
+    static final String CHROME = "com.android.chrome";
     static final String VIDEO = "/data/local/tmp/smoke-test.mp4";
     // A video the size of a phone's longer clips (about 150 MB), where pushed.
     static final String BIG_VIDEO = "/data/local/tmp/big-video.mp4";
