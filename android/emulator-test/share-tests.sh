@@ -35,6 +35,14 @@ ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=1
   "$OUT_DIR/big-video.mp4"
 adb push "$OUT_DIR/big-video.mp4" /data/local/tmp/big-video.mp4 > /dev/null
 rm "$OUT_DIR/big-video.mp4"
+# Updates to Chrome from the Play Store would kill it mid-test.
+adb shell pm disable-user --user 0 com.android.vending > /dev/null || true
+# A current Chrome in place of the image's own, where the workflow got one
+# (CHROME_APKS: see android-emulator.yml).
+if [ -n "${CHROME_APKS:-}" ]; then
+  adb install-multiple -r "$CHROME_APKS"/*.apk > /dev/null
+fi
+
 # Chrome's flags, as on Test Lab: skip its first-run screens and the Digital
 # Asset Links check, which the debug signing key would fail.
 echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
