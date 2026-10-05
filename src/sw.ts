@@ -61,6 +61,7 @@ self.addEventListener('fetch', (event: FetchEvent) => {
   // write) can exceed that budget. Respond with the redirect immediately,
   // then hand the file to the page once it signals it is listening.
   const formDataPromise = event.request.formData()
+  const referrer = event.request.referrer
   event.respondWith(Response.redirect(`${url.origin}/video-shrinker/?share-target=1`, 303))
   event.waitUntil(
     (async () => {
@@ -70,11 +71,15 @@ self.addEventListener('fetch', (event: FetchEvent) => {
       // cloud) apart from "handshake never happened" (fail fast).
       client.postMessage({ type: 'SHARE_TARGET_RECEIVING' })
       try {
-        const file = (await formDataPromise).get('video')
+        const formData = await formDataPromise
+        const file = formData.get('video')
         if (file instanceof File) {
           client.postMessage({ type: 'SHARE_TARGET_FILE', file })
         } else {
-          client.postMessage({ type: 'SHARE_TARGET_ERROR', message: 'No video found in the shared data.' })
+          client.postMessage({
+            type: 'SHARE_TARGET_ERROR',
+            message: `No video found in the shared data. ${describeShare(formData, referrer)}`,
+          })
         }
       } catch (err) {
         client.postMessage({
@@ -85,3 +90,18 @@ self.addEventListener('fetch', (event: FetchEvent) => {
     })(),
   )
 })
+
+// Says what the browser actually sent and which app opened it, so a
+// screenshot of a failed share shows where the video went missing. The
+// Android app's relay copies the video to a local file before the browser
+// sees it (referrer android-app://<package>/), while a home-screen install
+// of the site hands the sender's file straight to the browser, which drops
+// it silently when it can't read it, e.g. a Google Photos item that is only
+// in the cloud.
+function describeShare(formData: FormData, referrer: string): string {
+  const fields = [...formData.entries()].map(([name, value]) =>
+    value instanceof File ? `${name}: ${value.type || 'untyped'} file, ${value.size} bytes` : `${name}: text`,
+  )
+  const from = referrer.startsWith('android-app://') ? new URL(referrer).host : 'browser'
+  return `[received ${fields.length ? fields.join('; ') : 'nothing'}; from ${from}]`
+}
