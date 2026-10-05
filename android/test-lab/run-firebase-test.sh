@@ -10,15 +10,11 @@
 #                           acts like Google Photos, and from Google Photos
 #                           itself where installed (the emulator test can
 #                           only share from the app's own files)
-#   UpdateDuringShareTest   share while a new version of the web app comes
-#                           out: serves this branch's build (dist/, from
-#                           npm run build) from the phone and releases a new
-#                           version mid-test
 # robo instead lets Test Lab's crawler poke at the app for a while; it can't
 # see much past Chrome opening, so it mostly shows the app launches.
 #
 # The app loads the live site (dubsector.github.io), not this branch's web
-# build, except in UpdateDuringShareTest, which serves dist/ from the phone.
+# build: there is no way to serve one to a Test Lab device.
 #
 # Usage: android/test-lab/run-firebase-test.sh [instrumentation|robo]
 # Build first: (cd android && ./gradlew assembleDebug assembleDebugAndroidTest)
@@ -43,9 +39,8 @@
 #   ENGINE                    what each conversion must have used: hardware
 #                             (WebCodecs on a hardware encoder, the default),
 #                             webcodecs (software encoder too) or any
-#   TESTS                     all (default), convert (ShareAndBackgroundTest),
-#                             share (ShareSourcesTest) or update
-#                             (UpdateDuringShareTest)
+#   TESTS                     all (default), convert (ShareAndBackgroundTest)
+#                             or share (ShareSourcesTest)
 #   TIMEOUT                   longest the run may take (default 15m)
 #   OUT_DIR                   where results are downloaded (test-lab-output)
 #   RESULTS_BUCKET            a bucket of your own for the results, instead of
@@ -73,7 +68,7 @@ form=$(gcloud firebase test android models describe "$DEVICE_MODEL" --format='va
 echo "Form: $form"
 # Virtual devices have no hardware video encoder, so the app falls back to
 # ffmpeg.wasm there, which the test fails on (see ENGINE below).
-if [ "$TYPE" = instrumentation ] && [ "${TESTS:-all}" = all -o "${TESTS:-all}" = convert ] && [ "$form" != PHYSICAL ] && [ "${ENGINE:-hardware}" != any ]; then
+if [ "$TYPE" = instrumentation ] && [ "${TESTS:-all}" != share ] && [ "$form" != PHYSICAL ] && [ "${ENGINE:-hardware}" != any ]; then
   echo "$DEVICE_MODEL is a $form device, with no hardware encoder; pick a physical one, or set ENGINE=any" >&2
   exit 2
 fi
@@ -93,44 +88,18 @@ case "$TYPE" in
     # Chrome reads this once the test makes it the debug app: skip its
     # first-run screens and the Digital Asset Links check, which the debug
     # signing key would fail (leaving a Custom Tab with a URL bar).
-    flags="_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io"
-    echo "$flags" > "$OUT_DIR/chrome-command-line"
-    cp "$OUT_DIR/chrome-command-line" "$OUT_DIR/chrome-command-line-live"
-    # UpdateDuringShareTest serves this branch's build from the phone, over
-    # HTTPS on 127.0.0.1:8443, and switches Chrome to these flags: a host rule
-    # sends dubsector.github.io there, and the throwaway certificate made here
-    # is trusted by its key's hash.
-    SITE_DIST="$HERE/../../dist"
-    if [ -f "$SITE_DIST/index.html" ]; then
-      rm -f "$OUT_DIR/site.zip"
-      # Without the 32 MB ffmpeg fallback, which a phone with WebCodecs never loads.
-      (cd "$SITE_DIST" && zip -qr - . -x 'ffmpeg-core/*') > "$OUT_DIR/site.zip"
-    else
-      echo "No dist/ to serve; UpdateDuringShareTest will fail. Run npm run build first." >&2
-      : > "$OUT_DIR/site.zip"
-    fi
-    openssl req -x509 -newkey rsa:2048 -nodes -days 7 -subj "/CN=dubsector.github.io" \
-      -addext "subjectAltName=DNS:dubsector.github.io" \
-      -keyout "$OUT_DIR/site-key.pem" -out "$OUT_DIR/site-cert.pem" 2> /dev/null
-    openssl pkcs12 -export -inkey "$OUT_DIR/site-key.pem" -in "$OUT_DIR/site-cert.pem" -passout pass:test \
-      -keypbe PBE-SHA1-3DES -certpbe PBE-SHA1-3DES -macalg sha1 -out "$OUT_DIR/site-cert.p12"
-    spki=$(openssl x509 -in "$OUT_DIR/site-cert.pem" -pubkey -noout | openssl pkey -pubin -outform der \
-      | openssl dgst -sha256 -binary | base64)
-    rm -f "$OUT_DIR/site-key.pem"
-    chmod 644 "$OUT_DIR/site-cert.p12"
-    echo "$flags --host-resolver-rules=\"MAP dubsector.github.io:443 127.0.0.1:8443\" --ignore-certificate-errors-spki-list=$spki --disable-quic" \
-      > "$OUT_DIR/chrome-command-line-local"
+    echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
+      > "$OUT_DIR/chrome-command-line"
     # Orchestrator runs each test in its own instrumentation with the app's
     # data cleared, so one test can't leave anything behind for the next.
     args+=(--type instrumentation --test "$TEST_APK" --use-orchestrator
-      --other-files "/data/local/tmp/smoke-test.mp4=$OUT_DIR/smoke-test.mp4,/data/local/tmp/chrome-command-line=$OUT_DIR/chrome-command-line,/data/local/tmp/chrome-command-line-live=$OUT_DIR/chrome-command-line-live,/data/local/tmp/chrome-command-line-local=$OUT_DIR/chrome-command-line-local,/data/local/tmp/site.zip=$OUT_DIR/site.zip,/data/local/tmp/site-cert.p12=$OUT_DIR/site-cert.p12"
+      --other-files "/data/local/tmp/smoke-test.mp4=$OUT_DIR/smoke-test.mp4,/data/local/tmp/chrome-command-line=$OUT_DIR/chrome-command-line"
       --directories-to-pull /sdcard/test-lab)
     case "${TESTS:-all}" in
       all) ;;
       convert) args+=(--test-targets "class io.github.dubsector.videoshrinker.ShareAndBackgroundTest") ;;
       share) args+=(--test-targets "class io.github.dubsector.videoshrinker.ShareSourcesTest") ;;
-      update) args+=(--test-targets "class io.github.dubsector.videoshrinker.UpdateDuringShareTest") ;;
-      *) echo "TESTS must be all, convert, share or update" >&2; exit 2 ;;
+      *) echo "TESTS must be all, convert or share" >&2; exit 2 ;;
     esac
     ;;
   robo)

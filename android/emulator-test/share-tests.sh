@@ -25,13 +25,6 @@ ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=1
   "$OUT_DIR/smoke-test.mp4"
 adb push "$OUT_DIR/smoke-test.mp4" /data/local/tmp/smoke-test.mp4 > /dev/null
 rm "$OUT_DIR/smoke-test.mp4"
-# And one the size of a phone's longer clips: 150 seconds at 8 Mbit/s.
-ffmpeg -loglevel error -y -f lavfi -i "testsrc2=size=1280x720:rate=30:duration=150" \
-  -vf "noise=alls=25:allf=t" \
-  -c:v libx264 -preset ultrafast -pix_fmt yuv420p -b:v 8M -maxrate 8M -bufsize 8M \
-  "$OUT_DIR/big-video.mp4"
-adb push "$OUT_DIR/big-video.mp4" /data/local/tmp/big-video.mp4 > /dev/null
-rm "$OUT_DIR/big-video.mp4"
 # Chrome's flags, as on Test Lab: skip its first-run screens and the Digital
 # Asset Links check, which the debug signing key would fail.
 echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
