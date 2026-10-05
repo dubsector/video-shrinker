@@ -86,6 +86,11 @@ adb wait-for-device
 # Nothing here needs the Play Store, so switch it off first.
 adb shell pm disable-user --user 0 com.android.vending > /dev/null \
   || echo "Could not disable the Play Store; Chrome may be updated mid-test"
+# A current Chrome in place of the image's own, where the workflow got one
+# (CHROME_APKS: see android-emulator.yml).
+if [ -n "${CHROME_APKS:-}" ]; then
+  adb install-multiple -r "$CHROME_APKS"/*.apk > /dev/null
+fi
 chrome_path=$(adb shell pm path "$CHROME" | tr -d '\r')
 [ -n "$chrome_path" ] || fail "Chrome is not installed; use a google_apis_playstore image"
 echo "Chrome $(adb shell dumpsys package "$CHROME" | grep -m1 versionName | tr -d '\r ')"

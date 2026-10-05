@@ -95,6 +95,28 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
 
+      # The images ship Chrome 124 (Android 15) and 133 (Android 16), and the
+      # Play Store won't update it without a Google account, so the tests
+      # would miss changes in current Chrome (like 153's check on shared
+      # files). The ci/chrome-apk branch holds a current Chrome, encrypted
+      # with CHROME_APK_KEY since the repository is public; both test scripts
+      # install it over the image's. Without the secret (a fork's PR), the
+      # image's Chrome is used.
+      - name: Get current Chrome
+        env:
+          CHROME_APK_KEY: ${{ secrets.CHROME_APK_KEY }}
+        run: |
+          if [ -z "$CHROME_APK_KEY" ]; then
+            echo "No CHROME_APK_KEY; testing with the image's Chrome"
+            exit 0
+          fi
+          git clone -q --depth 1 --branch ci/chrome-apk "https://github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/ci-chrome"
+          mkdir "$RUNNER_TEMP/chrome"
+          cat "$RUNNER_TEMP"/ci-chrome/chrome.tar.xz.enc.* \
+            | openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:CHROME_APK_KEY \
+            | xz -d | tar xf - -C "$RUNNER_TEMP/chrome"
+          echo "CHROME_APKS=$RUNNER_TEMP/chrome" >> "$GITHUB_ENV"
+
       # The Play Store image is the one that ships Chrome, which the app needs.
       # Each image bundles the Chrome of its day, so a newer Android also means
       # a newer Chrome. The screen is a Pixel 9 Pro XL's.
