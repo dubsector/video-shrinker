@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
  *    from a first one, which used to just bring back the first.
  *  - bigVideoWithAppClosed: a 150 MB video into the app after it was
  *    swiped away, where the run pushed one.
+ *  - senderStreamEndsEarlyOnce: the sender's first stream ends with no data.
  *  - withOnlyClipData / severalItemsPhotoFirst: shares whose video isn't
  *    the first EXTRA_STREAM item, which the relay used to pass on untouched.
  *  - fromGooglePhotos: Google Photos itself, through its Share button, where
@@ -143,6 +144,15 @@ public class ShareSourcesTest {
         web.waitForShared(name);
     }
 
+    // A sender whose first stream ends at once with no data. The relay used
+    // to forward the empty file, which the browser dropped, so the web app
+    // opened with "No video found".
+    @Test
+    public void senderStreamEndsEarlyOnce() throws IOException {
+        web.step("Sharing a video whose first read ends at once, like Google Photos does");
+        shareLikePhotos("PXL_20261005_163931999", "emptyFirst");
+    }
+
     @Test
     public void withOnlyClipData() throws IOException {
         web.step("Sharing a video named only in the share's ClipData");
@@ -223,18 +233,23 @@ public class ShareSourcesTest {
     // Photos downloads a cloud-only item. The relay should add the extension
     // for the real type.
     private void shareLikePhotos(String name) throws IOException {
+        shareLikePhotos(name, null);
+    }
+
+    private void shareLikePhotos(String name, String flag) throws IOException {
         File file = web.copyVideoToApp(PhotosLikeProvider.SOURCE_NAME);
         String testPackage = web.instrumentation.getContext().getPackageName();
         Uri source = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider", file);
         web.app.grantUriPermission(testPackage, source, Intent.FLAG_GRANT_READ_URI_PERMISSION);
         // About 12 seconds for the 12 MB test video, so the relay's
         // "Preparing your video" dialog shows for a while.
-        Uri uri = new Uri.Builder()
+        Uri.Builder builder = new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(testPackage + ".photoslike")
                 .appendPath(name)
-                .appendQueryParameter("kbps", "1024")
-                .build();
+                .appendQueryParameter("kbps", "1024");
+        if (flag != null) builder.appendQueryParameter(flag, "1");
+        Uri uri = builder.build();
         // Photos shares with a wildcard type when the item's is unknown.
         Intent share = new Intent(Intent.ACTION_SEND)
                 .setClassName(web.app, ShareRelayActivity.class.getName())

@@ -287,13 +287,41 @@ public class ShareRelayActivity extends Activity {
         }
         File out = new File(dir, name);
 
+        // A sender can hand over a stream that ends early, or at once, with
+        // no error: forwarding that short file let the browser drop it and
+        // the web app open with "No video found". Read it again a couple of
+        // times, then say what happened instead.
+        long copied = 0;
+        for (int attempt = 1; ; attempt++) {
+            copied = copyOnce(source, out, total);
+            boolean complete = copied > 0 && (total <= 0 || copied >= total);
+            if (complete) break;
+            if (attempt == 3) {
+                out.delete();
+                throw new IOException(total > 0
+                        ? String.format(Locale.US, "the sharing app sent %s of %s",
+                                formatMb(copied), formatMb(total))
+                        : "the sharing app sent no video data");
+            }
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                throw new IOException("Interrupted");
+            }
+        }
+
+        return FileProvider.getUriForFile(this, getString(R.string.providerAuthority), out);
+    }
+
+    /** Copies {@code source} to {@code out}, returning how many bytes came. */
+    private long copyOnce(Uri source, File out, long total) throws IOException {
         InputStream in = getContentResolver().openInputStream(source);
         if (in == null) throw new IOException("The sharing app did not provide the video data");
+        long copied = 0;
         try {
             OutputStream os = new FileOutputStream(out);
             try {
                 byte[] buffer = new byte[256 * 1024];
-                long copied = 0;
                 long lastUpdate = 0;
                 int read;
                 while ((read = in.read(buffer)) != -1) {
@@ -318,8 +346,7 @@ public class ShareRelayActivity extends Activity {
         } finally {
             in.close();
         }
-
-        return FileProvider.getUriForFile(this, getString(R.string.providerAuthority), out);
+        return copied;
     }
 
     /**
