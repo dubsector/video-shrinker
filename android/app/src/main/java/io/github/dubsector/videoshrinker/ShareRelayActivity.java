@@ -403,9 +403,19 @@ public class ShareRelayActivity extends Activity {
      * Launches LauncherActivity with the relayed share. Starting an activity
      * from the background is restricted on Android 10+, so if the user left
      * mid-copy the forward is held until this activity is visible again.
+     *
+     * NEW_TASK and CLEAR_TOP make sure the share is delivered when the app
+     * is already open. Without them LauncherActivity restarts itself with
+     * NEW_TASK alone, and if the open app's task was itself started by a
+     * share (its root intent SEND of the same type), Android takes the new
+     * share for that same launch: it brings the old screen to the front and
+     * drops the video without a word. CLEAR_TOP makes Android start a fresh
+     * LauncherActivity on top of the task instead, as when the app was
+     * opened from its icon.
      */
     private void forward(Intent forward) {
         forward.setClass(this, LauncherActivity.class);
+        forward.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (isResumedState) {
             startActivity(forward);
             finish();

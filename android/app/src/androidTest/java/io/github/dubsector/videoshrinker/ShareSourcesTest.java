@@ -2,9 +2,11 @@ package io.github.dubsector.videoshrinker;
 
 import static org.junit.Assume.assumeTrue;
 
+import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -40,6 +42,8 @@ import java.util.regex.Pattern;
  *  - fromPhotosLikeApp: another app sharing from its own task, its provider
  *    behaving like Google Photos at its most awkward: no extension, size or
  *    type, streaming slowly. Then again with Chrome not running.
+ *  - againWhileOpenFromAShare: a second share while the app is still open
+ *    from a first one, which used to just bring back the first.
  *  - withOnlyClipData / severalItemsPhotoFirst: shares whose video isn't
  *    the first EXTRA_STREAM item, which the relay used to pass on untouched.
  *  - fromGooglePhotos: Google Photos itself, through its Share button, where
@@ -88,6 +92,22 @@ public class ShareSourcesTest {
         web.device.pressHome();
         web.shell("am force-stop " + WebApp.CHROME);
         shareLikePhotos("PXL_20261004_120500456");
+    }
+
+    // The bug caught on a phone: with the app still open from an earlier
+    // share, a second share of the same type only brought that old screen
+    // back, and the new video never arrived. Opening the app from its icon
+    // (as setUp does) hides it, so close that first and open the app with a
+    // share instead.
+    @Test
+    public void againWhileOpenFromAShare() throws IOException {
+        web.step("Sharing a video like Google Photos does, with the app not open");
+        web.device.pressHome();
+        ActivityManager am = (ActivityManager) web.app.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        shareLikePhotos("PXL_20261005_163900111");
+        web.step("Sharing another while the app is still open from the first");
+        shareLikePhotos("PXL_20261005_164000222");
     }
 
     @Test
