@@ -339,6 +339,7 @@ function App() {
       : skippedEncode
         ? `${baseName}-clean.mp4`
         : `${baseName}-shrunk.mp4`;
+  const converting = status === 'converting';
   const codecLabel = result?.codec === 'hevc' ? 'H.265' : 'H.264';
   const sizeLabel = result?.width && result.height ? ` · ${result.width}×${result.height}` : '';
 
@@ -355,19 +356,26 @@ function App() {
       </header>
 
       <main>
+        {/* Locked while converting: a new video picked mid-conversion left the
+            old one running unseen, and pressing Convert again ran both at once
+            in the same worker, which mixed up their progress and results. The
+            drop is still swallowed so the browser doesn't open the file itself. */}
         <div
-          className={`dropzone${isDragging ? ' dragging' : ''}${file ? ' has-file' : ''}`}
+          className={`dropzone${isDragging ? ' dragging' : ''}${file ? ' has-file' : ''}${converting ? ' locked' : ''}`}
+          aria-disabled={converting}
           onDragOver={(e) => {
             e.preventDefault();
-            setIsDragging(true);
+            if (!converting) setIsDragging(true);
           }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={(e) => {
             e.preventDefault();
             setIsDragging(false);
-            handleFile(e.dataTransfer.files[0] ?? null);
+            if (!converting) handleFile(e.dataTransfer.files[0] ?? null);
           }}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => {
+            if (!converting) fileInputRef.current?.click();
+          }}
         >
           <input
             ref={fileInputRef}

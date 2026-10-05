@@ -91,6 +91,11 @@ jobs:
           git checkout -b "$BRANCH"
           git add src/locales .github/i18n/cache.json
           git commit -m "Update translations"
+          # Installing the tools rewrites their lock file on Linux (it was made
+          # on Windows), and that leftover change made the rebase below refuse
+          # to run, so every translation since run 10 was thrown away. Drop
+          # whatever the commit didn't take.
+          git checkout -- .
           # Translating every locale takes over an hour, so main has usually
           # moved on since checkout. main requires an up-to-date head branch,
           # so rebase before pushing.
