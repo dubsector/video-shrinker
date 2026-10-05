@@ -33,8 +33,23 @@ concurrency:
 
 jobs:
   emulator:
+    name: emulator (Android ${{ matrix.android }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # The Android the app targets (targetSdkVersion) and the newest one that
+    # runs here, side by side. One failing shouldn't hide whether the other
+    # passes. The newer images (36.1, 37.0) can't be used yet: their
+    # SurfaceFlinger aborts on "!rcEnc->featureInfo()->hasReadColorBufferDma"
+    # whenever it reads the screen back, restarting Android mid-test, at any
+    # screen size and with every emulator graphics mode tried.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - android: 15
+            api-level: '35'
+          - android: 16
+            api-level: '36'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -42,10 +57,14 @@ jobs:
 
       - uses: gradle/actions/wrapper-validation@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
 
+      # Caching Gradle's downloads is fine here: this only builds a debug APK
+      # for a throwaway emulator. The release build (android-build.yml) never
+      # restores a cache, so nothing cached can end up in what ships.
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
 
@@ -73,24 +92,30 @@ jobs:
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
 
       # The Play Store image is the one that ships Chrome, which the app needs.
+      # Each image bundles the Chrome of its day, so a newer Android also means
+      # a newer Chrome. The screen is a Pixel 9 Pro XL's.
       - name: Run smoke test on emulator
+        # Booting and both conversions take under 10 minutes; a wedged
+        # emulator shouldn't hold the job for the full 45.
+        timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         env:
           WEB_ROOT: ${{ inputs.site != 'live' && 'dist' || '' }}
         with:
-          api-level: 34
+          api-level: ${{ matrix.api-level }}
           target: google_apis_playstore
           arch: x86_64
           cores: 4
           ram-size: 4096M
           disable-animations: true
+          pre-emulator-launch-script: bash android/emulator-test/configure-avd.sh
           script: bash android/emulator-test/smoke-test.sh android/app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload screenshots and logs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: emulator-test-${{ github.run_number }}
+          name: emulator-test-${{ github.run_number }}-android-${{ matrix.android }}
           path: |
             emulator-test-output/*.png
             emulator-test-output/*.txt
