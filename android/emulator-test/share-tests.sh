@@ -45,9 +45,13 @@ cp -r android/app/build/outputs/androidTest-results android/app/build/reports/an
 echo "--- What the tests saw:"
 grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: //' | tail -80 || true
 if [ "$status" != 0 ]; then
-  # Enough of the system's side to follow a lost share from the job log.
-  echo "--- Logcat:"
-  grep -E 'ActivityTaskManager: (START|Activity start)|ActivityManager: (Start proc|Killing|Process .* has died)|ShareRelay|LauncherActivity|TwaLauncher|androidbrowserhelper|AndroidRuntime|Permission Denial|SecurityException|io\.github\.dubsector\.videoshrinker|cr_.*(Share|Intent|TWA|Trusted|Customtabs)|TestRunner: (started|failed|finished)' \
-    "$OUT_DIR/logcat.txt" | grep -v TestLabSmoke | tail -150 || true
+  # Enough of the system's side to follow a lost share from the job log:
+  # what happened while each failed test ran.
+  for test in $(grep -oE 'TestRunner: failed: [A-Za-z]+' "$OUT_DIR/logcat.txt" | awk '{print $3}' | sort -u); do
+    echo "--- Logcat during $test:"
+    awk -v t="$test(" 'index($0, "TestRunner: started: " t) {on = 1} on; index($0, "TestRunner: finished: " t) {on = 0}' "$OUT_DIR/logcat.txt" \
+      | grep -E 'ActivityTaskManager: (START|Activity start|Displayed)|ActivityManager: (Start proc|Killing|Process .* has died)|ShareRelay|LauncherActivity|TwaLauncher|androidbrowserhelper|AndroidRuntime|Permission Denial|SecurityException|BAL_|io\.github\.dubsector\.videoshrinker|cr_.*(Share|Intent|TWA|Trusted|Customtabs)|TestLabSmoke' \
+      | cut -c1-400 | tail -120 || true
+  done
 fi
 exit $status
