@@ -56,7 +56,12 @@ const KEY_FRAME_INTERVAL_SECONDS = 10;
  */
 export type WebCodecsOutcome =
   | { ok: true; result: WebCodecsResult }
-  | { ok: false; fallbackReason: string };
+  /**
+   * `interrupted` means frames had already gone through the encoder before it
+   * failed, so this browser can encode the file and something took the
+   * encoder away partway (see attemptConversion()).
+   */
+  | { ok: false; fallbackReason: string; interrupted: boolean };
 
 /**
  * Converts a video file entirely in the browser using WebCodecs (via
@@ -84,13 +89,16 @@ export async function convertWithWebCodecs(
   // This one stays per-attempt for that reason: the bitrate changes each pass.
   const probe = { width, height, bitrate: options.videoBitrate, frameRate };
   const codec = await pickWebCodecsCodec(options.preferHevc, probe);
-  if (!codec) return { ok: false, fallbackReason: 'No usable video codec available via WebCodecs in this browser.' };
+  if (!codec) {
+    return { ok: false, fallbackReason: 'No usable video codec available via WebCodecs in this browser.', interrupted: false };
+  }
   // Checked for the codec already picked, so a correction pass never switches
   // codec just because only the other one offers constant bitrate.
   const bitrateMode =
     options.constantBitrate && (await supportsConstantBitrate(codec, probe)) ? 'constant' : 'variable';
 
   const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
+  let madeProgress = false;
 
   // HEVC is only ever chosen after detectHevcHardwareSupport() confirmed a
   // hardware HEVC encoder (software HEVC is too slow to want), so keep
@@ -158,6 +166,7 @@ export async function convertWithWebCodecs(
     }
 
     conversion.onProgress = (progress, processedTime) => {
+      if (progress > 0) madeProgress = true;
       options.onProgress?.({ progress, processedSeconds: processedTime, durationSeconds });
     };
 
@@ -176,7 +185,7 @@ export async function convertWithWebCodecs(
     // outright); in any of those cases, degrade to the CPU fallback instead of
     // surfacing a raw encoder error.
     console.warn('[video-shrinker] WebCodecs encode failed, falling back to ffmpeg.wasm:', err);
-    return { ok: false, fallbackReason: err instanceof Error ? err.message : String(err) };
+    return { ok: false, fallbackReason: err instanceof Error ? err.message : String(err), interrupted: madeProgress };
   }
 
   const buffer = output.target.buffer;
