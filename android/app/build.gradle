@@ -60,8 +60,8 @@ android {
         applicationId "io.github.dubsector.videoshrinker"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 6
-        versionName "6"
+        versionCode 7
+        versionName "7"
 
         // For the Firebase Test Lab test in src/androidTest.
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
