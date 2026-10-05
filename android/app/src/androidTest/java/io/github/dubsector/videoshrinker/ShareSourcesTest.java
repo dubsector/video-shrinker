@@ -44,6 +44,8 @@ import java.util.regex.Pattern;
  *    type, streaming slowly. Then again with Chrome not running.
  *  - againWhileOpenFromAShare: a second share while the app is still open
  *    from a first one, which used to just bring back the first.
+ *  - bigVideoWithAppClosed: a 150 MB video into the app after it was
+ *    swiped away, where the run pushed one.
  *  - withOnlyClipData / severalItemsPhotoFirst: shares whose video isn't
  *    the first EXTRA_STREAM item, which the relay used to pass on untouched.
  *  - fromGooglePhotos: Google Photos itself, through its Share button, where
@@ -108,6 +110,37 @@ public class ShareSourcesTest {
         shareLikePhotos("PXL_20261005_163900111");
         web.step("Sharing another while the app is still open from the first");
         shareLikePhotos("PXL_20261005_164000222");
+    }
+
+    // A share of a phone-sized video (the one caught failing was 141 MB)
+    // into the app after it was swiped away, from another app's task. The
+    // other tests share a 12 MB clip.
+    @Test
+    public void bigVideoWithAppClosed() throws IOException {
+        String size = web.shell("stat -c %s " + WebApp.BIG_VIDEO).trim();
+        assumeTrue("no big test video at " + WebApp.BIG_VIDEO, size.matches("\\d+") && Long.parseLong(size) > 0);
+        web.step("Sharing a " + Long.parseLong(size) / (1024 * 1024) + " MB video with the app closed");
+        web.device.pressHome();
+        ActivityManager am = (ActivityManager) web.app.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        web.shell("am force-stop " + WebApp.CHROME);
+        String name = "PXL_20261005_163931000.mp4";
+        Uri uri = FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider",
+                web.copyVideoToApp(WebApp.BIG_VIDEO, name));
+        String testPackage = web.instrumentation.getContext().getPackageName();
+        web.app.grantUriPermission(testPackage, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Intent share = new Intent(Intent.ACTION_SEND)
+                .setClassName(web.app, ShareRelayActivity.class.getName())
+                .setType("video/mp4")
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        share.setClipData(ClipData.newRawUri(null, uri));
+        web.log("sharing " + uri + " from another app's task");
+        web.app.startActivity(new Intent()
+                .setClassName(testPackage, SenderActivity.class.getName())
+                .putExtra(SenderActivity.EXTRA_SHARE, share)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        web.waitForShared(name);
     }
 
     @Test
