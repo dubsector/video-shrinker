@@ -80,17 +80,48 @@ public class ShareRelayActivity extends Activity {
         copyInBackground(source);
     }
 
+    /**
+     * The shared item to relay. Most senders put it in EXTRA_STREAM, but
+     * some only fill in the ClipData, and a multi-item share may lead with
+     * something that isn't a video. Missing it here forwarded the share
+     * untouched, so the web app opened with "No video found".
+     */
     private Uri extractUri(Intent intent) {
         String action = intent.getAction();
-        if (Intent.ACTION_SEND.equals(action)) {
-            return (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (!Intent.ACTION_SEND.equals(action) && !Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+            return null;
         }
-        if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
-            ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            // The web app converts a single video at a time, so relay the first.
-            return uris != null && !uris.isEmpty() ? uris.get(0) : null;
+        ArrayList<Uri> candidates = new ArrayList<>();
+        try {
+            if (Intent.ACTION_SEND.equals(action)) {
+                Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (uri != null) candidates.add(uri);
+            } else {
+                ArrayList<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                if (uris != null) candidates.addAll(uris);
+            }
+        } catch (RuntimeException ignored) {
+            // A sender put something other than a Uri under EXTRA_STREAM.
         }
-        return null;
+        ClipData clip = intent.getClipData();
+        if (clip != null) {
+            for (int i = 0; i < clip.getItemCount(); i++) {
+                Uri uri = clip.getItemAt(i).getUri();
+                if (uri != null && !candidates.contains(uri)) candidates.add(uri);
+            }
+        }
+        // The web app converts a single video at a time, so relay the first
+        // video, or the first item when none says what it is.
+        for (Uri uri : candidates) {
+            String type = null;
+            try {
+                type = getContentResolver().getType(uri);
+            } catch (Exception ignored) {
+                // Some providers throw instead of returning null.
+            }
+            if (type != null && type.toLowerCase(Locale.ROOT).startsWith("video/")) return uri;
+        }
+        return candidates.isEmpty() ? null : candidates.get(0);
     }
 
     /**

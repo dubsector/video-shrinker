@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -39,6 +40,8 @@ import java.util.regex.Pattern;
  *  - fromPhotosLikeApp: another app sharing from its own task, its provider
  *    behaving like Google Photos at its most awkward: no extension, size or
  *    type, streaming slowly. Then again with Chrome not running.
+ *  - withOnlyClipData / severalItemsPhotoFirst: shares whose video isn't
+ *    the first EXTRA_STREAM item, which the relay used to pass on untouched.
  *  - fromGooglePhotos: Google Photos itself, through its Share button, where
  *    the phone has it. Skipped when Photos isn't there or its screens can't
  *    be got through, since that says nothing about the app.
@@ -85,6 +88,33 @@ public class ShareSourcesTest {
         web.device.pressHome();
         web.shell("am force-stop " + WebApp.CHROME);
         shareLikePhotos("PXL_20261004_120500456");
+    }
+
+    @Test
+    public void withOnlyClipData() throws IOException {
+        web.step("Sharing a video named only in the share's ClipData");
+        Uri uri = appFile("clipdata-only.mp4");
+        Intent share = relayIntent(Intent.ACTION_SEND, "video/*");
+        share.setClipData(ClipData.newRawUri(null, uri));
+        send(share, uri);
+        web.waitForShared("clipdata-only.mp4");
+    }
+
+    @Test
+    public void severalItemsPhotoFirst() throws IOException {
+        web.step("Sharing a photo and a video together, the photo first");
+        Uri photo = appFile("first-item.jpg");
+        Uri video = appFile("second-item.mp4");
+        ArrayList<Uri> uris = new ArrayList<>();
+        uris.add(photo);
+        uris.add(video);
+        Intent share = relayIntent(Intent.ACTION_SEND_MULTIPLE, "video/*")
+                .putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        ClipData clip = ClipData.newRawUri(null, photo);
+        clip.addItem(new ClipData.Item(video));
+        share.setClipData(clip);
+        send(share, video);
+        web.waitForShared("second-item.mp4");
     }
 
     @Test
@@ -168,6 +198,25 @@ public class ShareSourcesTest {
                 .putExtra(SenderActivity.EXTRA_SHARE, share)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         web.waitForShared(name + ".mp4");
+    }
+
+    // The test video in the app's own files, served by its FileProvider.
+    private Uri appFile(String name) throws IOException {
+        File file = web.copyVideoToApp(name);
+        return FileProvider.getUriForFile(web.app, web.app.getPackageName() + ".fileprovider", file);
+    }
+
+    private Intent relayIntent(String action, String type) {
+        return new Intent(action)
+                .setClass(web.app, ShareRelayActivity.class)
+                .setType(type)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    }
+
+    private void send(Intent share, Uri video) {
+        web.log("sharing " + video + " via " + share);
+        web.device.pressHome();
+        web.app.startActivity(share);
     }
 
     // Adds the test video to the media store as a new item and returns its

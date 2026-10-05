@@ -27,8 +27,6 @@ import java.util.regex.Pattern;
  * Test Lab's phones load the live site, which can't be given a new version on
  * cue, so this test serves the branch's own build from the phone (LocalSite)
  * and points Chrome at it, then releases a new version when it needs one.
- * test/update-during-share.mjs covers the same ground in desktop Chrome,
- * along with a share that fails, which a phone can't easily be made to do.
  */
 @RunWith(AndroidJUnit4.class)
 public class UpdateDuringShareTest {
