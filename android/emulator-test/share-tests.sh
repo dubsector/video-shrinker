@@ -30,6 +30,9 @@ rm "$OUT_DIR/smoke-test.mp4"
 echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
   | adb shell 'cat > /data/local/tmp/chrome-command-line'
 adb shell rm -rf /sdcard/test-lab
+# Room for the whole run's logcat, read back at the end.
+adb logcat -G 16M || true
+adb logcat -c || true
 
 status=0
 (cd android && ./gradlew connectedDebugAndroidTest \
@@ -41,4 +44,10 @@ adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
 cp -r android/app/build/outputs/androidTest-results android/app/build/reports/androidTests "$OUT_DIR/" 2> /dev/null || true
 echo "--- What the tests saw:"
 grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: //' | tail -80 || true
+if [ "$status" != 0 ]; then
+  # Enough of the system's side to follow a lost share from the job log.
+  echo "--- Logcat:"
+  grep -E 'ActivityTaskManager: (START|Activity start)|ActivityManager: (Start proc|Killing|Process .* has died)|ShareRelay|LauncherActivity|TwaLauncher|androidbrowserhelper|AndroidRuntime|Permission Denial|SecurityException|io\.github\.dubsector\.videoshrinker|cr_.*(Share|Intent|TWA|Trusted|Customtabs)|TestRunner: (started|failed|finished)' \
+    "$OUT_DIR/logcat.txt" | grep -v TestLabSmoke | tail -150 || true
+fi
 exit $status
