@@ -37,8 +37,8 @@ jobs:
     name: emulator (Android ${{ matrix.android }})
     runs-on: ubuntu-latest
     timeout-minutes: 75
-    # The Android the app targets (targetSdkVersion) and the newest one that
-    # runs here, side by side. One failing shouldn't hide whether the other
+    # The Android the app targets (targetSdkVersion, 16) and the one before
+    # it, side by side. One failing shouldn't hide whether the other
     # passes. The newer images (36.1, 37.0) can't be used yet: their
     # SurfaceFlinger aborts on "!rcEnc->featureInfo()->hasReadColorBufferDma"
     # whenever it reads the screen back, restarting Android mid-test, at any
