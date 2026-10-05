@@ -31,7 +31,16 @@ one of the two classes. A `robo` run lets Test Lab's crawler explore instead,
 which mostly shows the app launches, since the crawler can't see much inside
 Chrome.
 
-The app loads the live site, not the branch's web build.
+`UpdateDuringShareTest` shares a video while a new version of the web app
+comes out, since the app updates itself with a quiet reload and a reload at
+the wrong moment can lose a share. The live site can't be given a new version
+on cue, so this test serves the branch's own build (`dist/`, from
+`npm run build`) from the phone over HTTPS, points Chrome at it with a host
+rule and a throwaway certificate that the run script makes, and releases a
+new version mid-test. The `update` choice of the `tests` input runs just this
+one.
+
+The other tests load the live site, not the branch's web build.
 
 ## Setting it up
 

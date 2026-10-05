@@ -33,9 +33,9 @@ on:
         type: string
         default: '37'
       tests:
-        description: Which instrumentation tests (convert = share + background, share = share sources)
+        description: Which instrumentation tests (convert = share + background, share = share sources, update = share while a new version comes out)
         type: choice
-        options: [all, convert, share]
+        options: [all, convert, share, update]
         default: all
       engine:
         description: What each conversion must have used (hardware = WebCodecs on the phone's hardware encoder)
@@ -96,6 +96,18 @@ jobs:
       - name: Build debug APKs
         working-directory: android
         run: ./gradlew assembleDebug assembleDebugAndroidTest
+
+      # UpdateDuringShareTest serves this build of the web app from the phone.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: inputs.type != 'robo'
+        with:
+          node-version: 24
+          cache: npm
+
+      # npm install, not npm ci: see pr-checks.yml.
+      - name: Build the web app
+        if: inputs.type != 'robo'
+        run: npm install && npm run build
 
       - name: Install ffmpeg
         if: inputs.type != 'robo'

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Debug builds only: UpdateDuringShareTest (src/androidTest) serves the
+         web app from the phone itself, inside this app's process, so that it
+         can release a new version mid-test. The app never needs the network
+         itself; Chrome does that. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>
