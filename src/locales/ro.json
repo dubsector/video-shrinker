@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Se convertește…",
+        "pause": "Pauză",
+        "paused": "În pauză",
         "refineNote": "Prima trecere a ratat ținta. Ajustez rata de biți și codificarea din nou.",
         "refining": "Rafinarea dimensiunii...",
+        "resume": "Reluare",
         "start": "Convertește"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automat",
         "label": "Limbă"
+    },
+    "notice": {
+        "interruptedAgain": "Aplicația a fost închisă din nou în fundal înainte de finalizarea conversiei. Apăsați Convert pentru a încerca din nou.",
+        "restarted": "Aplicația a fost închisă în fundal și conversia s-a pierdut, așa că a repornit."
     },
     "privacy": {
         "clean": "Fără conturi, fără analitice, fără cookie-uri.",

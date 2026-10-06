@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Inageuza...",
+        "pause": "Sitisha",
+        "paused": "Imesitishwa",
         "refineNote": "Jaribio la kwanza halikufikia lengo. Inarekebisha bitrate na encoding tena.",
         "refining": "Inarekebisha ukubwa...",
+        "resume": "Endelea",
         "start": "Badilisha"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Otomatiki",
         "label": "Lugha"
+    },
+    "notice": {
+        "interruptedAgain": "Programu ilifungwa chinichini tena kabla ya ubadilishaji kukamilika. Bonyeza Convert ili ujaribu tena.",
+        "restarted": "Programu ilifungwa chinichini na ubadilishaji ulipotea, kwa hivyo imeanza tena."
     },
     "privacy": {
         "clean": "Hakuna akaunti, hakuna takwimu, hakuna vidakuzi.",

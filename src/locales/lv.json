@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Konvertē...",
+        "pause": "Pauzēt",
+        "paused": "Pauzēts",
         "refineNote": "Pirmajā piegājienā mērķis netika sasniegts. Vēlreiz pielāgo bitreitu un kodēšanu.",
         "refining": "Precizēju izmēru…",
+        "resume": "Atsākt",
         "start": "Konvertēt"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automātiski",
         "label": "Valoda"
+    },
+    "notice": {
+        "interruptedAgain": "Lietotne fonā atkal tika aizvērta, pirms konvertēšana bija pabeigta. Nospiediet Convert, lai mēģinātu vēlreiz.",
+        "restarted": "Lietotne tika aizvērta fonā un konvertēšana tika pārtraukta, tāpēc tā sākās no jauna."
     },
     "privacy": {
         "clean": "Nav kontu, nav analītikas, nav sīkfailu.",

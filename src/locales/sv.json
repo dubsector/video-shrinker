@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Konverterar…",
+        "pause": "Pausa",
+        "paused": "Pausad",
         "refineNote": "Den första genomgången missade målet. Justerar bithastigheten och kodningen igen.",
         "refining": "Finjusterar storlek…",
+        "resume": "Återuppta",
         "start": "Konvertera"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatisk",
         "label": "Språk"
+    },
+    "notice": {
+        "interruptedAgain": "Appen stängdes i bakgrunden igen innan konverteringen var klar. Tryck på Convert för att försöka igen.",
+        "restarted": "Appen stängdes i bakgrunden och konverteringen gick förlorad, så den har startat om."
     },
     "privacy": {
         "clean": "Inga konton, ingen analys, inga cookies.",

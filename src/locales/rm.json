@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Convertez...",
+        "pause": "Pausa",
+        "paused": "Pausà",
         "refineNote": "L'emprima passa n'ha betg cuntanschì la finamira. Ajustar il bitrate e la codificaziun anc ina giada.",
         "refining": "Refinar la grondezza…",
+        "resume": "Reprender",
         "start": "Convertir"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatic",
         "label": "Lingua"
+    },
+    "notice": {
+        "interruptedAgain": "L'app è vegnida serrada puspè en il background avant che la conversiun è stada terminada. Stritga sin Convert per empruvar anc ina giada.",
+        "restarted": "L'app è vegnida serrada en il background e la conversiun è ida a perder, perquai ha ella cumenzà da nov."
     },
     "privacy": {
         "clean": "Nagins quints, nagina analitica, nagins cookies.",

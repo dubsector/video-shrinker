@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Iyaguqula…",
+        "pause": "Misa isikhashana",
+        "paused": "Imisiwe okwesikhashana",
         "refineNote": "Umzamo wokuqala awuzange ufinyelele ilitshe. Kulungiswa i-bitrate nokubhalwa futhi.",
         "refining": "Ilungisa usayizi…",
+        "resume": "Qalisa kabusha",
         "start": "Guqula"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Okuzenzakalelayo",
         "label": "Ulimi"
+    },
+    "notice": {
+        "interruptedAgain": "Uhlelo lokusebenza luvaleke ngemuva futhi ngaphambi kokuba ukuguqulwa kuqedwe. Cindezela u-Convert ukuze uzame futhi.",
+        "restarted": "Uhlelo lokusebenza luvalwe ngemuva futhi ukuguqulwa kulahlekile, ngakho-ke kuqalise kabusha."
     },
     "privacy": {
         "clean": "Awekho ama-akhawunti, akukho ukuhlaziya, awekho amakhukhi.",

@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "변환 중…",
+        "pause": "일시 정지",
+        "paused": "일시 정지됨",
         "refineNote": "첫 번째 패스에서 목표치를 달성하지 못했습니다. 비트레이트와 인코딩을 다시 조정합니다.",
         "refining": "크기 조정 중…",
+        "resume": "재개",
         "start": "변환"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "자동",
         "label": "언어"
+    },
+    "notice": {
+        "interruptedAgain": "변환이 완료되기 전에 앱이 백그라운드에서 다시 종료되었습니다. Convert를 눌러 다시 시도하세요.",
+        "restarted": "앱이 백그라운드에서 종료되어 변환이 손실되었으므로 다시 시작되었습니다."
     },
     "privacy": {
         "clean": "계정, 분석 도구, 쿠키가 없습니다.",

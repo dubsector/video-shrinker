@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "正在轉換…",
+        "pause": "暫停",
+        "paused": "已暫停",
         "refineNote": "第一次壓縮未達到目標大小。正在再次調整位元率和編碼。",
         "refining": "正在最佳化大小…",
+        "resume": "恢復",
         "start": "轉換"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "自動",
         "label": "語言"
+    },
+    "notice": {
+        "interruptedAgain": "應用在轉換完成前再次於後臺關閉。請按“轉換”鍵再試一次。",
+        "restarted": "應用在後臺關閉，導致轉換中斷，因此已重新開始。"
     },
     "privacy": {
         "clean": "無賬戶，無分析，無 Cookie。",

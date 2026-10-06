@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Mengonversi…",
+        "pause": "Jeda",
+        "paused": "Dijeda",
         "refineNote": "Langkah pertama tidak mencapai target. Menyesuaikan bitrate dan penyandian sekali lagi.",
         "refining": "Menyempurnakan ukuran…",
+        "resume": "Lanjutkan",
         "start": "Konversi"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Otomatis",
         "label": "Bahasa"
+    },
+    "notice": {
+        "interruptedAgain": "Aplikasi ditutup lagi di latar belakang sebelum konversi selesai. Tekan Konversi untuk mencoba lagi.",
+        "restarted": "Aplikasi ditutup di latar belakang dan konversi hilang, jadi konversi dimulai lagi."
     },
     "privacy": {
         "clean": "Tanpa akun, tanpa analitik, tanpa cookie.",

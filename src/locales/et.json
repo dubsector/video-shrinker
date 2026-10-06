@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Teisendamine…",
+        "pause": "Peata",
+        "paused": "Peatatud",
         "refineNote": "Esimene katse ei saavutanud sihtmärki. Kohandan bitikiirust ja kodeeringut uuesti.",
         "refining": "Täpsustan suurust…",
+        "resume": "Jätka",
         "start": "Teisenda"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automaatne",
         "label": "Keel"
+    },
+    "notice": {
+        "interruptedAgain": "Rakendus suleti taustal uuesti enne teisendamise lõpetamist. Vajutage teisendamiseks nuppu Convert, et uuesti proovida.",
+        "restarted": "Rakendus suleti taustal ja teisendamine läks kaotsi, seega see käivitus uuesti."
     },
     "privacy": {
         "clean": "Kontosid, analüütikat ega küpsiseid ei kasutata.",

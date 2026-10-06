@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Menukar…",
+        "pause": "Jeda",
+        "paused": "Dijeda",
         "refineNote": "Laluan pertama tidak mencapai sasaran. Melaraskan bitrate dan pengekodan sekali lagi.",
         "refining": "Melaraskan saiz...",
+        "resume": "Sambung semula",
         "start": "Tukar"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatik",
         "label": "Bahasa"
+    },
+    "notice": {
+        "interruptedAgain": "Aplikasi ditutup di latar belakang sekali lagi sebelum penukaran selesai. Tekan Convert untuk cuba sekali lagi.",
+        "restarted": "Aplikasi ditutup di latar belakang dan penukaran telah hilang, jadi ia dimulakan semula."
     },
     "privacy": {
         "clean": "Tiada akaun, tiada analitik, tiada kuki.",

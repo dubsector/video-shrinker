@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Besig om te omskakel…",
+        "pause": "Pouse",
+        "paused": "Gepouseer",
         "refineNote": "Die eerste poging het die teiken gemis. Pas die biskoers en enkoderingsinstelling weer eens aan.",
         "refining": "Verfyn grootte…",
+        "resume": "Hervat",
         "start": "Skakel om"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Outomaties",
         "label": "Taal"
+    },
+    "notice": {
+        "interruptedAgain": "Die toepassing is weer in die agtergrond gesluit voordat die omskakeling voltooi is. Druk Skakel om om weer te probeer.",
+        "restarted": "Die toepassing is in die agtergrond gesluit en die omskakeling is verlore, dus het dit weer begin."
     },
     "privacy": {
         "clean": "Geen rekeninge, geen analise, geen koekies.",

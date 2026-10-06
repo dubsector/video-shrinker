@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Bihurtzen…",
+        "pause": "Pausatu",
+        "paused": "Pausatuta",
         "refineNote": "Lehen saiakerak ez du helburua bete. Bitratea eta kodetzea berriro doitzen.",
         "refining": "Tamaina doitzen…",
+        "resume": "Berrekin",
         "start": "Bihurtu"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatikoa",
         "label": "Hizkuntza"
+    },
+    "notice": {
+        "interruptedAgain": "Aplikazioa berriro itxi da atzeko planoan bihurketa amaitu baino lehen. Sakatu Convert berriro saiatzeko.",
+        "restarted": "Aplikazioa atzeko planoan itxi da eta bihurketa galdu egin da, beraz, berriro hasi da."
     },
     "privacy": {
         "clean": "Konturik ez, analitikaririk ez, cookierik ez.",

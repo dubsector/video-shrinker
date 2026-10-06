@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Conversion…",
+        "pause": "Pause",
+        "paused": "En pause",
         "refineNote": "La première passe a manqué la cible. Ajustement du débit et de l'encodage une fois de plus.",
         "refining": "Ajustement de la taille…",
+        "resume": "Reprendre",
         "start": "Convertir"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatique",
         "label": "Langue"
+    },
+    "notice": {
+        "interruptedAgain": "L'application a été fermée en arrière-plan à nouveau avant la fin de la conversion. Appuyez sur Convertir pour réessayer.",
+        "restarted": "L'application a été fermée en arrière-plan et la conversion a été perdue, elle a donc recommencé."
     },
     "privacy": {
         "clean": "Aucun compte, aucune analyse, aucun cookie.",

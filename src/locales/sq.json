@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Po konvertohet…",
+        "pause": "Pauzë",
+        "paused": "E pauzuar",
         "refineNote": "Kalimi i parë nuk e arriti objektivin. Po rregullohet bitrate dhe kodimi edhe një herë.",
         "refining": "Po optimizohet madhësia…",
+        "resume": "Vazhdo",
         "start": "Konverto"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatike",
         "label": "Gjuha"
+    },
+    "notice": {
+        "interruptedAgain": "Aplikacioni u mbyll përsëri në sfond para se të përfundonte konvertimi. Shtypni Convert për të provuar përsëri.",
+        "restarted": "Aplikacioni u mbyll në sfond dhe konvertimi humbi, kështu që ai filloi përsëri."
     },
     "privacy": {
         "clean": "Pa llogari, pa analitikë, pa cookies.",

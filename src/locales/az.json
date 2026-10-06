@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Çevrilir…",
+        "pause": "Pauza ver",
+        "paused": "Pauza verildi",
         "refineNote": "İlk cəhd hədəfə çatmadı. Bitrate və kodlaşdırma yenidən tənzimlənir.",
         "refining": "Ölçü dəqiqləşdirilir…",
+        "resume": "Davam et",
         "start": "Çevir"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Avtomatik",
         "label": "Dil"
+    },
+    "notice": {
+        "interruptedAgain": "Tətbiq çevrilmə bitməmiş yenidən fonda bağlandı. Yenidən cəhd etmək üçün \"Convert\" düyməsinə basın.",
+        "restarted": "Tətbiq fonda bağlandı və çevrilmə itdi, buna görə də o, yenidən başladı."
     },
     "privacy": {
         "clean": "Hesab yoxdur, analitika yoxdur, kukilər yoxdur.",

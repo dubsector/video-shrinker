@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Đang chuyển đổi…",
+        "pause": "Tạm dừng",
+        "paused": "Đã tạm dừng",
         "refineNote": "Lần chạy đầu tiên không đạt mục tiêu. Đang điều chỉnh lại bitrate và mã hóa.",
         "refining": "Đang tinh chỉnh kích thước…",
+        "resume": "Tiếp tục",
         "start": "Chuyển đổi"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Tự động",
         "label": "Ngôn ngữ"
+    },
+    "notice": {
+        "interruptedAgain": "Ứng dụng lại bị đóng trong nền trước khi quá trình chuyển đổi hoàn tất. Nhấn Convert để thử lại.",
+        "restarted": "Ứng dụng đã bị đóng trong nền và quá trình chuyển đổi bị mất, nên ứng dụng đã khởi động lại."
     },
     "privacy": {
         "clean": "Không tài khoản, không phân tích, không cookie.",

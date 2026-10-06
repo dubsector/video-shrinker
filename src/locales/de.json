@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Konvertierung läuft…",
+        "pause": "Pause",
+        "paused": "Pausiert",
         "refineNote": "Der erste Durchlauf hat das Ziel verfehlt. Bitrate und Kodierung werden erneut angepasst.",
         "refining": "Größe wird optimiert…",
+        "resume": "Fortsetzen",
         "start": "Konvertieren"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatisch",
         "label": "Sprache"
+    },
+    "notice": {
+        "interruptedAgain": "Die App wurde im Hintergrund erneut geschlossen, bevor die Konvertierung abgeschlossen war. Drücke auf \"Konvertieren\", um es erneut zu versuchen.",
+        "restarted": "Die App wurde im Hintergrund geschlossen und die Konvertierung ging verloren, daher wurde sie neu gestartet."
     },
     "privacy": {
         "clean": "Keine Konten, kein Analytics, keine Cookies.",

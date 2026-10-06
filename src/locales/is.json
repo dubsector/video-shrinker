@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Umbreyti…",
+        "pause": "Hlé",
+        "paused": "Í hléi",
         "refineNote": "Fyrsta tilraun náði ekki markmiðinu. Bitrate og kóðun stillt á ný.",
         "refining": "Fínstillir stærð…",
+        "resume": "Halda áfram",
         "start": "Umbreyta"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Sjálfvirkt",
         "label": "Tungumál"
+    },
+    "notice": {
+        "interruptedAgain": "Forritið var lokað í bakgrunni aftur áður en umbreytingunni lauk. Ýttu á Convert til að reyna aftur.",
+        "restarted": "Forritið var lokað í bakgrunni og umbreytingin glataðist, svo hún er hafin aftur."
     },
     "privacy": {
         "clean": "Engir reikningar, engin greining, engar vafrakökur.",

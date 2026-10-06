@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Nagko-convert…",
+        "pause": "I-pause",
+        "paused": "Naka-pause",
         "refineNote": "Hindi naabot ng unang pag-compress ang target. Ina-adjust muli ang bitrate at encoding.",
         "refining": "Inaayos ang laki…",
+        "resume": "Ipagpatuloy",
         "start": "I-convert"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Awtomatiko",
         "label": "Wika"
+    },
+    "notice": {
+        "interruptedAgain": "Ang app ay naisara muli sa background bago matapos ang conversion. Pindutin ang Convert para sumubok muli.",
+        "restarted": "Ang app ay naisara sa background at nawala ang conversion, kaya ito ay nagsimula muli."
     },
     "privacy": {
         "clean": "Walang mga account, walang analytics, walang cookies.",

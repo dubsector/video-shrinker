@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Konvertuje sa…",
+        "pause": "Pozastaviť",
+        "paused": "Pozastavené",
         "refineNote": "Prvý prechod minul cieľ. Bitrate a kódovanie sa znova upravujú.",
         "refining": "Upravuje sa veľkosť…",
+        "resume": "Pokračovať",
         "start": "Konvertovať"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automaticky",
         "label": "Jazyk"
+    },
+    "notice": {
+        "interruptedAgain": "Aplikácia bola na pozadí opäť zatvorená skôr, než sa konverzia dokončila. Stlačte Convert, aby ste to skúsili znova.",
+        "restarted": "Aplikácia bola zatvorená na pozadí a konverzia sa stratila, preto sa spustila znova."
     },
     "privacy": {
         "clean": "Žiadne účty, žiadna analytika, žiadne cookies.",

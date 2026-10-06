@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Dönüştürülüyor…",
+        "pause": "Duraklat",
+        "paused": "Duraklatıldı",
         "refineNote": "İlk geçiş hedefi tutturamadı. Bit hızı ve kodlamayı tekrar ayarlıyoruz.",
         "refining": "Boyut ayarlanıyor…",
+        "resume": "Devam et",
         "start": "Dönüştür"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Otomatik",
         "label": "Dil"
+    },
+    "notice": {
+        "interruptedAgain": "Uygulama, dönüştürme işlemi tamamlanmadan arka planda tekrar kapatıldı. Tekrar denemek için Convert düğmesine basın.",
+        "restarted": "Uygulama arka planda kapatıldı ve dönüştürme işlemi kayboldu, bu yüzden işlem yeniden başladı."
     },
     "privacy": {
         "clean": "Hesap yok, analiz yok, çerez yok.",
