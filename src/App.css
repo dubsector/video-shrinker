@@ -72,6 +72,14 @@ main {
   border-style: solid;
 }
 
+.dropzone.locked,
+.dropzone.locked:hover {
+  cursor: default;
+  opacity: 0.6;
+  border-color: var(--border);
+  background: transparent;
+}
+
 .file-info {
   display: flex;
   flex-direction: column;
