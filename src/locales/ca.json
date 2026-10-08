@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Convertint…",
+        "pause": "Pausa",
+        "paused": "En pausa",
         "refineNote": "La primera passada no ha assolit l'objectiu. Ajustant el bitrate i la codificació una vegada més.",
         "refining": "Refinant la mida…",
+        "resume": "Reprèn",
         "start": "Converteix"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automàtic",
         "label": "Idioma"
+    },
+    "notice": {
+        "interruptedAgain": "L'aplicació s'ha tornat a tancar en segon pla abans que finalitzés la conversió. Prem Convert per tornar-ho a provar.",
+        "restarted": "L'aplicació s'ha tancat en segon pla i la conversió s'ha perdut, així que s'ha iniciat de nou."
     },
     "privacy": {
         "clean": "Sense comptes, sense analítiques, sense cookies.",

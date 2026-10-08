@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Konvertuojama…",
+        "pause": "Pristabdyti",
+        "paused": "Pristabdyta",
         "refineNote": "Pirmas bandymas nepasiekė tikslo. Reguliuojamas bitų dažnis ir kodavimas.",
         "refining": "Tikslinamas dydis…",
+        "resume": "Tęsti",
         "start": "Konvertuoti"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatinis",
         "label": "Kalba"
+    },
+    "notice": {
+        "interruptedAgain": "Programėlė vėl buvo uždaryta fone, nebaigus konvertavimo. Paspauskite Convert, kad bandytumėte dar kartą.",
+        "restarted": "Programėlė buvo uždaryta fone ir konvertavimas nutrūko, todėl jis prasidėjo iš naujo."
     },
     "privacy": {
         "clean": "Jokių paskyrų, jokios analitikos, jokių slapukų.",

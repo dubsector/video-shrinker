@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Konvertálás…",
+        "pause": "Szünet",
+        "paused": "Szüneteltetve",
         "refineNote": "Az első próbálkozás nem érte el a célméretet. Újraállítjuk a bitrátát és a kódolást.",
         "refining": "Méret finomítása…",
+        "resume": "Folytatás",
         "start": "Konvertál"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatikus",
         "label": "Nyelv"
+    },
+    "notice": {
+        "interruptedAgain": "Az alkalmazás a konvertálás befejezése előtt ismét bezárult a háttérben. Nyomja meg a Convert gombot az újrapróbálkozáshoz.",
+        "restarted": "Az alkalmazás a háttérben bezárult, és a konvertálás megszakadt, ezért újraindult."
     },
     "privacy": {
         "clean": "Nincs fiók, nincs analitika, nincsenek sütik.",

@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Muunnetaan…",
+        "pause": "Keskeytä",
+        "paused": "Keskeytetty",
         "refineNote": "Ensimmäinen yritys ei saavuttanut tavoitetta. Säädetään bittivirtaa ja koodausta vielä kerran.",
         "refining": "Viimeistellään kokoa…",
+        "resume": "Jatka",
         "start": "Muunna"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automaattinen",
         "label": "Kieli"
+    },
+    "notice": {
+        "interruptedAgain": "Sovellus sulkeutui taustalla uudelleen ennen kuin muunnos valmistui. Paina Convert yrittääksesi uudelleen.",
+        "restarted": "Sovellus sulkeutui taustalla ja muunnos keskeytyi, joten se on käynnistynyt uudelleen."
     },
     "privacy": {
         "clean": "Ei tilejä, ei analytiikkaa, ei evästeitä.",

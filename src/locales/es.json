@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Convirtiendo…",
+        "pause": "Pausar",
+        "paused": "En pausa",
         "refineNote": "La primera pasada no alcanzó el objetivo. Ajustando el bitrate y la codificación una vez más.",
         "refining": "Ajustando tamaño…",
+        "resume": "Reanudar",
         "start": "Convertir"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automático",
         "label": "Idioma"
+    },
+    "notice": {
+        "interruptedAgain": "La aplicación se cerró de nuevo en segundo plano antes de que finalizara la conversión. Pulsa Convert para intentarlo de nuevo.",
+        "restarted": "La aplicación se cerró en segundo plano y la conversión se perdió, por lo que se ha iniciado de nuevo."
     },
     "privacy": {
         "clean": "Sin cuentas, sin analíticas, sin cookies.",

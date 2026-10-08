@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Pretvarjanje…",
+        "pause": "Premor",
+        "paused": "Pavzirano",
         "refineNote": "Prvi prehod ni dosegel cilja. Še enkrat prilagajanje bitne hitrosti in kodiranja.",
         "refining": "Natančno določanje velikosti…",
+        "resume": "Nadaljuj",
         "start": "Pretvori"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Samodejno",
         "label": "Jezik"
+    },
+    "notice": {
+        "interruptedAgain": "Aplikacija je bila v ozadju znova zaprta, preden se je pretvorba končala. Pritisnite Convert za ponoven poskus.",
+        "restarted": "Aplikacija je bila zaprta v ozadju in pretvorba je bila izgubljena, zato se je znova začela."
     },
     "privacy": {
         "clean": "Brez računov, brez analitike, brez piškotkov.",

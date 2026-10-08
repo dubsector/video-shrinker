@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "正在转换…",
+        "pause": "暂停",
+        "paused": "已暂停",
         "refineNote": "第一次压缩未达到目标大小。正在再次调整比特率和编码。",
         "refining": "正在优化大小…",
+        "resume": "恢复",
         "start": "转换"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "自动",
         "label": "语言"
+    },
+    "notice": {
+        "interruptedAgain": "应用在转换完成前再次于后台关闭。请按“转换”键再试一次。",
+        "restarted": "应用在后台关闭，导致转换中断，因此已重新开始。"
     },
     "privacy": {
         "clean": "无账户，无分析，无 Cookie。",

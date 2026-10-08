@@ -8,8 +8,11 @@
     },
     "convert": {
         "converting": "Converteren…",
+        "pause": "Pauzeren",
+        "paused": "Gepauzeerd",
         "refineNote": "De eerste poging haalde het doel niet. De bitrate en encoding worden nogmaals aangepast.",
         "refining": "Grootte aanpassen…",
+        "resume": "Hervatten",
         "start": "Converteren"
     },
     "dropzone": {
@@ -34,6 +37,10 @@
     "language": {
         "auto": "Automatisch",
         "label": "Taal"
+    },
+    "notice": {
+        "interruptedAgain": "De app werd opnieuw op de achtergrond gesloten voordat de conversie was voltooid. Druk op Convert om het opnieuw te proberen.",
+        "restarted": "De app werd op de achtergrond gesloten en de conversie is verloren gegaan, dus is deze opnieuw gestart."
     },
     "privacy": {
         "clean": "Geen accounts, geen analytics, geen cookies.",
