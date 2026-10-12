@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import './App.css';
 import { setAppBusy } from './lib/appBusy';
 import type { ConversionPhase, ConvertResult } from './lib/convert';
-import { type ConversionHandle, prepareConverter, startConversion } from './lib/converter';
+import { type ConversionHandle, prepareConverter, releaseOutputs, startConversion } from './lib/converter';
 import { keepScreenOn } from './lib/keepScreenOn';
-import { clearJob, fromSavedResult, loadJob, saveFile, saveState, type SavedSettings, toSavedResult } from './lib/savedJob';
+import { clearJob, forgetResult, fromSavedResult, loadJob, saveFile, saveState, type SavedSettings, toSavedResult } from './lib/savedJob';
 
 const MB = 1024 * 1024;
 const SIZE_PRESETS_MB = [10, 25, 50, 100];
@@ -87,6 +87,12 @@ function App() {
       .catch(() => setHevcAvailable(false));
   }, []);
 
+  // Results kept on disk by an earlier visit were either downloaded or
+  // abandoned; a page reload brings a result back from the saved job instead.
+  useEffect(() => {
+    releaseOutputs();
+  }, []);
+
   useEffect(() => {
     return () => {
       if (resultUrl) URL.revokeObjectURL(resultUrl);
@@ -120,6 +126,7 @@ function App() {
       return null;
     });
     void clearJob();
+    releaseOutputs();
   }, []);
 
   const handleFile = useCallback(
@@ -524,7 +531,7 @@ function App() {
                         : t('result.ffmpeg')}
               </span>
             </p>
-            <a className="download-button" href={resultUrl} download={downloadName}>
+            <a className="download-button" href={resultUrl} download={downloadName} onClick={() => void forgetResult()}>
               {t('result.download')}
             </a>
             <button type="button" className="link-button" onClick={reset}>
