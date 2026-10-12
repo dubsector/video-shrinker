@@ -3,12 +3,15 @@
 // that is enough to make the page stutter while it works. Here none of it
 // competes with the UI.
 import { type ConversionPhase, convertVideo, type ConvertResult } from './convert';
+import { releaseAllOutputs } from './outputFiles';
 import { PauseGate } from './pauseGate';
 
 export type ConvertRequest =
   | { type: 'convert'; file: File; targetSizeBytes: number; preferHevc: boolean; stripMetadata: boolean }
   | { type: 'pause' }
   | { type: 'resume' }
+  // The result is no longer wanted, so the file it lives in can go.
+  | { type: 'release' }
   // A worker can't see the page, so the page reports when it is shown or hidden.
   | { type: 'visibility'; visible: boolean };
 
@@ -38,6 +41,10 @@ self.addEventListener('message', (event: MessageEvent<ConvertRequest>) => {
   }
   if (request.type === 'resume') {
     gate?.resume();
+    return;
+  }
+  if (request.type === 'release') {
+    void releaseAllOutputs();
     return;
   }
   if (request.type === 'visibility') {

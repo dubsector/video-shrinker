@@ -1,6 +1,5 @@
 import {
   BlobSource,
-  BufferTarget,
   Conversion,
   Input,
   type InputAudioTrack,
@@ -28,6 +27,8 @@ import {
   UPWARD_PASS_MARGIN,
 } from './bitrate';
 import { detectHevcHardwareSupport } from './capabilities';
+import { releaseAllOutputs, releaseOutput } from './outputFiles';
+import { createOutputFile } from './outputStorage';
 import type { PauseGate } from './pauseGate';
 import { convertWithWebCodecs } from './webcodecsEngine';
 
@@ -102,8 +103,9 @@ const INPUT_FORMATS = [MP4, QTFF, MATROSKA, WEBM, MPEG_TS];
  * callers fall back to a normal encode in that case.
  */
 async function remuxWithoutMetadata(input: Input): Promise<Blob | null> {
+  const outputFile = await createOutputFile();
+  const output = new Output({ format: new Mp4OutputFormat(), target: outputFile.target });
   try {
-    const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
     const conversion = await Conversion.init({
       input,
       output,
@@ -116,11 +118,17 @@ async function remuxWithoutMetadata(input: Input): Promise<Blob | null> {
       tags: {},
     });
     // A dropped track means the copy would lose the picture or the sound.
-    if (!conversion.isValid || conversion.discardedTracks.length > 0) return null;
+    if (!conversion.isValid || conversion.discardedTracks.length > 0) {
+      await output.cancel();
+      await outputFile.discard();
+      return null;
+    }
     await conversion.execute();
-    return output.target.buffer ? new Blob([output.target.buffer], { type: 'video/mp4' }) : null;
+    return await outputFile.finish();
   } catch (err) {
     console.warn('[video-shrinker] Metadata-only remux failed, falling back to a re-encode:', err);
+    await output.cancel().catch(() => {});
+    await outputFile.discard();
     return null;
   }
 }
@@ -293,6 +301,8 @@ async function attemptConversion(
  * it under.
  */
 export async function convertVideo(file: File, targetSizeBytes: number, options: ConvertOptions): Promise<ConvertResult> {
+  // The last result is replaced by this one, so its file can go.
+  await releaseAllOutputs();
   const input = new Input({
     formats: INPUT_FORMATS,
     source: new BlobSource(file, {
@@ -333,6 +343,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       if (stripped && stripped.size <= targetSizeBytes) {
         return { ...untouched, engine: 'remux', blob: stripped };
       }
+      if (stripped) await releaseOutput(stripped);
     }
 
     // Resolved once here rather than inside each attempt: none of it changes
@@ -410,9 +421,14 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       videoBitrate = nextBitrate;
       attempt = await attemptConversion(context, videoBitrate, plan.audioBitrate, 'refining');
 
+      // Only the best attempt is kept; the other's file goes. Its size, all
+      // that is read from it below, stays readable.
       if (isImprovement(attempt, best, targetSizeBytes)) {
+        await releaseOutput(best.blob);
         best = attempt;
         bestVideoBitrate = videoBitrate;
+      } else {
+        await releaseOutput(attempt.blob);
       }
 
       // Raising the bitrate barely moved the output, so this footage is
@@ -425,9 +441,12 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
     // grain, confetti, rain), and returning that is worse than doing nothing.
     // A metadata-stripping copy is still an improvement if one is available.
     if (best.blob.size >= file.size) {
+      await releaseOutput(best.blob);
       const stripped = options.stripMetadata ? await remuxWithoutMetadata(input) : null;
+      const strippedFits = !!stripped && stripped.size <= file.size;
+      if (stripped && !strippedFits) await releaseOutput(stripped);
       return {
-        blob: stripped && stripped.size <= file.size ? stripped : file,
+        blob: strippedFits ? stripped : file,
         engine: 'unshrinkable',
         codec: 'original',
         hardwareAccelerated: false,

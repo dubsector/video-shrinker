@@ -131,6 +131,23 @@ export function fromSavedResult(saved: NonNullable<SavedState['result']>, source
   return { ...rest, blob: sameAsSource || !blob ? source : blob };
 }
 
+/**
+ * Drops a saved result once it has been downloaded, keeping the video and
+ * settings. A finished file shouldn't sit in storage after it has been saved
+ * where the user wanted it.
+ */
+export function forgetResult(): Promise<void> {
+  return serial(async () => {
+    await run('readwrite', (store) => {
+      const request = store.get(STATE_KEY);
+      request.onsuccess = () => {
+        const state = request.result as SavedState | undefined;
+        if (state?.result) store.put({ ...state, result: null }, STATE_KEY);
+      };
+    });
+  });
+}
+
 export function clearJob(): Promise<void> {
   return serial(async () => {
     await run('readwrite', (store) => {

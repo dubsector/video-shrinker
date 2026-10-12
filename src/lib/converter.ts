@@ -129,6 +129,15 @@ function runInWorker(request: ConversionRequest): ConversionHandle {
   return { result, pause: () => controls.pause(), resume: () => controls.resume() };
 }
 
+/**
+ * Deletes finished results kept on disk: the worker's, the page's, and any
+ * left behind by an earlier visit. Call once the result on screen is gone.
+ */
+export function releaseOutputs(): void {
+  worker?.postMessage({ type: 'release' } satisfies ConvertRequest);
+  void import('./outputFiles').then(({ releaseAllOutputs }) => releaseAllOutputs());
+}
+
 export async function startConversion(request: ConversionRequest): Promise<ConversionHandle> {
   return !workerBroken && (await isWorkerSuitable()) ? runInWorker(request) : runInPage(request);
 }

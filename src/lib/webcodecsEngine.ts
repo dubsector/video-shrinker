@@ -1,6 +1,7 @@
-import { BufferTarget, Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output, Quality } from 'mediabunny';
+import { Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output, Quality } from 'mediabunny';
 import type { OutputGeometry } from './bitrate';
 import { pickWebCodecsCodec, supportsConstantBitrate } from './capabilities';
+import { createOutputFile } from './outputStorage';
 import type { PauseGate } from './pauseGate';
 
 export type ProgressInfo = {
@@ -97,7 +98,8 @@ export async function convertWithWebCodecs(
   const bitrateMode =
     options.constantBitrate && (await supportsConstantBitrate(codec, probe)) ? 'constant' : 'variable';
 
-  const output = new Output({ format: new Mp4OutputFormat(), target: new BufferTarget() });
+  const outputFile = await createOutputFile();
+  const output = new Output({ format: new Mp4OutputFormat(), target: outputFile.target });
   let madeProgress = false;
 
   // HEVC is only ever chosen after detectHevcHardwareSupport() confirmed a
@@ -185,16 +187,18 @@ export async function convertWithWebCodecs(
     // outright); in any of those cases, degrade to the CPU fallback instead of
     // surfacing a raw encoder error.
     console.warn('[video-shrinker] WebCodecs encode failed, falling back to ffmpeg.wasm:', err);
+    await output.cancel().catch(() => {});
+    await outputFile.discard();
     return { ok: false, fallbackReason: err instanceof Error ? err.message : String(err), interrupted: madeProgress };
   }
 
-  const buffer = output.target.buffer;
-  if (!buffer) throw new Error('Conversion finished without producing output data.');
+  const blob = await outputFile.finish();
+  if (!blob) throw new Error('Conversion finished without producing output data.');
 
   return {
     ok: true,
     result: {
-      blob: new Blob([buffer], { type: 'video/mp4' }),
+      blob,
       codec,
       hardwareAccelerated: hardwareAcceleration === 'prefer-hardware',
     },
