@@ -8,8 +8,8 @@ import { keepScreenOn } from './lib/keepScreenOn';
 import { clearJob, forgetResult, fromSavedResult, loadJob, saveFile, saveState, type SavedSettings, toSavedResult } from './lib/savedJob';
 
 const MB = 1024 * 1024;
-const SIZE_PRESETS_MB = [10, 25, 50, 100];
-const DEFAULT_TARGET_MB = 25;
+const SIZE_PRESETS_MB = [10, 20, 50, 100];
+const DEFAULT_TARGET_MB = 20;
 
 type Status = 'idle' | 'converting' | 'done' | 'error';
 
