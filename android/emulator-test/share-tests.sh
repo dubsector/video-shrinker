@@ -43,12 +43,15 @@ adb logcat -G 16M || true
 adb logcat -c || true
 
 status=0
-(cd android && ./gradlew connectedDebugAndroidTest \
+# Each test has its own time limit, but stop the whole run in time to save
+# the logs below before the CI step's 25 minutes run out.
+(cd android && timeout --signal=INT --kill-after=30s 17m ./gradlew connectedDebugAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.class=io.github.dubsector.videoshrinker.ShareSourcesTest \
   -Pandroid.testInstrumentationRunnerArguments.engine=any) || status=$?
 
-adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
-adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
+# adb waits forever for an emulator that crashed during the run.
+timeout 60s adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
+timeout 60s adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
 cp -r android/app/build/outputs/androidTest-results android/app/build/reports/androidTests "$OUT_DIR/" 2> /dev/null || true
 echo "--- What the tests saw:"
 grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: //' | tail -80 || true
@@ -61,5 +64,11 @@ if [ "$status" != 0 ]; then
       | grep -E 'ActivityTaskManager: (START|Activity start|Displayed)|ActivityManager: (Start proc|Killing|Process .* has died)|ShareRelay|LauncherActivity|TwaLauncher|androidbrowserhelper|AndroidRuntime|Permission Denial|SecurityException|BAL_|io\.github\.dubsector\.videoshrinker|cr_.*(Share|Intent|TWA|Trusted|Customtabs)|TestLabSmoke' \
       | cut -c1-400 | tail -120 || true
   done
+  # A run that hung shows no failed test, only the time limit. Show what
+  # happened after the last test that finished, to find where it stopped.
+  echo "--- Logcat after the last finished test:"
+  awk '/TestRunner: finished: /{n = NR} {line[NR] = $0} END {for (i = n + 1; i <= NR; i++) print line[i]}' "$OUT_DIR/logcat.txt" \
+    | grep -E 'TestRunner|MonitoringInstr|ActivityFinisher|InstrumentationResultPrinter|ActivityTaskManager: (START|Activity start|Displayed)|ActivityManager: (Start proc|Killing|Process .* has died|ANR)|AndroidRuntime|TestLabSmoke|io\.github\.dubsector\.videoshrinker' \
+    | cut -c1-400 | tail -150 || true
 fi
 exit $status
