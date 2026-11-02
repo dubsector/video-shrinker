@@ -38,6 +38,7 @@
   "overrides": {
     "vite-plugin-static-copy": {
       "chokidar": "^4.0.3"
-    }
+    },
+    "minimatch": "^11.0.4"
   }
 }
