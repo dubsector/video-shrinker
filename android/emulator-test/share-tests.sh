@@ -53,6 +53,16 @@ status=0
 timeout 60s adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
 timeout 60s adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
 cp -r android/app/build/outputs/androidTest-results android/app/build/reports/androidTests "$OUT_DIR/" 2> /dev/null || true
+# The emulator sometimes dies mid-run with nothing in its own output. Show
+# whether it is still running and whether the runner's kernel killed it
+# (out of memory) or it crashed.
+if ! timeout 10s adb get-state > /dev/null 2>&1; then
+  echo "--- The emulator stopped answering. What the runner saw:"
+  pgrep -a qemu || echo "no emulator process left"
+  free -m || true
+  sudo dmesg 2> /dev/null | grep -iE 'out of memory|killed process|oom|qemu|segfault|general protection' | tail -20 || true
+  ls -la /tmp/android-runner 2> /dev/null || true
+fi
 echo "--- What the tests saw:"
 grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: //' | tail -80 || true
 if [ "$status" != 0 ]; then
