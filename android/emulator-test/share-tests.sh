@@ -43,12 +43,15 @@ adb logcat -G 16M || true
 adb logcat -c || true
 
 status=0
-(cd android && ./gradlew connectedDebugAndroidTest \
+# Each test has its own time limit, but stop the whole run in time to save
+# the logs below before the CI step's 25 minutes run out.
+(cd android && timeout --signal=INT --kill-after=30s 17m ./gradlew connectedDebugAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.class=io.github.dubsector.videoshrinker.ShareSourcesTest \
   -Pandroid.testInstrumentationRunnerArguments.engine=any) || status=$?
 
-adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
-adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
+# adb waits forever for an emulator that crashed during the run.
+timeout 60s adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
+timeout 60s adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
 cp -r android/app/build/outputs/androidTest-results android/app/build/reports/androidTests "$OUT_DIR/" 2> /dev/null || true
 echo "--- What the tests saw:"
 grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: //' | tail -80 || true
