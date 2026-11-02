@@ -2,6 +2,7 @@ package io.github.dubsector.videoshrinker;
 
 import static org.junit.Assert.fail;
 
+import android.app.ActivityManager;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
@@ -104,6 +105,21 @@ final class WebApp {
         if (launch == null) fail("the app has no launcher activity");
         launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | (fresh ? Intent.FLAG_ACTIVITY_CLEAR_TASK : 0));
         app.startActivity(launch);
+    }
+
+    // Closes the app's screens and waits until Android has removed them.
+    // Under the test orchestrator each test is its own run, and the next one
+    // starts right after this one's process is stopped. A share's screen
+    // still being torn down then could make Android kill the next run's
+    // process as it started ("start not valid"), and the orchestrator waited
+    // for it forever, holding the CI job until its time limit.
+    void closeAppTasks() {
+        ActivityManager am = (ActivityManager) app.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        long end = SystemClock.uptimeMillis() + 10_000;
+        while (!am.getAppTasks().isEmpty() && SystemClock.uptimeMillis() < end) SystemClock.sleep(250);
+        // The tasks leave the list before their screens are destroyed.
+        SystemClock.sleep(2_000);
     }
 
     // Copies the test video into the app's own files, where its FileProvider
