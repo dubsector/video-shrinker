@@ -27,6 +27,9 @@ adb push "$OUT_DIR/smoke-test.mp4" /data/local/tmp/smoke-test.mp4 > /dev/null
 rm "$OUT_DIR/smoke-test.mp4"
 # Updates to Chrome from the Play Store would kill it mid-test.
 adb shell pm disable-user --user 0 com.android.vending > /dev/null || true
+# A slow first boot can leave "Pixel Launcher isn't responding" on top of
+# every test's screen. Don't show such dialogs.
+adb shell settings put global hide_error_dialogs 1 || true
 # A current Chrome in place of the image's own, where the workflow got one
 # (CHROME_APKS: see android-emulator.yml).
 if [ -n "${CHROME_APKS:-}" ]; then
