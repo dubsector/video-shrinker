@@ -2,11 +2,9 @@ package io.github.dubsector.videoshrinker;
 
 import static org.junit.Assume.assumeTrue;
 
-import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -81,7 +79,9 @@ public class ShareSourcesTest {
 
     @After
     public void tearDown() {
+        if (web == null) return;
         if (galleryItem != null) web.app.getContentResolver().delete(galleryItem, null, null);
+        web.closeAppTasks();
     }
 
     @Test
@@ -117,8 +117,7 @@ public class ShareSourcesTest {
     public void againWhileOpenFromAShare() throws IOException {
         web.step("Sharing a video like Google Photos does, with the app not open");
         web.device.pressHome();
-        ActivityManager am = (ActivityManager) web.app.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        web.closeAppTasks();
         shareLikePhotos("PXL_20261005_163900111");
         web.step("Sharing another while the app is still open from the first");
         shareLikePhotos("PXL_20261005_164000222");
