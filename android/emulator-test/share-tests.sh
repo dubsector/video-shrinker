@@ -27,6 +27,9 @@ adb push "$OUT_DIR/smoke-test.mp4" /data/local/tmp/smoke-test.mp4 > /dev/null
 rm "$OUT_DIR/smoke-test.mp4"
 # Updates to Chrome from the Play Store would kill it mid-test.
 adb shell pm disable-user --user 0 com.android.vending > /dev/null || true
+# A slow first boot can leave "Pixel Launcher isn't responding" on top of
+# every test's screen. Don't show such dialogs.
+adb shell settings put global hide_error_dialogs 1 || true
 # A current Chrome in place of the image's own, where the workflow got one
 # (CHROME_APKS: see android-emulator.yml).
 if [ -n "${CHROME_APKS:-}" ]; then
@@ -43,13 +46,26 @@ adb logcat -G 16M || true
 adb logcat -c || true
 
 status=0
-(cd android && ./gradlew connectedDebugAndroidTest \
+# Each test has its own time limit, but stop the whole run in time to save
+# the logs below before the CI step's 25 minutes run out.
+(cd android && timeout --signal=INT --kill-after=30s 17m ./gradlew connectedDebugAndroidTest \
   -Pandroid.testInstrumentationRunnerArguments.class=io.github.dubsector.videoshrinker.ShareSourcesTest \
   -Pandroid.testInstrumentationRunnerArguments.engine=any) || status=$?
 
-adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
-adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
+# adb waits forever for an emulator that crashed during the run.
+timeout 60s adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
+timeout 60s adb logcat -d > "$OUT_DIR/logcat.txt" 2> /dev/null || true
 cp -r android/app/build/outputs/androidTest-results android/app/build/reports/androidTests "$OUT_DIR/" 2> /dev/null || true
+# The emulator sometimes dies mid-run with nothing in its own output. Show
+# whether it is still running and whether the runner's kernel killed it
+# (out of memory) or it crashed.
+if ! timeout 10s adb get-state > /dev/null 2>&1; then
+  echo "--- The emulator stopped answering. What the runner saw:"
+  pgrep -a qemu || echo "no emulator process left"
+  free -m || true
+  sudo dmesg 2> /dev/null | grep -iE 'out of memory|killed process|oom|qemu|segfault|general protection' | tail -20 || true
+  ls -la /tmp/android-runner 2> /dev/null || true
+fi
 echo "--- What the tests saw:"
 grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: //' | tail -80 || true
 if [ "$status" != 0 ]; then
@@ -61,5 +77,11 @@ if [ "$status" != 0 ]; then
       | grep -E 'ActivityTaskManager: (START|Activity start|Displayed)|ActivityManager: (Start proc|Killing|Process .* has died)|ShareRelay|LauncherActivity|TwaLauncher|androidbrowserhelper|AndroidRuntime|Permission Denial|SecurityException|BAL_|io\.github\.dubsector\.videoshrinker|cr_.*(Share|Intent|TWA|Trusted|Customtabs)|TestLabSmoke' \
       | cut -c1-400 | tail -120 || true
   done
+  # A run that hung shows no failed test, only the time limit. Show what
+  # happened after the last test that finished, to find where it stopped.
+  echo "--- Logcat after the last finished test:"
+  awk '/TestRunner: finished: /{n = NR} {line[NR] = $0} END {for (i = n + 1; i <= NR; i++) print line[i]}' "$OUT_DIR/logcat.txt" \
+    | grep -E 'TestRunner|MonitoringInstr|ActivityFinisher|InstrumentationResultPrinter|ActivityTaskManager: (START|Activity start|Displayed)|ActivityManager: (Start proc|Killing|Process .* has died|ANR)|AndroidRuntime|TestLabSmoke|io\.github\.dubsector\.videoshrinker' \
+    | cut -c1-400 | tail -150 || true
 fi
 exit $status

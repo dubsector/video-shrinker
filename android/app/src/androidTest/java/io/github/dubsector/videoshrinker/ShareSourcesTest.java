@@ -2,11 +2,9 @@ package io.github.dubsector.videoshrinker;
 
 import static org.junit.Assume.assumeTrue;
 
-import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,7 +18,9 @@ import androidx.test.uiautomator.UiObject2;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -56,6 +57,17 @@ public class ShareSourcesTest {
     private static final String PHOTOS = "com.google.android.apps.photos";
     private static final Pattern SHARE_TARGET = Pattern.compile("Vid Shrinker|Video Shrinker");
 
+    // A test that hangs somewhere with no limit of its own (seen on the
+    // emulators, with the emulator still up) fails after this instead of
+    // holding the run until the CI step is killed, which loses the logs.
+    // The longest test's own waits add up to under 6 minutes. The stuck
+    // thread's stack goes into the failure, to show where it hung.
+    @Rule
+    public final Timeout timeout = Timeout.builder()
+            .withTimeout(7, TimeUnit.MINUTES)
+            .withLookingForStuckThread(true)
+            .build();
+
     private WebApp web;
     private Uri galleryItem;
 
@@ -67,7 +79,9 @@ public class ShareSourcesTest {
 
     @After
     public void tearDown() {
+        if (web == null) return;
         if (galleryItem != null) web.app.getContentResolver().delete(galleryItem, null, null);
+        web.closeAppTasks();
     }
 
     @Test
@@ -103,8 +117,7 @@ public class ShareSourcesTest {
     public void againWhileOpenFromAShare() throws IOException {
         web.step("Sharing a video like Google Photos does, with the app not open");
         web.device.pressHome();
-        ActivityManager am = (ActivityManager) web.app.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.AppTask task : am.getAppTasks()) task.finishAndRemoveTask();
+        web.closeAppTasks();
         shareLikePhotos("PXL_20261005_163900111");
         web.step("Sharing another while the app is still open from the first");
         shareLikePhotos("PXL_20261005_164000222");
