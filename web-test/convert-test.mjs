@@ -1,7 +1,7 @@
 // Converts a video with the built web app (dist/) in desktop Chrome and
 // checks what comes out: the app reports a result, and the download is a
-// video that plays through, runs as long as the original and fits the size
-// asked for.
+// video that plays through, keeps its sound, runs as long as the original
+// and fits the size asked for.
 //
 // Usage: node web-test/convert-test.mjs
 // Run from the repository root after `npm run build`. Needs ffmpeg and
@@ -105,10 +105,10 @@ try {
   // A file this small would mean most of the video is missing.
   if (bytes < TARGET_MB * 1_000_000 * 0.5) problems.push(`it is under half of the ${TARGET_MB} MB asked for`)
   if (!after.video) problems.push('it has no video')
-  // Chrome on Linux has no AAC encoder, and the app leaves the sound out
-  // there when it can't copy it across untouched. Shown, but not failed on,
-  // until the app does something else about it.
-  if (!after.audio) console.log('WARNING: the converted video has no sound')
+  // Chrome on Linux has no AAC encoder of its own, so this also covers the
+  // one the app brings for it (src/lib/aacEncoder.ts).
+  if (!after.audio) problems.push('it lost its sound')
+  else if (after.audio.codec_name !== 'aac') problems.push(`its sound is ${after.audio.codec_name}, not AAC`)
   if (Math.abs(after.seconds - before.seconds) > 0.5) problems.push(`it runs ${after.seconds} s, not ${before.seconds} s`)
   // Decodes every frame: a file that only looks right in its headers fails here.
   try {

@@ -1,4 +1,5 @@
 import { Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output, Quality } from 'mediabunny';
+import { ensureAacEncoder } from './aacEncoder';
 import type { OutputGeometry } from './bitrate';
 import { pickWebCodecsCodec, supportsConstantBitrate } from './capabilities';
 import { createOutputFile } from './outputStorage';
@@ -97,6 +98,9 @@ export async function convertWithWebCodecs(
   // codec just because only the other one offers constant bitrate.
   const bitrateMode =
     options.constantBitrate && (await supportsConstantBitrate(codec, probe)) ? 'constant' : 'variable';
+
+  // Only when the sound is going to be re-encoded: a copy needs no encoder.
+  if (audioTrack && !options.copyAudio) await ensureAacEncoder();
 
   const outputFile = await createOutputFile();
   const output = new Output({ format: new Mp4OutputFormat(), target: outputFile.target });
