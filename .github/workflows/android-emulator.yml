@@ -3,9 +3,10 @@ name: Android Emulator Test
 # Builds the debug APK and runs android/emulator-test/smoke-test.sh on an
 # emulator: launch, share a video in, convert it, and survive being sent to
 # the background mid-encode. Alongside it, in its own job, runs the Test Lab
-# share tests (android/emulator-test/share-tests.sh). By default the app loads this branch's own web
-# build (served locally in place of dubsector.github.io), so a PR is tested
-# with its own changes; a manual run can pick the live site instead.
+# share tests (android/emulator-test/share-tests.sh). By default both load
+# this branch's own web build (served locally in place of
+# dubsector.github.io), so a PR is tested with its own changes; a manual run
+# can pick the live site instead.
 on:
   pull_request:
     branches: [main]
@@ -59,6 +60,14 @@ jobs:
         with:
           persist-credentials: false
 
+      # The test scripts need ffmpeg to make their test video, and installing
+      # it takes about half a minute. Started here, it runs while the app is
+      # built; "Wait for ffmpeg" below picks it up.
+      - name: Start installing ffmpeg
+        run: |
+          (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg; echo $? > "$RUNNER_TEMP/ffmpeg-status") \
+            > "$RUNNER_TEMP/ffmpeg-install.log" 2>&1 &
+
       - uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
 
       # Caching Gradle's downloads is fine here: this only builds a debug APK
@@ -78,7 +87,7 @@ jobs:
 
       # npm ci can't be used: see pr-checks.yml.
       - name: Build web app
-        if: matrix.suite == 'smoke' && inputs.site != 'live'
+        if: inputs.site != 'live'
         run: npm install && npm run build
 
       - name: Build debug APKs
@@ -91,9 +100,6 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-
-      - name: Install ffmpeg
-        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
 
       # The images ship Chrome 124 (Android 15) and 133 (Android 16), and the
       # Play Store won't update it without a Google account, so the tests
@@ -116,6 +122,16 @@ jobs:
             | openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:CHROME_APK_KEY \
             | xz -d | tar xf - -C "$RUNNER_TEMP/chrome"
           echo "CHROME_APKS=$RUNNER_TEMP/chrome" >> "$GITHUB_ENV"
+
+      - name: Wait for ffmpeg
+        run: |
+          timeout 300 sh -c 'until [ -f "$RUNNER_TEMP/ffmpeg-status" ]; do sleep 1; done' || true
+          if [ "$(cat "$RUNNER_TEMP/ffmpeg-status" 2> /dev/null)" != 0 ]; then
+            cat "$RUNNER_TEMP/ffmpeg-install.log"
+            echo "::error::ffmpeg did not install"
+            exit 1
+          fi
+          ffmpeg -version | head -1
 
       # The Play Store image is the one that ships Chrome, which the app needs.
       # Each image bundles the Chrome of its day, so a newer Android also means
@@ -143,14 +159,15 @@ jobs:
 
       # The share tests Firebase Test Lab runs on a real phone, here for free:
       # media store, a Google-Photos-like sender, ClipData-only and
-      # several-item shares. They load the live site.
-      # Kept from failing the job while it settles: on Android 15 one share
-      # in a run sometimes never reaches the app, a different one each time.
+      # several-item shares. A test that fails is run once more before the
+      # job fails: see share-tests.sh.
       - name: Run share tests on emulator
         if: matrix.suite == 'share'
-        continue-on-error: true
-        timeout-minutes: 25
+        # Room for the first run's 17 minutes and the second's 6.
+        timeout-minutes: 30
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          WEB_ROOT: ${{ inputs.site != 'live' && 'dist' || '' }}
         with:
           api-level: ${{ matrix.api-level }}
           target: google_apis_playstore

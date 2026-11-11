@@ -25,6 +25,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.2.1",
     "oxlint": "^1.91.0",
+    "playwright-core": "^1.63.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.5",
     "vite-plugin-pwa": "^2.0.0",

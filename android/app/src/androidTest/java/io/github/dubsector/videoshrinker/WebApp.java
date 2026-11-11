@@ -295,10 +295,24 @@ final class WebApp {
         return found;
     }
 
+    // A slow first boot on an emulator can leave "Pixel Launcher isn't
+    // responding" on top of everything, where it hides the web app from every
+    // test until someone answers it. Answer "Wait", which leaves the launcher
+    // running.
+    private void dismissNotRespondingDialog() {
+        if (device.findObject(By.textContains("isn't responding")) == null) return;
+        UiObject2 wait = device.findObject(By.text("Wait"));
+        if (wait == null) return;
+        log("dismissing a \"not responding\" dialog");
+        wait.click();
+        SystemClock.sleep(1_000);
+    }
+
     // Waits for `pattern` to show up, failing on an error message or timeout.
     void waitFor(Pattern pattern, long timeoutMs, String what) {
         long end = SystemClock.uptimeMillis() + timeoutMs;
         for (; ; ) {
+            dismissNotRespondingDialog();
             checkForError();
             UiObject2 found = SystemClock.uptimeMillis() < end - timeoutMs / 2 ? findOnScreen(pattern) : find(pattern);
             if (found != null) return;
@@ -311,6 +325,7 @@ final class WebApp {
     UiObject2 await(Pattern pattern, long timeoutMs) {
         long end = SystemClock.uptimeMillis() + timeoutMs;
         for (; ; ) {
+            dismissNotRespondingDialog();
             UiObject2 found = findOnScreen(pattern);
             if (found != null || SystemClock.uptimeMillis() > end) return found;
             SystemClock.sleep(1_000);

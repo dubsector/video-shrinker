@@ -31,3 +31,17 @@ jobs:
       - run: npx tsc -b
       - run: npm run build
 
+      # Converts a video with the build in the runner's own Chrome and checks
+      # the result (web-test/convert-test.mjs).
+      - name: Install ffmpeg
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - name: Convert a video in Chrome
+        run: node web-test/convert-test.mjs
+      - name: Upload the converted video and screenshot
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: web-test-${{ github.run_number }}
+          path: web-test-output/
+          if-no-files-found: ignore
+          retention-days: 14
