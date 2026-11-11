@@ -3,9 +3,10 @@ name: Android Emulator Test
 # Builds the debug APK and runs android/emulator-test/smoke-test.sh on an
 # emulator: launch, share a video in, convert it, and survive being sent to
 # the background mid-encode. Alongside it, in its own job, runs the Test Lab
-# share tests (android/emulator-test/share-tests.sh). By default the app loads this branch's own web
-# build (served locally in place of dubsector.github.io), so a PR is tested
-# with its own changes; a manual run can pick the live site instead.
+# share tests (android/emulator-test/share-tests.sh). By default both load
+# this branch's own web build (served locally in place of
+# dubsector.github.io), so a PR is tested with its own changes; a manual run
+# can pick the live site instead.
 on:
   pull_request:
     branches: [main]
@@ -78,7 +79,7 @@ jobs:
 
       # npm ci can't be used: see pr-checks.yml.
       - name: Build web app
-        if: matrix.suite == 'smoke' && inputs.site != 'live'
+        if: inputs.site != 'live'
         run: npm install && npm run build
 
       - name: Build debug APKs
@@ -143,14 +144,15 @@ jobs:
 
       # The share tests Firebase Test Lab runs on a real phone, here for free:
       # media store, a Google-Photos-like sender, ClipData-only and
-      # several-item shares. They load the live site.
-      # Kept from failing the job while it settles: on Android 15 one share
-      # in a run sometimes never reaches the app, a different one each time.
+      # several-item shares. A test that fails is run once more before the
+      # job fails: see share-tests.sh.
       - name: Run share tests on emulator
         if: matrix.suite == 'share'
-        continue-on-error: true
-        timeout-minutes: 25
+        # Room for the first run's 17 minutes and the second's 6.
+        timeout-minutes: 30
         uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        env:
+          WEB_ROOT: ${{ inputs.site != 'live' && 'dist' || '' }}
         with:
           api-level: ${{ matrix.api-level }}
           target: google_apis_playstore
