@@ -60,6 +60,14 @@ jobs:
         with:
           persist-credentials: false
 
+      # The test scripts need ffmpeg to make their test video, and installing
+      # it takes about half a minute. Started here, it runs while the app is
+      # built; "Wait for ffmpeg" below picks it up.
+      - name: Start installing ffmpeg
+        run: |
+          (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg; echo $? > "$RUNNER_TEMP/ffmpeg-status") \
+            > "$RUNNER_TEMP/ffmpeg-install.log" 2>&1 &
+
       - uses: gradle/actions/wrapper-validation@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
 
       # Caching Gradle's downloads is fine here: this only builds a debug APK
@@ -93,9 +101,6 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Install ffmpeg
-        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
-
       # The images ship Chrome 124 (Android 15) and 133 (Android 16), and the
       # Play Store won't update it without a Google account, so the tests
       # would miss changes in current Chrome (like 153's check on shared
@@ -117,6 +122,16 @@ jobs:
             | openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:CHROME_APK_KEY \
             | xz -d | tar xf - -C "$RUNNER_TEMP/chrome"
           echo "CHROME_APKS=$RUNNER_TEMP/chrome" >> "$GITHUB_ENV"
+
+      - name: Wait for ffmpeg
+        run: |
+          timeout 300 sh -c 'until [ -f "$RUNNER_TEMP/ffmpeg-status" ]; do sleep 1; done' || true
+          if [ "$(cat "$RUNNER_TEMP/ffmpeg-status" 2> /dev/null)" != 0 ]; then
+            cat "$RUNNER_TEMP/ffmpeg-install.log"
+            echo "::error::ffmpeg did not install"
+            exit 1
+          fi
+          ffmpeg -version | head -1
 
       # The Play Store image is the one that ships Chrome, which the app needs.
       # Each image bundles the Chrome of its day, so a newer Android also means

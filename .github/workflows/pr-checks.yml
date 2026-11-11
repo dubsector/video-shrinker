@@ -32,15 +32,11 @@ jobs:
       - run: npm run build
 
       # Converts a video with the build in the runner's own Chrome and checks
-      # the result (web-test/convert-test.mjs). playwright-core only drives
-      # Chrome; it is kept out of package.json so the lock file, generated on
-      # Windows, stays as it is.
+      # the result (web-test/convert-test.mjs).
       - name: Install ffmpeg
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
       - name: Convert a video in Chrome
-        run: |
-          npm install --no-save playwright-core@1.63.0
-          node web-test/convert-test.mjs
+        run: node web-test/convert-test.mjs
       - name: Upload the converted video and screenshot
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
