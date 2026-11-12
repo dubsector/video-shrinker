@@ -267,6 +267,11 @@ function App() {
             passTiming.current = { attempt: currentAttempt, startedAt: now, pausedMs: 0, pausedAt: null, lastPassMs };
             setAttempt(currentAttempt);
             setSecondsLeft(lastPassMs === null ? null : lastPassMs / 1000);
+          } else if (Math.round(p * 100) < lastPercent.current) {
+            // The same attempt started over (an interrupted encode running
+            // again, or the fallback engine taking it on): time it from here.
+            passTiming.current = { ...timing, startedAt: now, pausedMs: 0, pausedAt: timing.pausedAt === null ? null : now };
+            setSecondsLeft(null);
           }
           // The bar only ever renders whole percent, so every sub-percent tick
           // re-rendered the whole tree for no visible change — on the main
