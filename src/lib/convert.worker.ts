@@ -2,12 +2,13 @@
 // frames between decoder and encoder all happen in JavaScript, and on a phone
 // that is enough to make the page stutter while it works. Here none of it
 // competes with the UI.
+import type { EncoderBias } from './encoderBias';
 import { type ConversionPhase, convertVideo, type ConvertResult } from './convert';
 import { releaseAllOutputs } from './outputFiles';
 import { PauseGate } from './pauseGate';
 
 export type ConvertRequest =
-  | { type: 'convert'; file: File; targetSizeBytes: number; preferHevc: boolean; stripMetadata: boolean }
+  | { type: 'convert'; file: File; targetSizeBytes: number; preferHevc: boolean; stripMetadata: boolean; encoderBias: EncoderBias }
   | { type: 'pause' }
   | { type: 'resume' }
   // The result is no longer wanted, so the file it lives in can go.
@@ -60,6 +61,7 @@ self.addEventListener('message', (event: MessageEvent<ConvertRequest>) => {
   convertVideo(request.file, request.targetSizeBytes, {
     preferHevc: request.preferHevc,
     stripMetadata: request.stripMetadata,
+    encoderBias: request.encoderBias,
     pauseGate: ownGate,
     whenVisible,
     onProgress: (progress, phase, pausable, attempt) => send({ type: 'progress', progress, phase, pausable, attempt }),

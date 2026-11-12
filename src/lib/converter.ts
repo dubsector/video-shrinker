@@ -1,5 +1,6 @@
 import type { ConversionPhase, ConvertResult } from './convert';
 import type { ConvertRequest, ConvertResponse } from './convert.worker';
+import { loadEncoderBias, rememberEncoderObservation } from './encoderBias';
 import { whenPageVisible } from './pageVisibility';
 import { PauseGate } from './pauseGate';
 
@@ -74,6 +75,7 @@ function runInPage(request: ConversionRequest): ConversionHandle {
       convertVideo(request.file, request.targetSizeBytes, {
         preferHevc: request.preferHevc,
         stripMetadata: request.stripMetadata,
+        encoderBias: loadEncoderBias(),
         pauseGate: gate,
         whenVisible: whenPageVisible,
         cancelSignal: canceller.signal,
@@ -180,6 +182,8 @@ function runInWorker(request: ConversionRequest): ConversionHandle {
     targetSizeBytes: request.targetSizeBytes,
     preferHevc: request.preferHevc,
     stripMetadata: request.stripMetadata,
+    // Read here: a worker has no localStorage of its own.
+    encoderBias: loadEncoderBias(),
   });
   return { result, pause: () => controls.pause(), resume: () => controls.resume(), cancel: () => controls.cancel() };
 }
@@ -194,5 +198,13 @@ export function releaseOutputs(): void {
 }
 
 export async function startConversion(request: ConversionRequest): Promise<ConversionHandle> {
-  return !workerBroken && (await isWorkerSuitable()) ? runInWorker(request) : runInPage(request);
+  const handle = !workerBroken && (await isWorkerSuitable()) ? runInWorker(request) : runInPage(request);
+  // Learn from how this one landed, for the next conversion on this device.
+  handle.result.then(
+    (converted) => {
+      if (converted.encoderObservation) rememberEncoderObservation(converted.encoderObservation);
+    },
+    () => {},
+  );
+  return handle;
 }
