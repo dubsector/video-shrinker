@@ -7,12 +7,15 @@
         "targetSize": "Grondezza da destinaziun"
     },
     "convert": {
+        "cancel": "Interrumper",
         "converting": "Convertez...",
+        "minutesLeft": "Circa {{minutes}} min restantas",
         "pause": "Pausa",
         "paused": "Pausà",
-        "refineNote": "L'emprima passa n'ha betg cuntanschì la finamira. Ajustar il bitrate e la codificaziun anc ina giada.",
+        "refineNote": "L'emprova davosa n'ha betg cuntansch la grondezza giavischada, perquai vegn il video cumpress puspè (emprova {{number}}).",
         "refining": "Refinar la grondezza…",
         "resume": "Reprender",
+        "secondsLeft": "Circa {{seconds}} s restantas",
         "start": "Convertir"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Tscherna in file video.",
         "shareFailed": "N'ha betg pudì retschaiver il video spartì ({{message}}). Empruvai da tschernir il file directamain.",
         "shareNeverArrived": "Il video spartì n'è mai arrivà dal sistem. Empruva da tschernir il file directamain.",
+        "shareOutFailed": "N'hai betg pudì avrir il menu da partecipar. Utilisescha il download enstagl.",
         "shareTimeout": "Stà vegnì dà si d'spetgar sin il video spartì. Empruvai da tschernir il file directamain."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
         "noShrink": "N'hai betg pudì far quai pli pitschen:",
         "noShrinkDetail": "Quest film na po betg vegnir cumpress sut sia grondezza actuala, perquai è el vegnì mantegnì sco ch'el è",
+        "overTarget": "N'hai betg pudì vegnir sut {{target}}. Quai è il resultat il pli datiers:",
+        "overTargetHint": "Emprova ina grondezza pli gronda u in video pli curt.",
         "remuxed": "Metadata eliminada, video laschà nuntutgà",
+        "share": "Partegiar",
+        "smaller": "{{percent}}% pli pitschen",
         "untouched": "Laschà uschia, nagut da diminuir",
         "webcodecs": "WebCodecs, accelerà da hardware",
         "webcodecsSoftware": "WebCodecs, codificatur da software"

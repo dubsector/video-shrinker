@@ -7,12 +7,15 @@
         "targetSize": "Cieľová veľkosť"
     },
     "convert": {
+        "cancel": "Zrušiť",
         "converting": "Konvertuje sa…",
+        "minutesLeft": "Ostáva približne {{minutes}} min",
         "pause": "Pozastaviť",
         "paused": "Pozastavené",
-        "refineNote": "Prvý prechod minul cieľ. Bitrate a kódovanie sa znova upravujú.",
+        "refineNote": "Posledný pokus nezasiahol cieľovú veľkosť, takže video sa zmenšuje znova (pokus {{number}}).",
         "refining": "Upravuje sa veľkosť…",
         "resume": "Pokračovať",
+        "secondsLeft": "Ostáva približne {{seconds}} s",
         "start": "Konvertovať"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Prosím, vyberte video súbor.",
         "shareFailed": "Nepodarilo sa prijať zdieľané video ({{message}}). Namiesto toho skúste vybrať súbor priamo.",
         "shareNeverArrived": "Zdieľané video neprišlo zo systému. Namiesto toho skúste vybrať súbor priamo.",
+        "shareOutFailed": "Nepodarilo sa otvoriť ponuku zdieľania. Namiesto toho použite Stiahnuť.",
         "shareTimeout": "Čakanie na zdieľané video bolo ukončené. Namiesto toho skúste vybrať súbor priamo."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU záloha",
         "noShrink": "Nepodarilo sa to zmenšiť:",
         "noShrinkDetail": "Tento záznam sa nedá skomprimovať pod jeho súčasnú veľkosť, preto bol ponechaný tak, ako je",
+        "overTarget": "Nepodarilo sa dosiahnuť menej ako {{target}}. Toto je najbližší výsledok:",
+        "overTargetHint": "Skúste väčšiu veľkosť alebo kratšie video.",
         "remuxed": "Metadata odstránené, video ponechané bez zmeny",
+        "share": "Zdieľať",
+        "smaller": "{{percent}}% menšie",
         "untouched": "Ponechané v pôvodnom stave, nie je čo zmenšovať",
         "webcodecs": "WebCodecs, hardvérová akcelerácia",
         "webcodecsSoftware": "WebCodecs, softvérový enkodér"

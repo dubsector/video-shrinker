@@ -7,12 +7,15 @@
         "targetSize": "Taille cible"
     },
     "convert": {
+        "cancel": "Annuler",
         "converting": "Conversion…",
+        "minutesLeft": "Environ {{minutes}} min restantes",
         "pause": "Pause",
         "paused": "En pause",
-        "refineNote": "La première passe a manqué la cible. Ajustement du débit et de l'encodage une fois de plus.",
+        "refineNote": "La dernière tentative n'a pas atteint la taille souhaitée, la vidéo est donc à nouveau compressée (tentative n°{{number}}).",
         "refining": "Ajustement de la taille…",
         "resume": "Reprendre",
+        "secondsLeft": "Environ {{seconds}} s restantes",
         "start": "Convertir"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Veuillez choisir un fichier vidéo.",
         "shareFailed": "Impossible de recevoir la vidéo partagée ({{message}}). Essayez plutôt de sélectionner le fichier directement.",
         "shareNeverArrived": "La vidéo partagée n'est jamais arrivée du système. Essayez plutôt de sélectionner le fichier directement.",
+        "shareOutFailed": "Impossible d'ouvrir le menu de partage. Utilisez Télécharger à la place.",
         "shareTimeout": "L'attente de la vidéo partagée a été annulée. Essayez plutôt de sélectionner le fichier directement."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, alternative CPU",
         "noShrink": "Impossible de réduire la taille :",
         "noShrinkDetail": "Cette séquence ne se compresse pas au-delà de sa taille actuelle, elle a donc été conservée telle quelle.",
+        "overTarget": "Impossible de descendre en dessous de {{target}}. Voici le résultat le plus proche :",
+        "overTargetHint": "Essayez une taille plus grande ou une vidéo plus courte.",
         "remuxed": "Métadonnées supprimées, vidéo laissée intacte",
+        "share": "Partager",
+        "smaller": "{{percent}} % plus petit",
         "untouched": "Laissé tel quel, rien à réduire",
         "webcodecs": "WebCodecs, accélération matérielle",
         "webcodecsSoftware": "WebCodecs, encodeur logiciel"

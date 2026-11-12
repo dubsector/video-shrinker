@@ -7,12 +7,15 @@
         "targetSize": "목표 크기"
     },
     "convert": {
+        "cancel": "취소",
         "converting": "변환 중…",
+        "minutesLeft": "약 {{minutes}}분 남음",
         "pause": "일시 정지",
         "paused": "일시 정지됨",
-        "refineNote": "첫 번째 패스에서 목표치를 달성하지 못했습니다. 비트레이트와 인코딩을 다시 조정합니다.",
+        "refineNote": "마지막 시도에서 목표 크기에 도달하지 못하여 동영상을 다시 압축 중입니다(시도 {{number}}).",
         "refining": "크기 조정 중…",
         "resume": "재개",
+        "secondsLeft": "약 {{seconds}}초 남았습니다",
         "start": "변환"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "동영상 파일을 선택해주세요.",
         "shareFailed": "공유된 동영상을 받을 수 없습니다 ({{message}}). 대신 파일을 직접 선택해보세요.",
         "shareNeverArrived": "시스템에서 공유된 비디오를 받지 못했습니다. 대신 파일을 직접 선택해 보세요.",
+        "shareOutFailed": "공유 메뉴를 열 수 없습니다. 대신 다운로드를 사용하세요.",
         "shareTimeout": "공유된 동영상을 기다리다 중단되었습니다. 대신 파일을 직접 선택해보세요."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU 대체 모드",
         "noShrink": "더 작게 만들 수 없습니다:",
         "noShrinkDetail": "이 영상은 현재 크기 이하로 압축되지 않아 그대로 유지되었습니다.",
+        "overTarget": "{{target}} 미만으로 줄일 수 없습니다. 가장 가까운 결과입니다:",
+        "overTargetHint": "더 큰 크기를 선택하거나 더 짧은 영상을 시도해 보세요.",
         "remuxed": "메타데이터가 제거되었으며, 영상은 수정되지 않았습니다.",
+        "share": "공유",
+        "smaller": "{{percent}}% 더 작아짐",
         "untouched": "그대로 유지됨, 축소할 대상 없음",
         "webcodecs": "WebCodecs, 하드웨어 가속",
         "webcodecsSoftware": "WebCodecs, 소프트웨어 인코더"

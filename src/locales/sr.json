@@ -7,12 +7,15 @@
         "targetSize": "Ciljana veličina"
     },
     "convert": {
+        "cancel": "Otkaži",
         "converting": "Konvertovanje…",
+        "minutesLeft": "Preostalo je oko {{minutes}} min",
         "pause": "Pauziraj",
         "paused": "Pauzirano",
-        "refineNote": "Prvi prolaz nije ostvario cilj. Ponovno podešavanje bitrate-a i kodiranja.",
+        "refineNote": "Poslednji pokušaj nije postigao željenu veličinu, pa se video ponovo smanjuje (pokušaj {{number}}).",
         "refining": "Preciziranje veličine…",
         "resume": "Nastavi",
+        "secondsLeft": "Preostalo još oko {{seconds}} s",
         "start": "Konvertuj"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Molimo odaberite video datoteku.",
         "shareFailed": "Nije bilo moguće primiti deljeni video snimak ({{message}}). Pokušajte da izaberete datoteku direktno.",
         "shareNeverArrived": "Deljeni video snimak nikada nije stigao iz sistema. Pokušajte da izaberete datoteku direktno.",
+        "shareOutFailed": "Nije bilo moguće otvoriti meni za deljenje. Umesto toga koristite Preuzmi.",
         "shareTimeout": "Prekinuli smo čekanje na deljeni video. Pokušajte da direktno izaberete datoteku."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, rezervni CPU",
         "noShrink": "Nije bilo moguće dodatno smanjiti:",
         "noShrinkDetail": "Ovaj snimak ne može da se komprimuje ispod svoje trenutne veličine, pa je zadržan kakav jeste",
+        "overTarget": "Nije moguće postići manje od {{target}}. Ovo je najbliže što se može postići:",
+        "overTargetHint": "Pokušajte s većom veličinom ili kraćim video-snimkom.",
         "remuxed": "Metapodaci su uklonjeni, video je ostavljen netaknut",
+        "share": "Podeli",
+        "smaller": "{{percent}}% manje",
         "untouched": "Ostavljeno kao što jeste, nema šta da se smanji",
         "webcodecs": "WebCodecs, hardversko ubrzanje",
         "webcodecsSoftware": "WebCodecs, softverski enkoder"

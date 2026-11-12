@@ -7,12 +7,15 @@
         "targetSize": "Saizi lengwa"
     },
     "convert": {
+        "cancel": "Ghairi",
         "converting": "Inageuza...",
+        "minutesLeft": "Kama dakika {{minutes}} zimebaki",
         "pause": "Sitisha",
         "paused": "Imesitishwa",
-        "refineNote": "Jaribio la kwanza halikufikia lengo. Inarekebisha bitrate na encoding tena.",
+        "refineNote": "Jaribio la mwisho halikufikia saizi yako, hivyo video inabinywa tena (jaribio la {{number}}).",
         "refining": "Inarekebisha ukubwa...",
         "resume": "Endelea",
+        "secondsLeft": "Takriban {{seconds}} s zimesalia",
         "start": "Badilisha"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Tafadhali chagua faili ya video.",
         "shareFailed": "Imeshindwa kupokea video iliyoshirikiwa ({{message}}). Jaribu kuchagua faili moja kwa moja badala yake.",
         "shareNeverArrived": "Video iliyoshirikiwa haijafika kutoka kwa mfumo. Jaribu kuchagua faili moja kwa moja badala yake.",
+        "shareOutFailed": "Imeshindwa kufungua menyu ya kushiriki. Tumia Pakua badala yake.",
         "shareTimeout": "Imeacha kusubiri video iliyoshirikiwa. Jaribu kuchagua faili moja kwa moja badala yake."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, mbadala wa CPU (fallback)",
         "noShrink": "Imeshindikana kuifanya hii kuwa ndogo:",
         "noShrinkDetail": "Video hii haiwezi kubanwa zaidi ya saizi yake ya sasa, kwa hivyo imebaki kama ilivyo",
+        "overTarget": "Imeshindwa kufikia chini ya {{target}}. Hii ndiyo iliyo karibu zaidi:",
+        "overTargetHint": "Jaribu saizi kubwa zaidi, au video fupi zaidi.",
         "remuxed": "Metadata imeondolewa, video imeachwa bila kuguswa",
+        "share": "Shiriki",
+        "smaller": "{{percent}}% ndogo zaidi",
         "untouched": "Imeachwa kama ilivyo, hakuna cha kupunguza",
         "webcodecs": "WebCodecs, iliyoharakishwa kwa maunzi",
         "webcodecsSoftware": "WebCodecs, enkoda ya programu"

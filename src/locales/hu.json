@@ -7,12 +7,15 @@
         "targetSize": "Célméret"
     },
     "convert": {
+        "cancel": "Mégse",
         "converting": "Konvertálás…",
+        "minutesLeft": "Kb. {{minutes}} perc van hátra",
         "pause": "Szünet",
         "paused": "Szüneteltetve",
-        "refineNote": "Az első próbálkozás nem érte el a célméretet. Újraállítjuk a bitrátát és a kódolást.",
+        "refineNote": "Az utolsó kísérlet nem érte el a célméretet, ezért a videó tömörítése folytatódik ({{number}}. kísérlet).",
         "refining": "Méret finomítása…",
         "resume": "Folytatás",
+        "secondsLeft": "Kb. {{seconds}} mp van hátra",
         "start": "Konvertál"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Kérlek, válassz egy videófájlt.",
         "shareFailed": "A megosztott videó fogadása sikertelen ({{message}}). Próbáld meg közvetlenül kiválasztani a fájlt.",
         "shareNeverArrived": "A megosztott videó nem érkezett meg a rendszertől. Próbáld meg közvetlenül kiválasztani a fájlt.",
+        "shareOutFailed": "A megosztási menü nem nyitható meg. Használd helyette a Letöltést.",
         "shareTimeout": "A megosztott videóra való várakozás leállítva. Próbáld meg közvetlenül kiválasztani a fájlt."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU-alapú tartalék",
         "noShrink": "Ezt nem sikerült kisebbre méretezni:",
         "noShrinkDetail": "Ez a felvétel nem tömöríthető tovább a jelenlegi mérete alá, így változatlan maradt",
+        "overTarget": "Nem sikerült {{target}} alá csökkenteni. Ez a legközelebbi érték:",
+        "overTargetHint": "Próbálj meg nagyobb méretet vagy rövidebb videót választani.",
         "remuxed": "Metaadatok eltávolítva, videó érintetlenül hagyva",
+        "share": "Megosztás",
+        "smaller": "{{percent}}%-kal kisebb",
         "untouched": "Érintetlenül hagyva, nincs mit tömöríteni",
         "webcodecs": "WebCodecs, hardveres gyorsítással",
         "webcodecsSoftware": "WebCodecs, szoftveres kódoló"

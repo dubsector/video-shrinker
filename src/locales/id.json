@@ -7,12 +7,15 @@
         "targetSize": "Ukuran target"
     },
     "convert": {
+        "cancel": "Batal",
         "converting": "Mengonversi…",
+        "minutesLeft": "Tersisa sekitar {{minutes}} mnt",
         "pause": "Jeda",
         "paused": "Dijeda",
-        "refineNote": "Langkah pertama tidak mencapai target. Menyesuaikan bitrate dan penyandian sekali lagi.",
+        "refineNote": "Percobaan terakhir tidak mencapai ukuran yang diinginkan, jadi video sedang diperkecil lagi (percobaan {{number}}).",
         "refining": "Menyempurnakan ukuran…",
         "resume": "Lanjutkan",
+        "secondsLeft": "Tersisa sekitar {{seconds}} detik",
         "start": "Konversi"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Harap pilih file video.",
         "shareFailed": "Tidak dapat menerima video yang dibagikan ({{message}}). Coba pilih file secara langsung sebagai gantinya.",
         "shareNeverArrived": "Video yang dibagikan tidak diterima dari sistem. Coba pilih file secara langsung.",
+        "shareOutFailed": "Gagal membuka menu bagikan. Gunakan Unduh sebagai gantinya.",
         "shareTimeout": "Berhenti menunggu video yang dibagikan. Coba pilih file secara langsung sebagai gantinya."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, cadangan CPU",
         "noShrink": "Tidak dapat memperkecil ukuran ini:",
         "noShrinkDetail": "Rekaman ini tidak dapat dikompresi lebih kecil dari ukuran saat ini, jadi dibiarkan apa adanya",
+        "overTarget": "Tidak dapat mencapai di bawah {{target}}. Ini adalah hasil terdekat:",
+        "overTargetHint": "Coba ukuran yang lebih besar, atau video yang lebih pendek.",
         "remuxed": "Metadata dihapus, video dibiarkan tanpa perubahan",
+        "share": "Bagikan",
+        "smaller": "{{percent}}% lebih kecil",
         "untouched": "Dibiarkan apa adanya, tidak ada yang perlu diperkecil",
         "webcodecs": "WebCodecs, akselerasi perangkat keras",
         "webcodecsSoftware": "WebCodecs, enkoder perangkat lunak"
