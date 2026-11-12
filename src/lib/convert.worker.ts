@@ -16,7 +16,7 @@ export type ConvertRequest =
   | { type: 'visibility'; visible: boolean };
 
 export type ConvertResponse =
-  | { type: 'progress'; progress: number; phase: ConversionPhase; pausable: boolean }
+  | { type: 'progress'; progress: number; phase: ConversionPhase; pausable: boolean; attempt: number }
   | { type: 'done'; result: ConvertResult }
   | { type: 'error'; message: string };
 
@@ -62,7 +62,7 @@ self.addEventListener('message', (event: MessageEvent<ConvertRequest>) => {
     stripMetadata: request.stripMetadata,
     pauseGate: ownGate,
     whenVisible,
-    onProgress: (progress, phase, pausable) => send({ type: 'progress', progress, phase, pausable }),
+    onProgress: (progress, phase, pausable, attempt) => send({ type: 'progress', progress, phase, pausable, attempt }),
   }).then(
     (result) => send({ type: 'done', result }),
     (err: unknown) => send({ type: 'error', message: err instanceof Error ? err.message : String(err) }),

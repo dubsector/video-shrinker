@@ -41,6 +41,8 @@ export type WebCodecsConvertOptions = {
   /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
   pauseGate?: PauseGate;
+  /** Aborts when the user cancels the conversion. */
+  cancelSignal?: AbortSignal;
   onProgress?: (info: ProgressInfo) => void;
 };
 
@@ -101,6 +103,7 @@ export async function convertWithWebCodecs(
   const outputFile = await createOutputFile();
   const output = new Output({ format: new Mp4OutputFormat(), target: outputFile.target });
   let madeProgress = false;
+  let cancelConversion: (() => void) | undefined;
 
   // HEVC is only ever chosen after detectHevcHardwareSupport() confirmed a
   // hardware HEVC encoder (software HEVC is too slow to want), so keep
@@ -167,6 +170,10 @@ export async function convertWithWebCodecs(
       throw new Error(`This browser can't handle this file's video track (${discardedVideo.reason}).`);
     }
 
+    cancelConversion = () => void conversion.cancel().catch(() => {});
+    options.cancelSignal?.addEventListener('abort', cancelConversion);
+    if (options.cancelSignal?.aborted) cancelConversion();
+
     conversion.onProgress = (progress, processedTime) => {
       if (progress > 0) madeProgress = true;
       options.onProgress?.({ progress, processedSeconds: processedTime, durationSeconds });
@@ -177,10 +184,12 @@ export async function convertWithWebCodecs(
     const gate = options.pauseGate;
     await gate?.whenResumed();
     await conversion.execute({ pauseSignal: gate?.signal });
-    while (gate && conversion.state !== 'done') {
+    while (gate && conversion.state === 'idle') {
       await gate.whenResumed();
       await conversion.execute({ pauseSignal: gate.signal });
     }
+    // A cancel that lands while paused ends the loop above without a result.
+    if (conversion.state !== 'done') throw new Error('The conversion was cancelled.');
   } catch (err) {
     // Neither isConfigSupported() nor Conversion.init() is a perfect predictor
     // of what the encoder accepts once configured (init can also reject a track
@@ -190,6 +199,8 @@ export async function convertWithWebCodecs(
     await output.cancel().catch(() => {});
     await outputFile.discard();
     return { ok: false, fallbackReason: err instanceof Error ? err.message : String(err), interrupted: madeProgress };
+  } finally {
+    if (cancelConversion) options.cancelSignal?.removeEventListener('abort', cancelConversion);
   }
 
   const blob = await outputFile.finish();
