@@ -7,12 +7,15 @@
         "targetSize": "Dimensione target"
     },
     "convert": {
+        "cancel": "Annulla",
         "converting": "Conversione in corso…",
+        "minutesLeft": "Circa {{minutes}} min rimanenti",
         "pause": "Pausa",
         "paused": "In pausa",
-        "refineNote": "Il primo passaggio non ha raggiunto l'obiettivo. Regolazione di bitrate e codifica in corso.",
+        "refineNote": "L'ultimo tentativo non ha raggiunto la dimensione desiderata, quindi il video viene compresso di nuovo (tentativo {{number}}).",
         "refining": "Ottimizzazione dimensioni…",
         "resume": "Riprendi",
+        "secondsLeft": "Circa {{seconds}} s rimanenti",
         "start": "Converti"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Seleziona un file video.",
         "shareFailed": "Impossibile ricevere il video condiviso ({{message}}). Prova a selezionare direttamente il file.",
         "shareNeverArrived": "Il video condiviso non è arrivato dal sistema. Prova a selezionare direttamente il file.",
+        "shareOutFailed": "Impossibile aprire il menu di condivisione. Usa Scarica invece.",
         "shareTimeout": "Attesa del video condiviso interrotta. Prova a selezionare il file direttamente."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, fallback CPU",
         "noShrink": "Impossibile ridurre ulteriormente:",
         "noShrinkDetail": "Questo filmato non può essere compresso ulteriormente rispetto alle dimensioni attuali, quindi è stato mantenuto così com'è",
+        "overTarget": "Impossibile scendere sotto {{target}}. Ecco il risultato più vicino:",
+        "overTargetHint": "Prova con una dimensione maggiore o un video più breve.",
         "remuxed": "Metadati rimossi, video lasciato invariato",
+        "share": "Condividi",
+        "smaller": "{{percent}}% più piccolo",
         "untouched": "Lasciato così com'è, nulla da ridurre",
         "webcodecs": "WebCodecs, accelerazione hardware",
         "webcodecsSoftware": "WebCodecs, codificatore software"

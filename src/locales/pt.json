@@ -7,12 +7,15 @@
         "targetSize": "Tamanho alvo"
     },
     "convert": {
+        "cancel": "Cancelar",
         "converting": "Convertendo…",
+        "minutesLeft": "Aproximadamente {{minutes}} min restantes",
         "pause": "Pausar",
         "paused": "Pausado",
-        "refineNote": "A primeira tentativa não atingiu o alvo. Ajustando a taxa de bits e a codificação mais uma vez.",
+        "refineNote": "A última tentativa não atingiu o tamanho desejado, então o vídeo está sendo compactado novamente (tentativa {{number}}).",
         "refining": "Ajustando tamanho…",
         "resume": "Retomar",
+        "secondsLeft": "Faltam cerca de {{seconds}} s",
         "start": "Converter"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Por favor, escolha um arquivo de vídeo.",
         "shareFailed": "Não foi possível receber o vídeo compartilhado ({{message}}). Tente escolher o arquivo diretamente.",
         "shareNeverArrived": "O vídeo compartilhado nunca chegou do sistema. Tente escolher o arquivo diretamente.",
+        "shareOutFailed": "Não foi possível abrir o menu de compartilhamento. Use Baixar em vez disso.",
         "shareTimeout": "Não foi possível aguardar o vídeo compartilhado. Tente escolher o arquivo diretamente."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, fallback de CPU",
         "noShrink": "Não foi possível tornar isto menor:",
         "noShrinkDetail": "Este vídeo não pode ser compactado abaixo do tamanho atual, por isso foi mantido como está",
+        "overTarget": "Não foi possível ficar abaixo de {{target}}. Este é o mais próximo:",
+        "overTargetHint": "Tente um tamanho maior ou um vídeo mais curto.",
         "remuxed": "Metadados removidos, vídeo mantido inalterado",
+        "share": "Compartilhar",
+        "smaller": "{{percent}}% menor",
         "untouched": "Mantido como está, nada a compactar",
         "webcodecs": "WebCodecs, acelerado por hardware",
         "webcodecsSoftware": "WebCodecs, codificador de software"

@@ -7,12 +7,15 @@
         "targetSize": "Hədəf ölçü"
     },
     "convert": {
+        "cancel": "Ləğv et",
         "converting": "Çevrilir…",
+        "minutesLeft": "Təxminən {{minutes}} dəq qaldı",
         "pause": "Pauza ver",
         "paused": "Pauza verildi",
-        "refineNote": "İlk cəhd hədəfə çatmadı. Bitrate və kodlaşdırma yenidən tənzimlənir.",
+        "refineNote": "Son cəhd ölçünüzə uyğun gəlmədi, ona görə də video yenidən kiçildilir (cəhd {{number}}).",
         "refining": "Ölçü dəqiqləşdirilir…",
         "resume": "Davam et",
+        "secondsLeft": "Təxminən {{seconds}} s qaldı",
         "start": "Çevir"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Zəhmət olmasa bir video faylı seçin.",
         "shareFailed": "Paylaşılan video qəbul edilə bilmədi ({{message}}). Bunun əvəzinə faylı birbaşa seçməyə çalışın.",
         "shareNeverArrived": "Paylaşılan video sistemdən gəlmədi. Bunun əvəzinə faylı birbaşa seçməyə çalışın.",
+        "shareOutFailed": "Paylaşım menyusunu açmaq mümkün olmadı. Əvəzində Yüklə seçimindən istifadə edin.",
         "shareTimeout": "Paylaşılan videonu gözləməkdən vaz keçildi. Bunun əvəzinə faylı birbaşa seçməyə cəhd edin."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU ehtiyatı",
         "noShrink": "Bunu daha da kiçiltmək mümkün olmadı:",
         "noShrinkDetail": "Bu video hazırkı ölçüsündən daha kiçik ölçüyə sıxıla bilmir, buna görə də olduğu kimi saxlanıldı",
+        "overTarget": "{{target}} dəyərindən aşağı düşə bilmədi. Ən yaxın nəticə budur:",
+        "overTargetHint": "Daha böyük bir ölçü və ya daha qısa bir video sınayın.",
         "remuxed": "Metadata silindi, video olduğu kimi saxlanıldı",
+        "share": "Paylaş",
+        "smaller": "{{percent}}% daha kiçik",
         "untouched": "Olduğu kimi saxlanıldı, kiçildiləcək bir şey yoxdur",
         "webcodecs": "WebCodecs, aparat sürətləndirməsi ilə",
         "webcodecsSoftware": "WebCodecs, proqram təminatı enkoderi"

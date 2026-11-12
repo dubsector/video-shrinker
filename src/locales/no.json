@@ -7,12 +7,15 @@
         "targetSize": "Målstørrelse"
     },
     "convert": {
+        "cancel": "Avbryt",
         "converting": "Konverterer…",
+        "minutesLeft": "Ca. {{minutes}} min igjen",
         "pause": "Pause",
         "paused": "Pauset",
-        "refineNote": "Første gjennomgang traff ikke målet. Justerer bitrate og koding på nytt.",
+        "refineNote": "Det forrige forsøket traff ikke størrelsen din, så videoen komprimeres på nytt (forsøk {{number}}).",
         "refining": "Finjusterer størrelse…",
         "resume": "Gjenoppta",
+        "secondsLeft": "Ca. {{seconds}} s igjen",
         "start": "Konverter"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Vennligst velg en videofil.",
         "shareFailed": "Kunne ikke motta den delte videoen ({{message}}). Prøv å velge filen direkte i stedet.",
         "shareNeverArrived": "Den delte videoen kom aldri fra systemet. Prøv å velge filen direkte i stedet.",
+        "shareOutFailed": "Kunne ikke åpne delingsmenyen. Bruk Last ned i stedet.",
         "shareTimeout": "Avbrøt ventingen på delt video. Prøv å velge filen direkte i stedet."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
         "noShrink": "Kunne ikke gjøre denne mindre:",
         "noShrinkDetail": "Dette opptaket kan ikke komprimeres under gjeldende størrelse, så det ble beholdt som det er",
+        "overTarget": "Kunne ikke komme under {{target}}. Dette er det nærmeste:",
+        "overTargetHint": "Prøv en større størrelse, eller en kortere video.",
         "remuxed": "Metadata fjernet, videoen forblir urørt",
+        "share": "Del",
+        "smaller": "{{percent}}% mindre",
         "untouched": "Beholdt som den er, ingenting å krympe",
         "webcodecs": "WebCodecs, maskinvareakselerert",
         "webcodecsSoftware": "WebCodecs, programvare-enkoder"

@@ -7,12 +7,15 @@
         "targetSize": "Saiz sasaran"
     },
     "convert": {
+        "cancel": "Batal",
         "converting": "Menukar…",
+        "minutesLeft": "Tinggal kira-kira {{minutes}} min",
         "pause": "Jeda",
         "paused": "Dijeda",
-        "refineNote": "Laluan pertama tidak mencapai sasaran. Melaraskan bitrate dan pengekodan sekali lagi.",
+        "refineNote": "Percubaan terakhir terlepas saiz anda, jadi video sedang dikecilkan semula (percubaan {{number}}).",
         "refining": "Melaraskan saiz...",
         "resume": "Sambung semula",
+        "secondsLeft": "Lebih kurang {{seconds}} s lagi",
         "start": "Tukar"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Sila pilih fail video.",
         "shareFailed": "Tidak dapat menerima video yang dikongsi ({{message}}). Cuba pilih fail terus sebaliknya.",
         "shareNeverArrived": "Video yang dikongsi tidak pernah sampai daripada sistem. Cuba pilih fail terus sebaliknya.",
+        "shareOutFailed": "Tidak dapat membuka menu kongsi. Gunakan Muat Turun sebagai gantinya.",
         "shareTimeout": "Berhenti menunggu video yang dikongsi. Sila cuba pilih fail secara terus."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, sandaran CPU",
         "noShrink": "Tidak dapat mengecilkan fail ini:",
         "noShrinkDetail": "Rakaman ini tidak boleh dimampatkan di bawah saiz semasanya, jadi ia dikekalkan seperti asal",
+        "overTarget": "Tidak dapat mencapai bawah {{target}}. Ini yang paling hampir:",
+        "overTargetHint": "Cuba saiz yang lebih besar, atau video yang lebih pendek.",
         "remuxed": "Metadata dilucutkan, video dibiarkan tidak disentuh",
+        "share": "Kongsi",
+        "smaller": "{{percent}}% lebih kecil",
         "untouched": "Dibiarkan seperti asal, tiada apa untuk dikecilkan",
         "webcodecs": "WebCodecs, dipercepatkan perkakasan",
         "webcodecsSoftware": "WebCodecs, pengekod perisian"

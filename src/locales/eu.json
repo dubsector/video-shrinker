@@ -7,12 +7,15 @@
         "targetSize": "Helburuko tamaina"
     },
     "convert": {
+        "cancel": "Utzi",
         "converting": "Bihurtzen…",
+        "minutesLeft": "{{minutes}} minutu inguru falta dira",
         "pause": "Pausatu",
         "paused": "Pausatuta",
-        "refineNote": "Lehen saiakerak ez du helburua bete. Bitratea eta kodetzea berriro doitzen.",
+        "refineNote": "Azken saiakerak ez du zure tamaina lortu, beraz, bideoa berriro txikitzen ari da ({{number}}. saiakera).",
         "refining": "Tamaina doitzen…",
         "resume": "Berrekin",
+        "secondsLeft": "{{seconds}} segundu inguru falta dira",
         "start": "Bihurtu"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Mesedez, aukeratu bideo-fitxategi bat.",
         "shareFailed": "Ezin izan da partekatutako bideoa jaso ({{message}}). Saiatu fitxategia zuzenean hautatzen.",
         "shareNeverArrived": "Partekaturiko bideoa ez da sistemarengandik iritsi. Saiatu fitxategia zuzenean hautatzen.",
+        "shareOutFailed": "Ezin izan da partekatzeko menua ireki. Erabili Deskargatu aukera horren ordez.",
         "shareTimeout": "Partekaturiko bideoaren zain egoteari utzi diogu. Saiatu fitxategia zuzenean hautatzen."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU ordezkoa",
         "noShrink": "Ezin izan da hau txikiagoa egin:",
         "noShrinkDetail": "Metraje honek ez du bere oraingo tamaina baino gehiago konprimatzen, beraz, zegoen bezala utzi da",
+        "overTarget": "Ezin izan da {{target}} azpitik lortu. Hau da gertuen dagoena:",
+        "overTargetHint": "Saiatu tamaina handiago batekin edo bideo laburrago batekin.",
         "remuxed": "Metadatuak kendu dira, bideoa ukitu gabe utzi da",
+        "share": "Partekatu",
+        "smaller": "{{percent}}% txikiagoa",
         "untouched": "Dagoen bezala utzi da, ez dago zer txikitu",
         "webcodecs": "WebCodecs, hardware bidez azeleratua",
         "webcodecsSoftware": "WebCodecs, software kodetzailea"

@@ -7,12 +7,15 @@
         "targetSize": "Tavoitekoko"
     },
     "convert": {
+        "cancel": "Peruuta",
         "converting": "Muunnetaan…",
+        "minutesLeft": "Noin {{minutes}} min jäljellä",
         "pause": "Keskeytä",
         "paused": "Keskeytetty",
-        "refineNote": "Ensimmäinen yritys ei saavuttanut tavoitetta. Säädetään bittivirtaa ja koodausta vielä kerran.",
+        "refineNote": "Edellinen yritys ei saavuttanut tavoitekokoa, joten videota pienennetään uudelleen (yritys {{number}}).",
         "refining": "Viimeistellään kokoa…",
         "resume": "Jatka",
+        "secondsLeft": "Noin {{seconds}} s jäljellä",
         "start": "Muunna"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Valitse videotiedosto.",
         "shareFailed": "Jaettua videota ei voitu vastaanottaa ({{message}}). Kokeile valita tiedosto suoraan.",
         "shareNeverArrived": "Jaettua videota ei saatu järjestelmästä. Kokeile valita tiedosto suoraan.",
+        "shareOutFailed": "Jakamisvalikon avaaminen epäonnistui. Käytä sen sijaan Lataa-toimintoa.",
         "shareTimeout": "Jaetun videon odottaminen keskeytettiin. Kokeile valita tiedosto suoraan."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU-varavaihtoehto",
         "noShrink": "Tätä ei voinut pienentää:",
         "noShrinkDetail": "Tämä materiaali ei pakkaudu nykyistä kokoaan pienemmäksi, joten se säilytettiin ennallaan",
+        "overTarget": "Kokoa {{target}} ei alitettu. Tässä on lähin tulos:",
+        "overTargetHint": "Kokeile suurempaa kokoa tai lyhyempää videota.",
         "remuxed": "Metatiedot poistettu, video jätetty ennalleen",
+        "share": "Jaa",
+        "smaller": "{{percent}} % pienempi",
         "untouched": "Jätetty ennalleen, ei pienennettävää",
         "webcodecs": "WebCodecs, laitteistokiihdytetty",
         "webcodecsSoftware": "WebCodecs, ohjelmistokooderi"
