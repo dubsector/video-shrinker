@@ -20,7 +20,10 @@
     "start": "Convert",
     "converting": "Converting…",
     "refining": "Refining size…",
-    "refineNote": "The first pass missed the target. Adjusting the bitrate and encoding once more.",
+    "refineNote": "The last attempt missed your size, so the video is being shrunk again (attempt {{number}}).",
+    "secondsLeft": "About {{seconds}} s left",
+    "minutesLeft": "About {{minutes}} min left",
+    "cancel": "Cancel",
     "pause": "Pause",
     "resume": "Resume",
     "paused": "Paused"
@@ -30,10 +33,15 @@
     "conversionFailed": "Conversion failed.",
     "shareTimeout": "Gave up waiting for the shared video. Try picking the file directly instead.",
     "shareNeverArrived": "The shared video never arrived from the system. Try picking the file directly instead.",
+    "shareOutFailed": "Could not open the share menu. Use Download instead.",
     "shareFailed": "Could not receive the shared video ({{message}}). Try picking the file directly instead."
   },
   "result": {
     "done": "Done:",
+    "smaller": "{{percent}}% smaller",
+    "overTarget": "Could not get under {{target}}. This is the closest:",
+    "overTargetHint": "Try a bigger size, or a shorter video.",
+    "share": "Share",
     "alreadySmall": "Already smaller than your target:",
     "untouched": "Left as-is, nothing to shrink",
     "remuxed": "Metadata stripped, video left untouched",

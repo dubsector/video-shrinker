@@ -211,3 +211,41 @@ export function planBitratesWithCopiedAudio(
     audioBitrate: copiedAudioBitrate,
   };
 }
+
+// Used only once the ordinary passes have failed to get under the target:
+// one more step down from the ladder's usual floor.
+const LAST_RESORT_SHORT_SIDE = 240;
+
+// The lowest rate a last-resort pass may halve down to. Below this, motion
+// stops looking like motion.
+const MIN_LAST_RESORT_FRAME_RATE = 12;
+
+// A pass that changes the picture can't lean on the last pass's measurement
+// as closely as a plain bitrate correction does, so it aims lower.
+export const LAST_RESORT_MARGIN = 0.88;
+
+/**
+ * The next smaller picture to try when lowering the bitrate alone didn't get
+ * the file under target: an encoder has a smallest size it can produce for a
+ * given picture, and past that point asking for fewer bits changes nothing.
+ * Steps the picture down one rung, then halves the frame rate once the
+ * smallest picture is reached. Null when there is nothing left to give up.
+ */
+export function stepDownGeometry(current: OutputGeometry, source: SourceGeometry): OutputGeometry | null {
+  const shortSide = Math.min(current.width, current.height);
+  const rung = [...SHORT_SIDE_LADDER, LAST_RESORT_SHORT_SIDE].find((candidate) => candidate < shortSide);
+  if (rung !== undefined) {
+    const scale = rung / Math.min(source.width, source.height);
+    return { ...current, width: toEven(source.width * scale), height: toEven(source.height * scale) };
+  }
+  const frameRate = current.frameRate ?? source.frameRate;
+  if (frameRate !== null && frameRate / 2 >= MIN_LAST_RESORT_FRAME_RATE) {
+    return { ...current, frameRate: frameRate / 2 };
+  }
+  return null;
+}
+
+/** The next lower audio bitrate to re-encode at, or null when already at the lowest. */
+export function stepDownAudioBitrate(current: number): number | null {
+  return AUDIO_BITRATE_CANDIDATES.find((candidate) => candidate < current) ?? null;
+}

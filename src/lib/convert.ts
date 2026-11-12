@@ -14,6 +14,8 @@ import {
 } from 'mediabunny';
 import {
   type BitratePlan,
+  MIN_VIDEO_BITRATE,
+  LAST_RESORT_MARGIN,
   MIN_UPWARD_GROWTH,
   type OutputGeometry,
   planBitrates,
@@ -23,10 +25,13 @@ import {
   refineVideoBitrate,
   type SourceGeometry,
   sourceVideoBitrateCeiling,
+  stepDownAudioBitrate,
+  stepDownGeometry,
   UNDERSHOOT_RETRY_RATIO,
   UPWARD_PASS_MARGIN,
 } from './bitrate';
 import { detectHevcHardwareSupport } from './capabilities';
+import { correctForBias, type EncoderBias, type EncoderObservation } from './encoderBias';
 import { releaseAllOutputs, releaseOutput } from './outputFiles';
 import { createOutputFile } from './outputStorage';
 import type { PauseGate } from './pauseGate';
@@ -53,18 +58,37 @@ export type ConvertResult = {
   /** Output picture size, or null when encoding was skipped and the source's picture is untouched. */
   width: number | null;
   height: number | null;
+  /** The size that was asked for, so a result that missed it can be told apart from one that made it. */
+  targetSizeBytes: number;
+  /** How the first pass landed against what it was asked for, when that says something about the encoder. */
+  encoderObservation?: EncoderObservation;
 };
+
+/** Thrown out of a conversion the user cancelled, so callers can tell it from a failure. */
+export class ConversionCancelled extends Error {
+  constructor() {
+    super('The conversion was cancelled.');
+    this.name = 'ConversionCancelled';
+  }
+}
 
 export type ConvertOptions = {
   preferHevc: boolean;
   /** Strips metadata (location, title, artist, etc.) from the output. */
   stripMetadata: boolean;
+  /** How far this device's encoders have run from their requested size before (see encoderBias.ts). */
+  encoderBias?: EncoderBias;
   /** Lets the caller pause and resume. Only the WebCodecs engine can stop mid-encode. */
   pauseGate?: PauseGate;
   /** Resolves once the page is in view; an encode the browser cut short waits on it before running again. */
   whenVisible?: () => Promise<void>;
-  /** `pausable` is false while the ffmpeg.wasm engine runs, which has no way to pause. */
-  onProgress?: (progress: number, phase: ConversionPhase, pausable: boolean) => void;
+  /** Aborts when the user cancels. Only needed where the conversion runs in the page; a worker is simply stopped. */
+  cancelSignal?: AbortSignal;
+  /**
+   * `pausable` is false while the ffmpeg.wasm engine runs, which has no way to
+   * pause. `attempt` counts the encodes of this conversion from 1.
+   */
+  onProgress?: (progress: number, phase: ConversionPhase, pausable: boolean, attempt: number) => void;
 };
 
 type Attempt = {
@@ -81,6 +105,11 @@ type Attempt = {
 // (WebCodecs exposes no hard bitrate ceiling), so a single correction can still
 // land just over target; a couple of measured retries reliably converge under.
 const MAX_REFINEMENT_PASSES = 2;
+
+// Passes run after those, only while the result is still over target, each
+// with a smaller picture than the last (see stepDownGeometry). Going over is
+// the one outcome the user can't use, so it is worth the extra waiting.
+const MAX_LAST_RESORT_PASSES = 2;
 
 // Only the video containers this app can actually be handed. ALL_FORMATS also
 // registers the audio-only demuxers (WAVE, OGG, FLAC, MP3, ADTS) and HLS,
@@ -191,7 +220,13 @@ type ConversionContext = {
   resize: boolean;
   source: SourceGeometry;
   options: ConvertOptions;
+  /** Counts every encode started, for progress reporting. */
+  attempts: { count: number };
 };
+
+function throwIfCancelled(options: ConvertOptions): void {
+  if (options.cancelSignal?.aborted) throw new ConversionCancelled();
+}
 
 async function attemptConversion(
   context: ConversionContext,
@@ -201,6 +236,8 @@ async function attemptConversion(
 ): Promise<Attempt> {
   const { file, input, durationSeconds, audioTrack, copyAudio, resize, source, options } = context;
   let { geometry } = context;
+  throwIfCancelled(options);
+  const attemptNumber = ++context.attempts.count;
   const encodeWithWebCodecs = (atGeometry: OutputGeometry, atResize: boolean) =>
     convertWithWebCodecs(input, durationSeconds, audioTrack, atGeometry, atResize, {
       videoBitrate,
@@ -212,7 +249,8 @@ async function attemptConversion(
       preferHevc: options.preferHevc,
       stripMetadata: options.stripMetadata,
       pauseGate: options.pauseGate,
-      onProgress: (info) => options.onProgress?.(info.progress, phase, true),
+      cancelSignal: options.cancelSignal,
+      onProgress: (info) => options.onProgress?.(info.progress, phase, true, attemptNumber),
     });
 
   let webCodecsOutcome = await encodeWithWebCodecs(geometry, resize);
@@ -222,10 +260,12 @@ async function attemptConversion(
   // does this to pages left in the background, behind a lock screen or
   // another app. The pass runs again on WebCodecs once the page is back in
   // view; only a second failure goes on to ffmpeg.
+  throwIfCancelled(options);
   if (!webCodecsOutcome.ok && webCodecsOutcome.interrupted) {
     console.warn('[video-shrinker] WebCodecs encode was interrupted, retrying it:', webCodecsOutcome.fallbackReason);
     await options.whenVisible?.();
     webCodecsOutcome = await encodeWithWebCodecs(geometry, resize);
+    throwIfCancelled(options);
   }
   // The first downscaling attempt (#74) shipped a resize that made every
   // WebCodecs encode fail, and it had to be reverted. If resizing is ever what
@@ -235,6 +275,7 @@ async function attemptConversion(
     console.warn('[video-shrinker] Resized WebCodecs encode failed, retrying at the source size:', webCodecsOutcome.fallbackReason);
     const unresized = { ...geometry, width: source.width, height: source.height };
     const retry = await encodeWithWebCodecs(unresized, false);
+    throwIfCancelled(options);
     if (retry.ok) {
       geometry = unresized;
       webCodecsOutcome = retry;
@@ -252,7 +293,11 @@ async function attemptConversion(
   usedFfmpeg = true;
   // ffmpeg can't stop mid-encode, but a pause asked for before it starts holds.
   await options.pauseGate?.whenResumed();
-  options.onProgress?.(0, phase, false);
+  throwIfCancelled(options);
+  options.onProgress?.(0, phase, false, attemptNumber);
+  // Stopping the engine outright is the only way to stop ffmpeg mid-encode.
+  const stopFfmpeg = () => void import('./ffmpegEngine').then(({ terminateFfmpeg }) => terminateFfmpeg());
+  options.cancelSignal?.addEventListener('abort', stopFfmpeg);
   try {
     const ffmpegResult = await convertWithFfmpeg(file, {
       videoBitrate,
@@ -262,7 +307,7 @@ async function attemptConversion(
       geometry,
       resize,
       stripMetadata: options.stripMetadata,
-      onProgress: (ratio) => options.onProgress?.(ratio, phase, false),
+      onProgress: (ratio) => options.onProgress?.(ratio, phase, false, attemptNumber),
     });
     return {
       blob: ffmpegResult.blob,
@@ -273,11 +318,14 @@ async function attemptConversion(
       height: geometry.height,
     };
   } catch (err) {
+    throwIfCancelled(options);
     // The WebCodecs failure reason would otherwise be lost here (it only ever
     // reached console.warn), leaving just ffmpeg's generic error on screen
     // when both engines fail. Surface both.
     const message = err instanceof Error ? err.message : String(err);
     throw new Error(`${message} (WebCodecs also failed: ${webCodecsOutcome.fallbackReason})`);
+  } finally {
+    options.cancelSignal?.removeEventListener('abort', stopFfmpeg);
   }
 }
 
@@ -331,6 +379,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
         audioBitrate: 0,
         width: null,
         height: null,
+        targetSizeBytes,
       };
       if (!options.stripMetadata) return { ...untouched, blob: file };
 
@@ -373,7 +422,7 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
     // rather than shrink it, so no pass may exceed this.
     const bitrateCeiling = sourceVideoBitrateCeiling(file.size, duration, plan.audioBitrate);
 
-    const context: ConversionContext = {
+    let context: ConversionContext = {
       file,
       input,
       durationSeconds: duration,
@@ -383,12 +432,32 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       resize,
       source,
       options,
+      attempts: { count: 0 },
     };
 
-    let videoBitrate = Math.min(plan.videoBitrate, bitrateCeiling);
+    // Allow up front for how this device's encoder has run before, so the
+    // first pass lands where the plan meant it to.
+    const biasedBitrate = correctForBias(plan.videoBitrate, options.encoderBias?.[likelyHevc ? 'hevc' : 'avc']);
+    let videoBitrate = Math.max(MIN_VIDEO_BITRATE, Math.min(biasedBitrate, bitrateCeiling));
     let attempt = await attemptConversion(context, videoBitrate, plan.audioBitrate, 'encoding');
+    // What the encoder made of that request, with the correction taken back
+    // out so the figure is the encoder's own. Only a WebCodecs pass that ran
+    // at the planned picture size and above the bitrate floor is a fair
+    // reading; ffmpeg holds its bitrate closely and needs no correction.
+    const requestedVideoBytes = (videoBitrate * duration) / 8;
+    const producedVideoBytes = attempt.blob.size - (plan.audioBitrate * duration) / 8;
+    const encoderObservation: EncoderObservation | undefined =
+      attempt.engine === 'webcodecs' &&
+      (attempt.codec === 'avc' || attempt.codec === 'hevc') &&
+      attempt.width === geometry.width &&
+      videoBitrate > MIN_VIDEO_BITRATE &&
+      producedVideoBytes > 0
+        ? { codec: attempt.codec, ratio: producedVideoBytes / requestedVideoBytes }
+        : undefined;
     let best = attempt;
     let bestVideoBitrate = videoBitrate;
+    let audioBitrate = plan.audioBitrate;
+    let bestAudioBitrate = audioBitrate;
 
     for (let pass = 0; pass < MAX_REFINEMENT_PASSES; pass++) {
       const overshot = attempt.blob.size > targetSizeBytes;
@@ -436,6 +505,45 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
       if (!overshot && attempt.blob.size < sizeBeforePass * MIN_UPWARD_GROWTH) break;
     }
 
+    // Still over after the ordinary corrections: the encoder isn't following
+    // the bitrate down any further at this picture size (software encoders in
+    // particular have a smallest size per picture), so the picture itself has
+    // to get smaller. Re-encoded audio gives up a step on the way too.
+    for (let pass = 0; pass < MAX_LAST_RESORT_PASSES && best.blob.size > targetSizeBytes; pass++) {
+      const smaller = stepDownGeometry(context.geometry, source);
+      const lowerAudio = context.copyAudio || !audioTrack ? null : stepDownAudioBitrate(audioBitrate);
+      // With a smaller picture to try, ask for what the target allows rather
+      // than scaling down from a request the encoder wasn't following: the
+      // smaller picture is what brings the size down, and cutting the bitrate
+      // hard on top of it lands far under. With no smaller picture left, the
+      // last measurement is all there is to go on.
+      const nextAudio = lowerAudio ?? audioBitrate;
+      const nextBitrate = smaller
+        ? Math.min(
+            bitrateCeiling,
+            Math.max(MIN_VIDEO_BITRATE, Math.round((targetSizeBytes * 8 * LAST_RESORT_MARGIN) / duration - nextAudio)),
+          )
+        : refineVideoBitrate(bestVideoBitrate, bestAudioBitrate, best.blob.size, duration, targetSizeBytes, LAST_RESORT_MARGIN);
+      // Nothing left to give up.
+      if (!smaller && lowerAudio === null && nextBitrate >= bestVideoBitrate) break;
+
+      if (smaller) {
+        const resized = smaller.width !== source.width || smaller.height !== source.height;
+        context = { ...context, geometry: smaller, resize: resized };
+      }
+      if (lowerAudio !== null) audioBitrate = lowerAudio;
+      videoBitrate = nextBitrate;
+      attempt = await attemptConversion(context, videoBitrate, audioBitrate, 'refining');
+      if (isImprovement(attempt, best, targetSizeBytes)) {
+        await releaseOutput(best.blob);
+        best = attempt;
+        bestVideoBitrate = videoBitrate;
+        bestAudioBitrate = audioBitrate;
+      } else {
+        await releaseOutput(attempt.blob);
+      }
+    }
+
     // Every attempt came back bigger than the file we were handed. Encoders
     // can blow past a requested bitrate on footage they can't compress (heavy
     // grain, confetti, rain), and returning that is worse than doing nothing.
@@ -454,13 +562,16 @@ export async function convertVideo(file: File, targetSizeBytes: number, options:
         audioBitrate: 0,
         width: null,
         height: null,
+        targetSizeBytes,
       };
     }
 
     return {
       ...best,
       videoBitrate: bestVideoBitrate,
-      audioBitrate: plan.audioBitrate,
+      audioBitrate: bestAudioBitrate,
+      targetSizeBytes,
+      encoderObservation,
     };
   } finally {
     if (usedFfmpeg) {

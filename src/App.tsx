@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './App.css';
 import { setAppBusy } from './lib/appBusy';
 import type { ConversionPhase, ConvertResult } from './lib/convert';
-import { type ConversionHandle, prepareConverter, releaseOutputs, startConversion } from './lib/converter';
+import { ConversionCancelledError, type ConversionHandle, prepareConverter, releaseOutputs, startConversion } from './lib/converter';
 import { keepScreenOn } from './lib/keepScreenOn';
 import { clearJob, forgetResult, fromSavedResult, loadJob, saveFile, saveState, type SavedSettings, toSavedResult } from './lib/savedJob';
 
@@ -26,6 +26,9 @@ function formatBytes(bytes: number): string {
 // doesn't report one, so fall back to the extension before rejecting.
 const VIDEO_EXTENSIONS = /\.(mp4|m4v|mov|webm|mkv|avi|mpe?g|3gp|3g2|ts|mts|m2ts|wmv|flv|ogv)$/i;
 
+// Too little of a pass has run before this for its pace to mean anything.
+const MIN_PROGRESS_FOR_ESTIMATE = 0.03;
+
 function looksLikeVideo(file: File): boolean {
   if (file.type.startsWith('video/')) return true;
   return (file.type === '' || file.type === 'application/octet-stream') && VIDEO_EXTENSIONS.test(file.name);
@@ -47,6 +50,17 @@ function App() {
   const [paused, setPaused] = useState(false);
   // False while the ffmpeg.wasm engine runs: it can't stop mid-encode.
   const [pausable, setPausable] = useState(true);
+  // Which encode of this conversion is running, from 1. Anything past the
+  // first is a correction pass.
+  const [attempt, setAttempt] = useState(1);
+  // Seconds the running pass still needs, or null until that can be judged.
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  // Timing of the running pass, for the estimate above. Time spent paused is
+  // kept out of it, and the last pass's length stands in at the start of the
+  // next one, which re-encodes the same video.
+  const passTiming = useRef({ attempt: 0, startedAt: 0, pausedMs: 0, pausedAt: null as number | null, lastPassMs: null as number | null });
+  // Set when the result can't be played here, which hides the preview.
+  const [previewFailed, setPreviewFailed] = useState(false);
   const conversionRef = useRef<ConversionHandle | null>(null);
   const [result, setResult] = useState<ConvertResult | null>(null);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
@@ -119,6 +133,9 @@ function App() {
     lastPercent.current = -1;
     setPhase('encoding');
     setPaused(false);
+    setAttempt(1);
+    setSecondsLeft(null);
+    setPreviewFailed(false);
     setResult(null);
     setError(null);
     setResultUrl((prev) => {
@@ -229,6 +246,10 @@ function App() {
     setPhase('encoding');
     setPaused(false);
     setPausable(true);
+    setAttempt(1);
+    setSecondsLeft(null);
+    setPreviewFailed(false);
+    passTiming.current = { attempt: 0, startedAt: 0, pausedMs: 0, pausedAt: null, lastPassMs: null };
     setError(null);
     // H.265 whenever the GPU supports it, unless the user forces H.264.
     const preferHevc = hevcAvailable && !forceH264;
@@ -238,7 +259,20 @@ function App() {
         targetSizeBytes: targetMb * MB,
         preferHevc,
         stripMetadata,
-        onProgress: (p, currentPhase, canPause) => {
+        onProgress: (p, currentPhase, canPause, currentAttempt) => {
+          const timing = passTiming.current;
+          const now = performance.now();
+          if (currentAttempt !== timing.attempt) {
+            const lastPassMs = timing.attempt > 0 ? now - timing.startedAt - timing.pausedMs : null;
+            passTiming.current = { attempt: currentAttempt, startedAt: now, pausedMs: 0, pausedAt: null, lastPassMs };
+            setAttempt(currentAttempt);
+            setSecondsLeft(lastPassMs === null ? null : lastPassMs / 1000);
+          } else if (Math.round(p * 100) < lastPercent.current) {
+            // The same attempt started over (an interrupted encode running
+            // again, or the fallback engine taking it on): time it from here.
+            passTiming.current = { ...timing, startedAt: now, pausedMs: 0, pausedAt: timing.pausedAt === null ? null : now };
+            setSecondsLeft(null);
+          }
           // The bar only ever renders whole percent, so every sub-percent tick
           // re-rendered the whole tree for no visible change — on the main
           // thread, while the encoder is running and contending for it.
@@ -246,6 +280,10 @@ function App() {
           if (percent !== lastPercent.current) {
             lastPercent.current = percent;
             setProgress(p);
+            const { startedAt, pausedMs, lastPassMs } = passTiming.current;
+            const elapsedMs = now - startedAt - pausedMs;
+            if (p >= MIN_PROGRESS_FOR_ESTIMATE && p < 1) setSecondsLeft((elapsedMs * (1 - p)) / p / 1000);
+            else if (lastPassMs !== null) setSecondsLeft((lastPassMs * (1 - p)) / 1000);
           }
           setPhase(currentPhase);
           setPausable(canPause);
@@ -257,8 +295,22 @@ function App() {
       setResultUrl(URL.createObjectURL(converted.blob));
       setStatus('done');
       setNotice(null);
+      // A nudge for someone who put the phone down to wait.
+      navigator.vibrate?.(200);
       void saveState({ settings, converting: false, restarts: 0, result: toSavedResult(converted, file) });
     } catch (e) {
+      if (e instanceof ConversionCancelledError) {
+        // Back to the chosen video and its settings, ready to go again. Saved
+        // as not converting, so a reload doesn't start it over by itself.
+        setStatus('idle');
+        setProgress(0);
+        lastPercent.current = -1;
+        setNotice(null);
+        void saveState({ settings, converting: false, restarts: 0, result: null });
+        // Cancelling stopped the worker; have the next one ready.
+        prepareConverter();
+        return;
+      }
       setError(e instanceof Error ? { message: e.message } : { key: 'errors.conversionFailed' });
       setStatus('error');
       void saveState({ settings, converting: false, restarts: 0, result: null });
@@ -329,10 +381,29 @@ function App() {
   const togglePause = useCallback(() => {
     const conversion = conversionRef.current;
     if (!conversion) return;
-    if (paused) conversion.resume();
-    else conversion.pause();
+    const timing = passTiming.current;
+    if (paused) {
+      conversion.resume();
+      if (timing.pausedAt !== null) timing.pausedMs += performance.now() - timing.pausedAt;
+      timing.pausedAt = null;
+    } else {
+      conversion.pause();
+      timing.pausedAt = performance.now();
+    }
     setPaused(!paused);
   }, [paused]);
+
+  const cancelConversion = useCallback(() => {
+    conversionRef.current?.cancel();
+  }, []);
+
+  // Shows how far along it is in the tab or task switcher, for anyone who
+  // looked away while it runs.
+  useEffect(() => {
+    if (status === 'converting') document.title = `${Math.round(progress * 100)}% · Video Shrinker`;
+    else if (status === 'done') document.title = '✓ Video Shrinker';
+    else document.title = 'Video Shrinker';
+  }, [status, progress]);
 
   // None of the skip paths shrank anything, so "-shrunk" would be a lie. The
   // untouched file is the source object itself, and keeps its own name and
@@ -347,6 +418,42 @@ function App() {
         ? `${baseName}-clean.mp4`
         : `${baseName}-shrunk.mp4`;
   const converting = status === 'converting';
+  // No encoder holds to a hard limit, so the passes can run out with the
+  // closest attempt still over what was asked for. That has to be said: the
+  // usual reason for a target is an upload limit, which such a file fails.
+  const overTarget = !!result && !skippedEncode && result.targetSizeBytes !== undefined && result.blob.size > result.targetSizeBytes;
+  const percentSmaller = file && result && file.size > 0 ? Math.round((1 - result.blob.size / file.size) * 100) : 0;
+  // The system share sheet, where there is one that takes video files: on a
+  // phone the result is nearly always headed for another app, and this skips
+  // saving it and finding it again from there.
+  const shareFile = useMemo(() => {
+    if (status !== 'done' || !result) return null;
+    if (result.blob === file) return file;
+    return new File([result.blob], downloadName, { type: result.blob.type || 'video/mp4' });
+  }, [status, result, file, downloadName]);
+  const canShare = useMemo(() => {
+    if (!shareFile || typeof navigator.canShare !== 'function') return false;
+    try {
+      return navigator.canShare({ files: [shareFile] });
+    } catch {
+      return false;
+    }
+  }, [shareFile]);
+  const shareResult = () => {
+    if (!shareFile) return;
+    setError(null);
+    navigator.share({ files: [shareFile] }).catch((err: unknown) => {
+      // Closing the share sheet without picking anything is not a failure.
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      setError({ key: 'errors.shareOutFailed' });
+    });
+  };
+  const timeLeft =
+    secondsLeft === null
+      ? null
+      : secondsLeft < 55
+        ? t('convert.secondsLeft', { seconds: Math.max(5, Math.round(secondsLeft / 5) * 5) })
+        : t('convert.minutesLeft', { minutes: Math.round(secondsLeft / 60) });
   const codecLabel = result?.codec === 'hevc' ? 'H.265' : 'H.264';
   const sizeLabel = result?.width && result.height ? ` · ${result.width}×${result.height}` : '';
 
@@ -486,17 +593,27 @@ function App() {
 
         {status === 'converting' && (
           <div className="progress-wrap">
-            {phase === 'refining' && (
-              <p className="phase-note">{t('convert.refineNote')}</p>
-            )}
+            {attempt > 1 && <p className="phase-note">{t('convert.refineNote', { number: attempt })}</p>}
             <div className="progress">
-              <div className="progress-track">
+              <div
+                className="progress-track"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(progress * 100)}
+              >
                 <div className="progress-bar" style={{ width: `${Math.round(progress * 100)}%` }} />
               </div>
               <span className="progress-label">
                 {paused ? `${t('convert.paused')} · ` : ''}
                 {Math.round(progress * 100)}%
               </span>
+            </div>
+            <div className="progress-footer">
+              <span className="time-left">{!paused && timeLeft}</span>
+              <button type="button" className="link-button" onClick={cancelConversion}>
+                {t('convert.cancel')}
+              </button>
             </div>
           </div>
         )}
@@ -506,18 +623,29 @@ function App() {
         {error && <div className="message error">{'key' in error ? t(error.key, error.params) : error.message}</div>}
 
         {status === 'done' && result && resultUrl && (
-          <div className="result">
+          <div className={overTarget ? 'result over-target' : 'result'}>
             <p>
               {result.engine === 'unshrinkable'
                 ? t('result.noShrink')
                 : skippedEncode
                   ? t('result.alreadySmall')
-                  : t('result.done')}{' '}
+                  : overTarget
+                    ? t('result.overTarget', { target: formatBytes(result.targetSizeBytes) })
+                    : t('result.done')}{' '}
               <strong>
-                {skippedEncode ? formatBytes(result.blob.size) : `${codecLabel}${sizeLabel} · ${formatBytes(result.blob.size)}`}
+                {skippedEncode || !file
+                  ? formatBytes(result.blob.size)
+                  : `${formatBytes(file.size)} → ${formatBytes(result.blob.size)} · ${t('result.smaller', { percent: percentSmaller })}`}
               </strong>
               <br />
+              {overTarget && (
+                <>
+                  <span className="result-warning">{t('result.overTargetHint')}</span>
+                  <br />
+                </>
+              )}
               <span className="result-detail">
+                {!skippedEncode && `${codecLabel}${sizeLabel} · `}
                 {result.engine === 'original'
                   ? t('result.untouched')
                   : result.engine === 'remux'
@@ -531,9 +659,31 @@ function App() {
                         : t('result.ffmpeg')}
               </span>
             </p>
-            <a className="download-button" href={resultUrl} download={downloadName} onClick={() => void forgetResult()}>
-              {t('result.download')}
-            </a>
+            {!previewFailed && (
+              <video
+                className="result-preview"
+                src={resultUrl}
+                controls
+                playsInline
+                preload="metadata"
+                onError={() => setPreviewFailed(true)}
+              />
+            )}
+            <div className="result-actions">
+              {canShare && (
+                <button type="button" className="download-button share-button" onClick={shareResult}>
+                  {t('result.share')}
+                </button>
+              )}
+              <a
+                className={canShare ? 'download-button secondary' : 'download-button'}
+                href={resultUrl}
+                download={downloadName}
+                onClick={() => void forgetResult()}
+              >
+                {t('result.download')}
+              </a>
+            </div>
             <button type="button" className="link-button" onClick={reset}>
               {t('result.convertAnother')}
             </button>
