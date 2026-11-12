@@ -40,6 +40,7 @@
     "vite-plugin-static-copy": {
       "chokidar": "^4.0.3"
     },
-    "minimatch": "^11.0.4"
+    "minimatch": "^11.0.4",
+    "glob": "^14.0.2"
   }
 }
