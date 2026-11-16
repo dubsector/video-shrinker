@@ -7,12 +7,15 @@
         "targetSize": "Madhësia e synuar"
     },
     "convert": {
+        "cancel": "Anulo",
         "converting": "Po konvertohet…",
+        "minutesLeft": "Afërsisht {{minutes}} min mbetur",
         "pause": "Pauzë",
         "paused": "E pauzuar",
-        "refineNote": "Kalimi i parë nuk e arriti objektivin. Po rregullohet bitrate dhe kodimi edhe një herë.",
+        "refineNote": "Përpjekja e fundit nuk e arriti madhësinë tuaj, kështu që video po shkurtohet sërish (përpjekja {{number}}).",
         "refining": "Po optimizohet madhësia…",
         "resume": "Vazhdo",
+        "secondsLeft": "Afërsisht {{seconds}} s mbetur",
         "start": "Konverto"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Ju lutemi zgjidhni një skedar video.",
         "shareFailed": "Nuk u pranua videoja e ndarë ({{message}}). Provoni të zgjidhni skedarin direkt.",
         "shareNeverArrived": "Videoja e ndarë nuk arriti kurrë nga sistemi. Provoni ta zgjidhni skedarin direkt.",
+        "shareOutFailed": "Nuk mund të hapej menyja e ndarjes. Përdorni Shkarko në vend të saj.",
         "shareTimeout": "Pritja për videon e shpërndarë dështoi. Provoni ta zgjidhni skedarin direkt."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, rezervë CPU",
         "noShrink": "Nuk munda ta bëj këtë më të vogël:",
         "noShrinkDetail": "Kjo pamje nuk kompresohet nën madhësinë e saj aktuale, ndaj është lënë ashtu siç është",
+        "overTarget": "Nuk mund të arrihej nën {{target}}. Kjo është më e afërta:",
+        "overTargetHint": "Provoni një madhësi më të madhe, ose një video më të shkurtër.",
         "remuxed": "Metadata u hoq, videoja mbeti e paprekur",
+        "share": "Ndaj",
+        "smaller": "{{percent}}% më e vogël",
         "untouched": "U la siç ishte, nuk ka asgjë për t'u zvogëluar",
         "webcodecs": "WebCodecs, e përshpejtuar nga hardueri",
         "webcodecsSoftware": "WebCodecs, kodues softuerik"

@@ -7,12 +7,15 @@
         "targetSize": "Mērķa izmērs"
     },
     "convert": {
+        "cancel": "Atcelt",
         "converting": "Konvertē...",
+        "minutesLeft": "Atlikušas aptuveni {{minutes}} min",
         "pause": "Pauzēt",
         "paused": "Pauzēts",
-        "refineNote": "Pirmajā piegājienā mērķis netika sasniegts. Vēlreiz pielāgo bitreitu un kodēšanu.",
+        "refineNote": "Iepriekšējais mēģinājums nesasniedza vēlamo izmēru, tāpēc video tiek saspiests atkārtoti ({{number}}. mēģinājums).",
         "refining": "Precizēju izmēru…",
         "resume": "Atsākt",
+        "secondsLeft": "Atlikušas aptuveni {{seconds}} sek.",
         "start": "Konvertēt"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Lūdzu, izvēlieties video failu.",
         "shareFailed": "Neizdevās saņemt koplietoto video ({{message}}). Tā vietā mēģiniet izvēlēties failu tieši.",
         "shareNeverArrived": "Koplietotais video no sistēmas nepienāca. Tā vietā mēģiniet izvēlēties failu tieši.",
+        "shareOutFailed": "Neizdevās atvērt kopīgošanas izvēlni. Tā vietā izmantojiet lejupielādi.",
         "shareTimeout": "Pārtraucu gaidīt koplietoto video. Tā vietā mēģiniet izvēlēties failu tieši."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU rezerves risinājums",
         "noShrink": "Neizdevās padarīt to mazāku:",
         "noShrinkDetail": "Šo materiālu nevar saspiest zem tā pašreizējā izmēra, tāpēc tas tika atstāts nemainīts",
+        "overTarget": "Neizdevās sasniegt {{target}} izmēru. Šis ir vistuvākais rezultāts:",
+        "overTargetHint": "Izmēģiniet lielāku izmēru vai īsāku video.",
         "remuxed": "Metadati noņemti, video atstāts neskarts",
+        "share": "Kopīgot",
+        "smaller": "par {{percent}}% mazāks",
         "untouched": "Atstāts tāds, kāds ir, nav ko saspiest",
         "webcodecs": "WebCodecs, aparatūras paātrinājums",
         "webcodecsSoftware": "WebCodecs, programmatūras kodētājs"

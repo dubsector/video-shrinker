@@ -7,12 +7,15 @@
         "targetSize": "Teikengrootte"
     },
     "convert": {
+        "cancel": "Kanselleer",
         "converting": "Besig om te omskakel…",
+        "minutesLeft": "Ongeveer {{minutes}} min oor",
         "pause": "Pouse",
         "paused": "Gepouseer",
-        "refineNote": "Die eerste poging het die teiken gemis. Pas die biskoers en enkoderingsinstelling weer eens aan.",
+        "refineNote": "Die laaste poging het jou grootte gemis, so die video word weer gekrimp (poging {{number}}).",
         "refining": "Verfyn grootte…",
         "resume": "Hervat",
+        "secondsLeft": "Ongeveer {{seconds}} s oor",
         "start": "Skakel om"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Kies asseblief 'n videolêer.",
         "shareFailed": "Kon nie die gedeelde video ontvang nie ({{message}}). Probeer eerder om die lêer direk te kies.",
         "shareNeverArrived": "Die gedeelde video het nie vanaf die stelsel aangekom nie. Probeer eerder om die lêer direk te kies.",
+        "shareOutFailed": "Kon nie die deel-kieslys oopmaak nie. Gebruik eerder Laai af.",
         "shareTimeout": "Het opgehou wag vir die gedeelde video. Probeer eerder om die lêer direk te kies."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, SVE-rugsteun",
         "noShrink": "Kon dit nie kleiner maak nie:",
         "noShrinkDetail": "Hierdie beeldmateriaal komprimeer nie kleiner as sy huidige grootte nie, dus is dit behou soos dit is.",
+        "overTarget": "Kon nie onder {{target}} kom nie. Dit is die naaste:",
+        "overTargetHint": "Probeer 'n groter grootte, of 'n korter video.",
         "remuxed": "Metadata gestroop, video onaangeraak gelaat",
+        "share": "Deel",
+        "smaller": "{{percent}}% kleiner",
         "untouched": "So gelaat, niks om te verklein nie",
         "webcodecs": "WebCodecs, hardeware-versnel",
         "webcodecsSoftware": "WebCodecs, sagteware-enkodeerder"

@@ -7,12 +7,15 @@
         "targetSize": "Target na laki"
     },
     "convert": {
+        "cancel": "Kanselahin",
         "converting": "Nagko-convert…",
+        "minutesLeft": "May humigit-kumulang {{minutes}} min na lang ang natitira",
         "pause": "I-pause",
         "paused": "Naka-pause",
-        "refineNote": "Hindi naabot ng unang pag-compress ang target. Ina-adjust muli ang bitrate at encoding.",
+        "refineNote": "Hindi nakuha ng huling pagsubok ang iyong laki, kaya pinapaliit ulit ang video (pagsubok {{number}}).",
         "refining": "Inaayos ang laki…",
         "resume": "Ipagpatuloy",
+        "secondsLeft": "May humigit-kumulang {{seconds}} s na lang ang natitira",
         "start": "I-convert"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Mangyaring pumili ng file ng video.",
         "shareFailed": "Hindi natanggap ang ibinahaging video ({{message}}). Subukang piliin nang direkta ang file.",
         "shareNeverArrived": "Hindi dumating ang ibinahaging video mula sa system. Subukang piliin nang direkta ang file sa halip.",
+        "shareOutFailed": "Hindi mabuksan ang menu ng pagbabahagi. Gamitin na lang ang I-download.",
         "shareTimeout": "Huminto sa paghihintay sa ibinahaging video. Subukang piliin nang direkta ang file."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, fallback ng CPU",
         "noShrink": "Hindi ito mapaliit:",
         "noShrinkDetail": "Hindi na puwedeng paliitin pa ang footage na ito, kaya pinanatili ito sa kasalukuyang sukat",
+        "overTarget": "Hindi makababa sa {{target}}. Ito ang pinakamalapit:",
+        "overTargetHint": "Subukan ang mas malaking sukat, o mas maikling video.",
         "remuxed": "Tinanggal ang metadata, hindi ginalaw ang video",
+        "share": "Ibahagi",
+        "smaller": "{{percent}}% mas maliit",
         "untouched": "Iniwan nang ganito, walang dapat paliitin",
         "webcodecs": "WebCodecs, hardware-accelerated",
         "webcodecsSoftware": "WebCodecs, software encoder"
