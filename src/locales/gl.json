@@ -7,12 +7,15 @@
         "targetSize": "Tamaño obxectivo"
     },
     "convert": {
+        "cancel": "Cancelar",
         "converting": "Convertendo…",
+        "minutesLeft": "Restan uns {{minutes}} min",
         "pause": "Pausa",
         "paused": "En pausa",
-        "refineNote": "A primeira pasaxe non acadou o obxectivo. Axustando a taxa de bits e a codificación unha vez máis.",
+        "refineNote": "O último intento non acadou o teu tamaño, polo que o vídeo estase a comprimir de novo (intento {{number}}).",
         "refining": "Afinando o tamaño…",
         "resume": "Continuar",
+        "secondsLeft": "Restan uns {{seconds}} s",
         "start": "Converter"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Escolle un ficheiro de vídeo.",
         "shareFailed": "Non se puido recibir o vídeo compartido ({{message}}). Tenta escoller o ficheiro directamente.",
         "shareNeverArrived": "O vídeo compartido nunca chegou do sistema. Tenta escoller o ficheiro directamente.",
+        "shareOutFailed": "Non se puido abrir o menú de compartir. Usa Descargar no seu lugar.",
         "shareTimeout": "Deixouse de esperar polo vídeo compartido. Tenta escoller o ficheiro directamente."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, alternativa de CPU",
         "noShrink": "Non se puido reducir máis:",
         "noShrinkDetail": "Esta gravación non se pode comprimir por debaixo do seu tamaño actual, polo que se mantivo tal cal",
+        "overTarget": "Non se puido reducir a menos de {{target}}. Isto é o máis preto que puidemos:",
+        "overTargetHint": "Proba cun tamaño maior ou un vídeo máis curto.",
         "remuxed": "Metadatos eliminados, vídeo deixado intacto",
+        "share": "Compartir",
+        "smaller": "{{percent}}% máis pequeno",
         "untouched": "Deixado tal cal, non hai nada que reducir",
         "webcodecs": "WebCodecs, aceleración por hardware",
         "webcodecsSoftware": "WebCodecs, codificador de software"

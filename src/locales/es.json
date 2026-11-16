@@ -7,12 +7,15 @@
         "targetSize": "Tamaño objetivo"
     },
     "convert": {
+        "cancel": "Cancelar",
         "converting": "Convirtiendo…",
+        "minutesLeft": "Quedan unos {{minutes}} min",
         "pause": "Pausar",
         "paused": "En pausa",
-        "refineNote": "La primera pasada no alcanzó el objetivo. Ajustando el bitrate y la codificación una vez más.",
+        "refineNote": "El último intento no alcanzó tu tamaño objetivo, así que el video se está comprimiendo de nuevo (intento {{number}}).",
         "refining": "Ajustando tamaño…",
         "resume": "Reanudar",
+        "secondsLeft": "Faltan aproximadamente {{seconds}} s",
         "start": "Convertir"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Por favor, elige un archivo de video.",
         "shareFailed": "No se pudo recibir el video compartido ({{message}}). Intenta elegir el archivo directamente.",
         "shareNeverArrived": "El video compartido nunca llegó desde el sistema. Intenta elegir el archivo directamente.",
+        "shareOutFailed": "No se pudo abrir el menú para compartir. Usa Descargar en su lugar.",
         "shareTimeout": "Se agotó el tiempo de espera para el video compartido. Intenta elegir el archivo directamente en su lugar."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, respaldo de CPU",
         "noShrink": "No se pudo reducir:",
         "noShrinkDetail": "Este metraje no se puede comprimir por debajo de su tamaño actual, por lo que se mantuvo tal cual",
+        "overTarget": "No se pudo reducir a menos de {{target}}. Esto es lo más cerca que hemos llegado:",
+        "overTargetHint": "Prueba un tamaño mayor o un vídeo más corto.",
         "remuxed": "Metadatos eliminados, video sin cambios",
+        "share": "Compartir",
+        "smaller": "{{percent}}% más pequeño",
         "untouched": "Se dejó tal cual, no hay nada que reducir",
         "webcodecs": "WebCodecs, aceleración por hardware",
         "webcodecsSoftware": "WebCodecs, codificador de software"

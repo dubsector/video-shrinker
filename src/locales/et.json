@@ -7,12 +7,15 @@
         "targetSize": "Sihtmõõt"
     },
     "convert": {
+        "cancel": "Loobu",
         "converting": "Teisendamine…",
+        "minutesLeft": "Umbes {{minutes}} min jäänud",
         "pause": "Peata",
         "paused": "Peatatud",
-        "refineNote": "Esimene katse ei saavutanud sihtmärki. Kohandan bitikiirust ja kodeeringut uuesti.",
+        "refineNote": "Viimane katse ei vastanud soovitud suurusele, seega tihendatakse videot uuesti (katse {{number}}).",
         "refining": "Täpsustan suurust…",
         "resume": "Jätka",
+        "secondsLeft": "Umbes {{seconds}} s jäänud",
         "start": "Teisenda"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Palun vali videofail.",
         "shareFailed": "Jagatud videot ei õnnestunud kätte saada ({{message}}). Proovi selle asemel fail otse valida.",
         "shareNeverArrived": "Jagatud video ei jõudnud süsteemist kohale. Proovi selle asemel fail otse valida.",
+        "shareOutFailed": "Jagamismenüüd ei saanud avada. Kasutage selle asemel allalaadimist.",
         "shareTimeout": "Loobusin jagatud video ootamisest. Proovi selle asemel fail otse valida."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, protsessori kasutamine (varuvariant)",
         "noShrink": "Seda ei saanud väiksemaks muuta:",
         "noShrinkDetail": "Seda materjali ei saa praegusest suurusest väiksemaks tihendada, seega jäeti see endiseks",
+        "overTarget": "Ei õnnestunud jõuda alla {{target}}. See on kõige lähedasem tulemus:",
+        "overTargetHint": "Proovi suuremat suurust või lühemat videot.",
         "remuxed": "Metaandmed eemaldatud, video jäetud muutmata",
+        "share": "Jaga",
+        "smaller": "{{percent}}% väiksem",
         "untouched": "Jäetud muutmata, pole midagi tihendada",
         "webcodecs": "WebCodecs, riistvaraline kiirendus",
         "webcodecsSoftware": "WebCodecs, tarkvaraline kodeerija"

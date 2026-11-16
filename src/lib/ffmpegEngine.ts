@@ -69,6 +69,23 @@ export async function releaseFfmpegInput(): Promise<void> {
   await (await ffmpegPromise).unmount(INPUT_DIR).catch(() => {});
 }
 
+/**
+ * Stops the engine dead, whatever it is doing; the next conversion loads a
+ * fresh one. The only way to stop an encode, which ffmpeg.wasm can't pause
+ * or cancel.
+ */
+export async function terminateFfmpeg(): Promise<void> {
+  const loading = ffmpegPromise;
+  ffmpegPromise = null;
+  mountedInput = null;
+  if (!loading) return;
+  try {
+    (await loading).terminate();
+  } catch {
+    // Never finished loading, so there is nothing running to stop.
+  }
+}
+
 export type FfmpegConvertOptions = {
   videoBitrate: number;
   audioBitrate: number;

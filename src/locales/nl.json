@@ -7,12 +7,15 @@
         "targetSize": "Doelgrootte"
     },
     "convert": {
+        "cancel": "Annuleren",
         "converting": "Converteren…",
+        "minutesLeft": "Nog ongeveer {{minutes}} min",
         "pause": "Pauzeren",
         "paused": "Gepauzeerd",
-        "refineNote": "De eerste poging haalde het doel niet. De bitrate en encoding worden nogmaals aangepast.",
+        "refineNote": "De laatste poging heeft de doelgrootte niet behaald, dus de video wordt opnieuw verkleind (poging {{number}}).",
         "refining": "Grootte aanpassen…",
         "resume": "Hervatten",
+        "secondsLeft": "Nog ongeveer {{seconds}} s",
         "start": "Converteren"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Kies een videobestand.",
         "shareFailed": "Kon de gedeelde video niet ontvangen ({{message}}). Probeer in plaats daarvan het bestand direct te kiezen.",
         "shareNeverArrived": "De gedeelde video kwam nooit aan vanuit het systeem. Probeer in plaats daarvan het bestand direct te kiezen.",
+        "shareOutFailed": "Kon het deelmenu niet openen. Gebruik in plaats daarvan Downloaden.",
         "shareTimeout": "Het wachten op de gedeelde video is gestaakt. Probeer in plaats daarvan het bestand direct te kiezen."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU-fallback",
         "noShrink": "Kon dit niet kleiner maken:",
         "noShrinkDetail": "Dit beeldmateriaal kan niet verder worden gecomprimeerd dan de huidige grootte, dus het is behouden zoals het is.",
+        "overTarget": "Kon niet onder {{target}} komen. Dit is het dichtstbijzijnde resultaat:",
+        "overTargetHint": "Probeer een grotere grootte of een kortere video.",
         "remuxed": "Metadata verwijderd, video ongewijzigd gelaten",
+        "share": "Delen",
+        "smaller": "{{percent}}% kleiner",
         "untouched": "Zo gelaten, niets te verkleinen",
         "webcodecs": "WebCodecs, hardwareversneld",
         "webcodecsSoftware": "WebCodecs, software-encoder"

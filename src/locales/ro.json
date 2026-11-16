@@ -7,12 +7,15 @@
         "targetSize": "Dimensiune țintă"
     },
     "convert": {
+        "cancel": "Anulează",
         "converting": "Se convertește…",
+        "minutesLeft": "Aproximativ {{minutes}} min rămase",
         "pause": "Pauză",
         "paused": "În pauză",
-        "refineNote": "Prima trecere a ratat ținta. Ajustez rata de biți și codificarea din nou.",
+        "refineNote": "Ultima încercare nu a atins dimensiunea dorită, așa că video-ul este comprimat din nou (încercarea {{number}}).",
         "refining": "Rafinarea dimensiunii...",
         "resume": "Reluare",
+        "secondsLeft": "Aproximativ {{seconds}} s rămase",
         "start": "Convertește"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Te rugăm să alegi un fișier video.",
         "shareFailed": "Nu s-a putut primi videoclipul partajat ({{message}}). Încearcă să selectezi fișierul direct.",
         "shareNeverArrived": "Videoclipul partajat nu a ajuns niciodată din sistem. Încearcă să alegi fișierul direct.",
+        "shareOutFailed": "Nu s-a putut deschide meniul de partajare. Folosește Descărcare în schimb.",
         "shareTimeout": "Am renunțat să mai aștept videoclipul partajat. Încearcă să alegi fișierul direct."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, alternativă CPU",
         "noShrink": "Nu s-a putut micșora mai mult:",
         "noShrinkDetail": "Acest material video nu poate fi comprimat sub dimensiunea sa actuală, așa că a fost păstrat ca atare",
+        "overTarget": "Nu s-a putut obține sub {{target}}. Acesta este cel mai apropiat rezultat:",
+        "overTargetHint": "Încearcă o dimensiune mai mare sau un videoclip mai scurt.",
         "remuxed": "Metadate eliminate, video lăsat intact",
+        "share": "Partajează",
+        "smaller": "{{percent}}% mai mic",
         "untouched": "Lăsat așa cum este, nimic de micșorat",
         "webcodecs": "WebCodecs, accelerare hardware",
         "webcodecsSoftware": "WebCodecs, codificator software"

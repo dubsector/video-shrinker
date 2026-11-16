@@ -7,12 +7,15 @@
         "targetSize": "Tikslinis dydis"
     },
     "convert": {
+        "cancel": "Atšaukti",
         "converting": "Konvertuojama…",
+        "minutesLeft": "Liko apie {{minutes}} min.",
         "pause": "Pristabdyti",
         "paused": "Pristabdyta",
-        "refineNote": "Pirmas bandymas nepasiekė tikslo. Reguliuojamas bitų dažnis ir kodavimas.",
+        "refineNote": "Paskutinis bandymas nepasiekė norimo dydžio, todėl vaizdo įrašas glaudinamas iš naujo (bandymas {{number}}).",
         "refining": "Tikslinamas dydis…",
         "resume": "Tęsti",
+        "secondsLeft": "Liko apie {{seconds}} s",
         "start": "Konvertuoti"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Pasirinkite vaizdo įrašo failą.",
         "shareFailed": "Nepavyko gauti bendrinamo vaizdo įrašo ({{message}}). Vietoj to bandykite pasirinkti failą tiesiogiai.",
         "shareNeverArrived": "Bendrinamas vaizdo įrašas negautas iš sistemos. Vietoj to bandykite pasirinkti failą tiesiogiai.",
+        "shareOutFailed": "Nepavyko atidaryti bendrinimo meniu. Vietoj to naudokite atsisiuntimą.",
         "shareTimeout": "Nepavyko sulaukti bendrinamo vaizdo įrašo. Vietoj to bandykite pasirinkti failą tiesiogiai."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU atsarginis variantas",
         "noShrink": "Nepavyko sumažinti:",
         "noShrinkDetail": "Šio vaizdo įrašo nepavyksta suspausti iki mažesnio dydžio, todėl jis paliktas toks, koks yra",
+        "overTarget": "Nepavyko pasiekti mažiau nei {{target}}. Tai yra artimiausias rezultatas:",
+        "overTargetHint": "Išbandykite didesnį dydį arba trumpesnį vaizdo įrašą.",
         "remuxed": "Metaduomenys pašalinti, vaizdo įrašas paliktas nepaliestas",
+        "share": "Bendrinti",
+        "smaller": "{{percent}}% mažesnis",
         "untouched": "Palikta kaip yra, nėra ką suspausti",
         "webcodecs": "WebCodecs, aparatinis spartinimas",
         "webcodecsSoftware": "WebCodecs, programinės įrangos kodavimo priemonė"

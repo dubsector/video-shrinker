@@ -7,12 +7,15 @@
         "targetSize": "Mida objectiu"
     },
     "convert": {
+        "cancel": "Cancel·la",
         "converting": "Convertint…",
+        "minutesLeft": "Queden uns {{minutes}} min",
         "pause": "Pausa",
         "paused": "En pausa",
-        "refineNote": "La primera passada no ha assolit l'objectiu. Ajustant el bitrate i la codificació una vegada més.",
+        "refineNote": "L'últim intent no ha assolit la mida desitjada, així que el vídeo s'està comprimint de nou (intent {{number}}).",
         "refining": "Refinant la mida…",
         "resume": "Reprèn",
+        "secondsLeft": "Queden uns {{seconds}} s",
         "start": "Converteix"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Tria un fitxer de vídeo.",
         "shareFailed": "No s'ha pogut rebre el vídeo compartit ({{message}}). Intenteu triar el fitxer directament.",
         "shareNeverArrived": "El vídeo compartit no ha arribat des del sistema. Prova de seleccionar el fitxer directament.",
+        "shareOutFailed": "No s'ha pogut obrir el menú de compartir. Utilitza la descàrrega.",
         "shareTimeout": "S'ha deixat d'esperar el vídeo compartit. Prova de seleccionar el fitxer directament."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, alternativa CPU",
         "noShrink": "No s'ha pogut fer més petit:",
         "noShrinkDetail": "Aquest vídeo no es pot comprimir per sota de la seva mida actual, així que s'ha mantingut tal com està",
+        "overTarget": "No s'ha pogut baixar de {{target}}. Això és el més proper:",
+        "overTargetHint": "Prova una mida més gran, o un vídeo més curt.",
         "remuxed": "Metadades eliminades, vídeo deixat sense canvis",
+        "share": "Comparteix",
+        "smaller": "{{percent}}% més petit",
         "untouched": "Deixat tal com està, no hi ha res a reduir",
         "webcodecs": "WebCodecs, accelerat per maquinari",
         "webcodecsSoftware": "WebCodecs, codificador de programari"
