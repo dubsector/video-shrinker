@@ -7,12 +7,15 @@
         "targetSize": "የታለመ መጠን"
     },
     "convert": {
+        "cancel": "ይቅር",
         "converting": "በመቀየር ላይ…",
+        "minutesLeft": "{{minutes}} ደቂቃ ገደማ ቀርቷል",
         "pause": "አቁም",
         "paused": "ተቋርጧል",
-        "refineNote": "የመጀመሪያው ሙከራ ዒላማውን አልመታም። ቢትሬት እና ኢንኮዲንግን እንደገና በማስተካከል ላይ።",
+        "refineNote": "የመጨረሻው ሙከራ በመጠኑ ላይ ስላልደረሰ ቪዲዮው እንደገና እየተጨመቀ ነው (ሙከራ {{number}})።",
         "refining": "መጠን ማስተካከል…",
         "resume": "ቀጥል",
+        "secondsLeft": "ወደ {{seconds}} ሰከንድ ቀረ",
         "start": "ቀይር"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "እባክዎ የቪዲዮ ፋይል ይምረጡ።",
         "shareFailed": "የተጋራውን ቪዲዮ መቀበል አልተቻለም ({{message}})። ፋይሉን በቀጥታ ለመምረጥ ይሞክሩ።",
         "shareNeverArrived": "የተጋራው ቪዲዮ ከስርዓቱ አልመጣም። ፋይሉን በቀጥታ ለመምረጥ ይሞክሩ።",
+        "shareOutFailed": "የማጋሪያ ምናሌውን መክፈት አልተቻለም። በምትኩ ማውረጃውን ይጠቀሙ።",
         "shareTimeout": "ለተጋራው ቪዲዮ መጠበቅ ተቋርጧል። ፋይሉን በቀጥታ ለመምረጥ ይሞክሩ።"
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm፣ የሲፒዩ (CPU) መጠባበቂያ",
         "noShrink": "ይህንን ይበልጥ ማሳነስ አልተቻለም:",
         "noShrinkDetail": "ይህ ቪዲዮ አሁን ካለው መጠን በታች መጭመቅ አይቻልም፣ ስለዚህ እንደነበረ ተጠብቋል",
+        "overTarget": "ከ {{target}} በታች ማድረግ አልተቻለም። በጣም የቀረበው ይሄ ነው፡",
+        "overTargetHint": "ትልቅ መጠን ወይም አጭር ቪዲዮ ይሞክሩ።",
         "remuxed": "ሜታዳታ ተወግዷል፣ ቪዲዮው ሳይነካ ቀርቷል",
+        "share": "አጋራ",
+        "smaller": "{{percent}}% አነስ ያለ",
         "untouched": "እንደነበረው ቀርቷል፣ የሚቀንስ ነገር የለም",
         "webcodecs": "WebCodecs፣ በሃርድዌር የተፋጠነ",
         "webcodecsSoftware": "WebCodecs፣ የሶፍትዌር ኢንኮደር"

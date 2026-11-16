@@ -7,12 +7,15 @@
         "targetSize": "目标大小"
     },
     "convert": {
+        "cancel": "取消",
         "converting": "正在转换…",
+        "minutesLeft": "剩余约 {{minutes}} 分钟",
         "pause": "暂停",
         "paused": "已暂停",
-        "refineNote": "第一次压缩未达到目标大小。正在再次调整比特率和编码。",
+        "refineNote": "上次尝试未达到目标大小，因此正在重新压缩视频（尝试次数 {{number}}）。",
         "refining": "正在优化大小…",
         "resume": "恢复",
+        "secondsLeft": "剩余约 {{seconds}} 秒",
         "start": "转换"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "请选择一个视频文件。",
         "shareFailed": "无法接收共享视频 ({{message}})。请尝试直接选择文件。",
         "shareNeverArrived": "未从系统中收到共享视频。请尝试直接选择文件。",
+        "shareOutFailed": "无法打开分享菜单。请改用“下载”。",
         "shareTimeout": "等待共享视频超时。请尝试直接选择文件。"
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU 后备方案",
         "noShrink": "无法将其缩小:",
         "noShrinkDetail": "此视频无法压缩至当前大小以下，因此已保持原样",
+        "overTarget": "无法达到 {{target}} 以下。这是最接近的大小：",
+        "overTargetHint": "请尝试更大的尺寸或更短的视频。",
         "remuxed": "元数据已被剥离，视频保持不变",
+        "share": "分享",
+        "smaller": "缩小了 {{percent}}%",
         "untouched": "保持原样，无需压缩",
         "webcodecs": "WebCodecs，硬件加速",
         "webcodecsSoftware": "WebCodecs，软件编码器"

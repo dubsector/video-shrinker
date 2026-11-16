@@ -7,12 +7,15 @@
         "targetSize": "Markstærð"
     },
     "convert": {
+        "cancel": "Hætta við",
         "converting": "Umbreyti…",
+        "minutesLeft": "Um {{minutes}} mín eftir",
         "pause": "Hlé",
         "paused": "Í hléi",
-        "refineNote": "Fyrsta tilraun náði ekki markmiðinu. Bitrate og kóðun stillt á ný.",
+        "refineNote": "Síðasta tilraun náði ekki stærðinni þinni, svo myndbandið er minnkað aftur (tilraun {{number}}).",
         "refining": "Fínstillir stærð…",
         "resume": "Halda áfram",
+        "secondsLeft": "Um {{seconds}} sek eftir",
         "start": "Umbreyta"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Vinsamlegast veldu myndskeiðsskrá.",
         "shareFailed": "Tókst ekki að taka á móti deilda myndskeiðinu ({{message}}). Prófaðu að velja skrána beint í staðinn.",
         "shareNeverArrived": "Deilda myndskeiðið barst aldrei frá kerfinu. Prófaðu að velja skrána beint í staðinn.",
+        "shareOutFailed": "Ekki tókst að opna deilingarvalmyndina. Notaðu Hlaða niður í staðinn.",
         "shareTimeout": "Hætt var að bíða eftir deilda myndbandinu. Reyndu frekar að velja skrána beint."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU varaúrræði",
         "noShrink": "Ekki hægt að minnka þetta frekar:",
         "noShrinkDetail": "Ekki var hægt að þjappa þessu myndskeiði frekar, því var það látið óbreytt",
+        "overTarget": "Gat ekki farið undir {{target}}. Þetta er næst:",
+        "overTargetHint": "Prófaðu stærri stærð eða styttra myndband.",
         "remuxed": "Metadata fjarlægð, myndskeið látið óbreytt",
+        "share": "Deila",
+        "smaller": "{{percent}}% minna",
         "untouched": "Skilið eftir eins og það er, ekkert til að minnka",
         "webcodecs": "WebCodecs, vélbúnaðarhröðun",
         "webcodecsSoftware": "WebCodecs, hugbúnaðarkóðari"

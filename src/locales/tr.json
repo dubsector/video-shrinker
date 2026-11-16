@@ -7,12 +7,15 @@
         "targetSize": "Hedef boyut"
     },
     "convert": {
+        "cancel": "İptal",
         "converting": "Dönüştürülüyor…",
+        "minutesLeft": "Yaklaşık {{minutes}} dk kaldı",
         "pause": "Duraklat",
         "paused": "Duraklatıldı",
-        "refineNote": "İlk geçiş hedefi tutturamadı. Bit hızı ve kodlamayı tekrar ayarlıyoruz.",
+        "refineNote": "Son deneme hedef boyuta ulaşamadı, bu yüzden video yeniden küçültülüyor (deneme {{number}}).",
         "refining": "Boyut ayarlanıyor…",
         "resume": "Devam et",
+        "secondsLeft": "Yaklaşık {{seconds}} sn kaldı",
         "start": "Dönüştür"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Lütfen bir video dosyası seçin.",
         "shareFailed": "Paylaşılan video alınamadı ({{message}}). Bunun yerine dosyayı doğrudan seçmeyi deneyin.",
         "shareNeverArrived": "Paylaşılan video sistemden gelmedi. Bunun yerine dosyayı doğrudan seçmeyi deneyin.",
+        "shareOutFailed": "Paylaşım menüsü açılamadı. Bunun yerine İndir seçeneğini kullanın.",
         "shareTimeout": "Paylaşılan video için bekleme süresi doldu. Bunun yerine dosyayı doğrudan seçmeyi deneyin."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU yedekleme",
         "noShrink": "Bu dosya küçültülemedi:",
         "noShrinkDetail": "Bu video mevcut boyutunun altına sıkıştırılamıyor, bu yüzden olduğu gibi bırakıldı",
+        "overTarget": "{{target}} altına inilemedi. En yakın sonuç bu:",
+        "overTargetHint": "Daha büyük bir boyut veya daha kısa bir video deneyin.",
         "remuxed": "Metadata kaldırıldı, video dokunulmadan bırakıldı",
+        "share": "Paylaş",
+        "smaller": "%{{percent}} daha küçük",
         "untouched": "Olduğu gibi bırakıldı, küçültülecek bir şey yok",
         "webcodecs": "WebCodecs, donanım hızlandırmalı",
         "webcodecsSoftware": "WebCodecs, yazılım kodlayıcı"

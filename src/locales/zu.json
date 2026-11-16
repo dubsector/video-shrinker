@@ -7,12 +7,15 @@
         "targetSize": "Usayizi ohlosiwe"
     },
     "convert": {
+        "cancel": "Khansela",
         "converting": "Iyaguqula…",
+        "minutesLeft": "Cishe amaminithi {{minutes}} asele",
         "pause": "Misa isikhashana",
         "paused": "Imisiwe okwesikhashana",
-        "refineNote": "Umzamo wokuqala awuzange ufinyelele ilitshe. Kulungiswa i-bitrate nokubhalwa futhi.",
+        "refineNote": "Umzamo wokugcina awufinyelelanga usayizi wakho, ngakho ividiyo incishiswa futhi (umzamo {{number}}).",
         "refining": "Ilungisa usayizi…",
         "resume": "Qalisa kabusha",
+        "secondsLeft": "Kusele cishe {{seconds}} s",
         "start": "Guqula"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Sicela ukhethe ifayela levidiyo.",
         "shareFailed": "Kuhluleke ukuthola ividiyo eyabelwe ({{message}}). Zama ukukhetha ifayela ngokuqondile esikhundleni salokho.",
         "shareNeverArrived": "Ividiyo eyabelwe ayizange ifike kusistimu. Zama ukukhetha ifayela ngokuqondile esikhundleni salokho.",
+        "shareOutFailed": "Kuhlulekile ukuvula imenyu yokwabelana. Sebenzisa okuthi Landa esikhundleni salokho.",
         "shareTimeout": "Kuyekwe ukulinda ividiyo eyabelwe. Zama ukukhetha ifayela ngokuqondile esikhundleni salokho."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU fallback",
         "noShrink": "Kwehlulekile ukukwenza lokhu kube kuncane:",
         "noShrinkDetail": "Le vidiyo ayicindezelwa ngaphansi kosayizi wayo wamanje, ngakho ishiywe injalo.",
+        "overTarget": "Akukwazekanga ukufinyelela ngaphansi kuka-{{target}}. Lokhu kuyilokho okusondelene kakhulu:",
+        "overTargetHint": "Zama usayizi omkhulu, noma ividiyo emfushane.",
         "remuxed": "Imethadatha isusiwe, ividiyo ishiywe ingathintwanga",
+        "share": "Yabelana",
+        "smaller": "{{percent}}% incane",
         "untouched": "Kushiywe kunjalo, akukho okufanele kuncishiswe",
         "webcodecs": "WebCodecs, isheshiswe ngehadiwe",
         "webcodecsSoftware": "WebCodecs, i-encoder yesofthiwe"

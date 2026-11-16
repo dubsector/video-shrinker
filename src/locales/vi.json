@@ -7,12 +7,15 @@
         "targetSize": "Kích thước mục tiêu"
     },
     "convert": {
+        "cancel": "Hủy",
         "converting": "Đang chuyển đổi…",
+        "minutesLeft": "Còn khoảng {{minutes}} phút",
         "pause": "Tạm dừng",
         "paused": "Đã tạm dừng",
-        "refineNote": "Lần chạy đầu tiên không đạt mục tiêu. Đang điều chỉnh lại bitrate và mã hóa.",
+        "refineNote": "Lần thử cuối cùng không đạt kích thước bạn muốn, vì vậy video đang được nén lại (lần thử {{number}}).",
         "refining": "Đang tinh chỉnh kích thước…",
         "resume": "Tiếp tục",
+        "secondsLeft": "Còn khoảng {{seconds}} giây",
         "start": "Chuyển đổi"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Vui lòng chọn một tệp video.",
         "shareFailed": "Không thể nhận video được chia sẻ ({{message}}). Hãy thử chọn tệp trực tiếp thay thế.",
         "shareNeverArrived": "Video được chia sẻ chưa nhận được từ hệ thống. Hãy thử chọn tệp trực tiếp.",
+        "shareOutFailed": "Không thể mở menu chia sẻ. Hãy sử dụng Tải xuống thay thế.",
         "shareTimeout": "Đã ngừng chờ video được chia sẻ. Hãy thử chọn tệp trực tiếp."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, dự phòng CPU",
         "noShrink": "Không thể làm cho tệp này nhỏ hơn:",
         "noShrinkDetail": "Đoạn phim này không thể nén xuống dưới kích thước hiện tại, vì vậy nó đã được giữ nguyên",
+        "overTarget": "Không thể giảm xuống dưới {{target}}. Đây là kết quả gần nhất:",
+        "overTargetHint": "Hãy thử kích thước lớn hơn hoặc video ngắn hơn.",
         "remuxed": "Đã loại bỏ Metadata, video được giữ nguyên",
+        "share": "Chia sẻ",
+        "smaller": "Nhỏ hơn {{percent}}%",
         "untouched": "Để nguyên như cũ, không có gì để thu nhỏ",
         "webcodecs": "WebCodecs, tăng tốc phần cứng",
         "webcodecsSoftware": "WebCodecs, bộ mã hóa phần mềm"

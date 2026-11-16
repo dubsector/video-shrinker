@@ -24,6 +24,8 @@ CHROME=com.android.chrome
 APP_URL=https://dubsector.github.io/video-shrinker/
 HERE=$(cd "$(dirname "$0")" && pwd)
 VIDEO=smoke-test.mp4
+# shellcheck source=android/emulator-test/local-site.sh
+. "$HERE/local-site.sh"
 
 mkdir -p "$OUT_DIR"
 
@@ -101,18 +103,9 @@ echo "Chrome $(adb shell dumpsys package "$CHROME" | grep -m1 versionName | tr -
 flags=(_ --disable-fre --no-default-browser-check --no-first-run
   --disable-digital-asset-link-verification-for-url=https://dubsector.github.io)
 if [ -n "${WEB_ROOT:-}" ]; then
-  # Serve WEB_ROOT (a `npm run build` output) in place of the live site:
-  # Chrome resolves dubsector.github.io to a local HTTPS server reached over
-  # adb reverse, and trusts its throwaway certificate by key.
-  openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj /CN=dubsector.github.io \
-    -keyout "$OUT_DIR/key.pem" -out "$OUT_DIR/cert.pem" 2> /dev/null
-  spki=$(openssl x509 -in "$OUT_DIR/cert.pem" -pubkey -noout | openssl pkey -pubin -outform der \
-    | openssl dgst -sha256 -binary | base64)
-  node "$HERE/serve.mjs" "$WEB_ROOT" "$OUT_DIR/cert.pem" "$OUT_DIR/key.pem" 4443 > "$OUT_DIR/server.log" 2>&1 &
-  adb reverse tcp:4443 tcp:4443
-  flags+=("\"--host-resolver-rules=MAP dubsector.github.io 127.0.0.1:4443\""
-    "--ignore-certificate-errors-spki-list=$spki")
-  echo "Serving $WEB_ROOT as https://dubsector.github.io"
+  # Serve WEB_ROOT (a `npm run build` output) in place of the live site.
+  serve_web_root "$WEB_ROOT" "$OUT_DIR" || fail "could not serve $WEB_ROOT"
+  flags+=("${LOCAL_SITE_FLAGS[@]}")
 else
   echo "Using the live site"
 fi

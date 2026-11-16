@@ -31,3 +31,6 @@ android/*.apk
 *.njsproj
 *.sln
 *.sw?
+
+# Test output
+web-test-output

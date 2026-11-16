@@ -7,16 +7,25 @@
 # phone, without using its daily quota. No conversion is checked, so the
 # emulator's lack of a hardware encoder doesn't matter.
 #
-# The app loads the live site, as on Test Lab.
+# With WEB_ROOT set to a web build (dist/), the app loads that build
+# instead of the live site, so a PR's shares are tested against its own web
+# app. A test that fails is run once more by itself before the run counts
+# as failed: a freshly booted emulator is sometimes too slow to show the app
+# in time, a different test each run.
 #
 # Usage: android/emulator-test/share-tests.sh
 # Run from the repository root with an emulator attached. Needs adb and
-# ffmpeg. Screenshots, logcat and the test report go to $OUT_DIR (default:
-# emulator-test-output/share-tests).
+# ffmpeg, and openssl and Node 22+ with WEB_ROOT. Screenshots, logcat and
+# the test report go to $OUT_DIR (default: emulator-test-output/share-tests).
 set -euo pipefail
 
 OUT_DIR=${OUT_DIR:-emulator-test-output/share-tests}
+HERE=$(cd "$(dirname "$0")" && pwd)
+TESTS=io.github.dubsector.videoshrinker.ShareSourcesTest
 mkdir -p "$OUT_DIR"
+# shellcheck source=android/emulator-test/local-site.sh
+. "$HERE/local-site.sh"
+trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
 
 # The same noisy 12-second 720p clip as run-firebase-test.sh, where
 # WebApp.VIDEO expects it.
@@ -38,19 +47,45 @@ fi
 
 # Chrome's flags, as on Test Lab: skip its first-run screens and the Digital
 # Asset Links check, which the debug signing key would fail.
-echo "_ --disable-fre --no-default-browser-check --no-first-run --disable-digital-asset-link-verification-for-url=https://dubsector.github.io" \
-  | adb shell 'cat > /data/local/tmp/chrome-command-line'
+flags=(_ --disable-fre --no-default-browser-check --no-first-run
+  --disable-digital-asset-link-verification-for-url=https://dubsector.github.io)
+if [ -n "${WEB_ROOT:-}" ]; then
+  serve_web_root "$WEB_ROOT" "$OUT_DIR"
+  flags+=("${LOCAL_SITE_FLAGS[@]}")
+else
+  echo "Using the live site"
+fi
+echo "${flags[*]}" | adb shell 'cat > /data/local/tmp/chrome-command-line'
 adb shell rm -rf /sdcard/test-lab
 # Room for the whole run's logcat, read back at the end.
 adb logcat -G 16M || true
 adb logcat -c || true
 
+# Runs the tests named in $2 (a class, or class#test,class#test), giving up
+# after $1.
+run_tests() {
+  (cd android && timeout --signal=INT --kill-after=30s "$1" ./gradlew connectedDebugAndroidTest \
+    "-Pandroid.testInstrumentationRunnerArguments.class=$2" \
+    -Pandroid.testInstrumentationRunnerArguments.engine=any)
+}
+
 status=0
 # Each test has its own time limit, but stop the whole run in time to save
-# the logs below before the CI step's 25 minutes run out.
-(cd android && timeout --signal=INT --kill-after=30s 17m ./gradlew connectedDebugAndroidTest \
-  -Pandroid.testInstrumentationRunnerArguments.class=io.github.dubsector.videoshrinker.ShareSourcesTest \
-  -Pandroid.testInstrumentationRunnerArguments.engine=any) || status=$?
+# the logs below before the CI step's time runs out.
+run_tests 17m "$TESTS" || status=$?
+# 124 is the time limit: a run that hung is not worth starting again.
+if [ "$status" != 0 ] && [ "$status" != 124 ]; then
+  failed=$(timeout 60s adb logcat -d 2> /dev/null | grep -oE 'TestRunner: failed: [A-Za-z0-9_]+' | awk '{print $3}' | sort -u)
+  if [ -n "$failed" ]; then
+    echo "--- Failed the first time, running once more: $(echo $failed)"
+    # The second run's report replaces the first's; keep both.
+    cp -r android/app/build/outputs/androidTest-results "$OUT_DIR/first-run-results" 2> /dev/null || true
+    timeout 60s adb pull /sdcard/test-lab "$OUT_DIR/first-run-screens" > /dev/null 2>&1 || true
+    status=0
+    run_tests 6m "$(for t in $failed; do printf '%s#%s,' "$TESTS" "$t"; done | sed 's/,$//')" || status=$?
+    [ "$status" = 0 ] && echo "--- Passed the second time: $(echo $failed)"
+  fi
+fi
 
 # adb waits forever for an emulator that crashed during the run.
 timeout 60s adb pull /sdcard/test-lab "$OUT_DIR/" > /dev/null 2>&1 || true
@@ -71,7 +106,7 @@ grep -E 'TestLabSmoke' "$OUT_DIR/logcat.txt" | sed -E 's/^.*TestLabSmoke[^:]*: /
 if [ "$status" != 0 ]; then
   # Enough of the system's side to follow a lost share from the job log:
   # what happened while each failed test ran.
-  for test in $(grep -oE 'TestRunner: failed: [A-Za-z]+' "$OUT_DIR/logcat.txt" | awk '{print $3}' | sort -u); do
+  for test in $(grep -oE 'TestRunner: failed: [A-Za-z0-9_]+' "$OUT_DIR/logcat.txt" | awk '{print $3}' | sort -u); do
     echo "--- Logcat during $test:"
     awk -v t="$test(" 'index($0, "TestRunner: started: " t) {on = 1} on; index($0, "TestRunner: finished: " t) {on = 0}' "$OUT_DIR/logcat.txt" \
       | grep -E 'ActivityTaskManager: (START|Activity start|Displayed)|ActivityManager: (Start proc|Killing|Process .* has died)|ShareRelay|LauncherActivity|TwaLauncher|androidbrowserhelper|AndroidRuntime|Permission Denial|SecurityException|BAL_|io\.github\.dubsector\.videoshrinker|cr_.*(Share|Intent|TWA|Trusted|Customtabs)|TestLabSmoke' \
