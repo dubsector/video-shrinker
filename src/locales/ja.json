@@ -7,12 +7,15 @@
         "targetSize": "目標サイズ"
     },
     "convert": {
+        "cancel": "キャンセル",
         "converting": "変換中…",
+        "minutesLeft": "残り約{{minutes}}分",
         "pause": "一時停止",
         "paused": "一時停止中",
-        "refineNote": "最初の処理でターゲットに達しませんでした。ビットレートとエンコードを再調整しています。",
+        "refineNote": "前回の試行では指定サイズに収まらなかったため、動画を再圧縮しています（{{number}} 回目の試行）。",
         "refining": "サイズを調整中…",
         "resume": "再開",
+        "secondsLeft": "残り約 {{seconds}} 秒",
         "start": "変換"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "動画ファイルを選択してください。",
         "shareFailed": "共有ビデオを受信できませんでした ({{message}})。代わりにファイルを直接選択してください。",
         "shareNeverArrived": "共有された動画がシステムから届きませんでした。代わりに直接ファイルを選択してみてください。",
+        "shareOutFailed": "共有メニューを開けませんでした。代わりにダウンロードを使用してください。",
         "shareTimeout": "共有ビデオの待機を終了しました。代わりにファイルを直接選択してください。"
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU フォールバック",
         "noShrink": "これ以上小さくできませんでした:",
         "noShrinkDetail": "この映像は現在のサイズ以下には圧縮できないため、そのままにしました",
+        "overTarget": "{{target}}以下にできませんでした。これが最も近い結果です：",
+        "overTargetHint": "サイズを大きくするか、短い動画をお試しください。",
         "remuxed": "メタデータを削除し、動画は変更せずに残しました",
+        "share": "共有",
+        "smaller": "{{percent}}%縮小",
         "untouched": "変更なし。圧縮の必要はありません",
         "webcodecs": "WebCodecs、ハードウェアアクセラレーション",
         "webcodecsSoftware": "WebCodecs、ソフトウェアエンコーダー"

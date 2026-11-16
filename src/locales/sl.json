@@ -7,12 +7,15 @@
         "targetSize": "Ciljna velikost"
     },
     "convert": {
+        "cancel": "Prekliči",
         "converting": "Pretvarjanje…",
+        "minutesLeft": "Še približno {{minutes}} min do konca",
         "pause": "Premor",
         "paused": "Pavzirano",
-        "refineNote": "Prvi prehod ni dosegel cilja. Še enkrat prilagajanje bitne hitrosti in kodiranja.",
+        "refineNote": "Z zadnjim poskusom nismo dosegli želene velikosti, zato videoposnetek znova krčimo (poskus {{number}}).",
         "refining": "Natančno določanje velikosti…",
         "resume": "Nadaljuj",
+        "secondsLeft": "Še približno {{seconds}} s do konca",
         "start": "Pretvori"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Prosimo, izberite videodatoteko.",
         "shareFailed": "Skupno rabljenega videoposnetka ni bilo mogoče prejeti ({{message}}). Poskusite datoteko izbrati neposredno.",
         "shareNeverArrived": "Skupno rabljen videoposnetek ni prispel iz sistema. Namesto tega poskusite izbrati datoteko neposredno.",
+        "shareOutFailed": "Meni za deljenje se ni mogel odpreti. Namesto tega uporabite Prenos.",
         "shareTimeout": "Čakanje na skupno rabljen videoposnetek je prekinjeno. Namesto tega poskusite izbrati datoteko neposredno."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, nadomestna možnost CPU",
         "noShrink": "Tega ni bilo mogoče zmanjšati:",
         "noShrinkDetail": "Tega posnetka ni mogoče stisniti pod trenutno velikost, zato je ostal nespremenjen",
+        "overTarget": "Ni uspelo priti pod {{target}}. To je najbližji rezultat:",
+        "overTargetHint": "Poskusite z večjo velikostjo ali krajšim videoposnetkom.",
         "remuxed": "Metapodatki odstranjeni, video ostal nespremenjen",
+        "share": "Deli",
+        "smaller": "{{percent}}% manjše",
         "untouched": "Puščeno nespremenjeno, nič za skrčiti",
         "webcodecs": "WebCodecs, strojno pospeševanje",
         "webcodecsSoftware": "WebCodecs, programski kodirnik"

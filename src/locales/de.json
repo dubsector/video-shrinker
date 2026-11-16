@@ -7,12 +7,15 @@
         "targetSize": "Zielgröße"
     },
     "convert": {
+        "cancel": "Abbrechen",
         "converting": "Konvertierung läuft…",
+        "minutesLeft": "Etwa {{minutes}} Min. verbleibend",
         "pause": "Pause",
         "paused": "Pausiert",
-        "refineNote": "Der erste Durchlauf hat das Ziel verfehlt. Bitrate und Kodierung werden erneut angepasst.",
+        "refineNote": "Der letzte Versuch hat die Zielgröße nicht erreicht, das Video wird daher erneut verkleinert (Versuch {{number}}).",
         "refining": "Größe wird optimiert…",
         "resume": "Fortsetzen",
+        "secondsLeft": "Noch ca. {{seconds}} s übrig",
         "start": "Konvertieren"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Bitte wähle eine Videodatei aus.",
         "shareFailed": "Das geteilte Video konnte nicht empfangen werden ({{message}}). Versuche stattdessen, die Datei direkt auszuwählen.",
         "shareNeverArrived": "Das geteilte Video ist nicht vom System eingetroffen. Versuchen Sie stattdessen, die Datei direkt auszuwählen.",
+        "shareOutFailed": "Das Freigabe-Menü konnte nicht geöffnet werden. Verwende stattdessen Download.",
         "shareTimeout": "Das Warten auf das geteilte Video wurde abgebrochen. Versuchen Sie stattdessen, die Datei direkt auszuwählen."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, CPU-Fallback",
         "noShrink": "Konnte nicht weiter verkleinert werden:",
         "noShrinkDetail": "Dieses Material lässt sich nicht weiter komprimieren, daher wurde es im Originalzustand belassen",
+        "overTarget": "Zielgröße {{target}} konnte nicht unterschritten werden. Dies ist das bestmögliche Ergebnis:",
+        "overTargetHint": "Versuche eine größere Zielgröße oder ein kürzeres Video.",
         "remuxed": "Metadaten entfernt, Video unverändert gelassen",
+        "share": "Teilen",
+        "smaller": "{{percent}}% kleiner",
         "untouched": "Unverändert gelassen, nichts zu verkleinern",
         "webcodecs": "WebCodecs, hardwarebeschleunigt",
         "webcodecsSoftware": "WebCodecs, Software-Encoder"

@@ -7,12 +7,15 @@
         "targetSize": "Rozmiar docelowy"
     },
     "convert": {
+        "cancel": "Anuluj",
         "converting": "Konwertowanie…",
+        "minutesLeft": "Pozostało około {{minutes}} min",
         "pause": "Wstrzymaj",
         "paused": "Wstrzymano",
-        "refineNote": "Pierwszy przebieg nie osiągnął celu. Ponowna regulacja bitrate i kodowania.",
+        "refineNote": "Ostatnia próba nie pozwoliła uzyskać żądanego rozmiaru, więc wideo jest ponownie kompresowane (próba nr {{number}}).",
         "refining": "Dostrajanie rozmiaru…",
         "resume": "Wznów",
+        "secondsLeft": "Pozostało około {{seconds}} s",
         "start": "Konwertuj"
     },
     "dropzone": {
@@ -24,6 +27,7 @@
         "notVideo": "Wybierz plik wideo.",
         "shareFailed": "Nie udało się odebrać udostępnionego wideo ({{message}}). Spróbuj wybrać plik bezpośrednio.",
         "shareNeverArrived": "Udostępnione wideo nie dotarło z systemu. Spróbuj wybrać plik bezpośrednio.",
+        "shareOutFailed": "Nie można otworzyć menu udostępniania. Użyj opcji Pobierz.",
         "shareTimeout": "Przerwano oczekiwanie na udostępnione wideo. Spróbuj wybrać plik bezpośrednio."
     },
     "footer": {
@@ -55,7 +59,11 @@
         "ffmpeg": "ffmpeg.wasm, zapasowy procesor (CPU)",
         "noShrink": "Nie udało się bardziej zmniejszyć:",
         "noShrinkDetail": "Tego nagrania nie można skompresować do mniejszego rozmiaru, więc pozostało bez zmian",
+        "overTarget": "Nie udało się uzyskać rozmiaru poniżej {{target}}. Oto wynik najbliższy oczekiwanemu:",
+        "overTargetHint": "Spróbuj wybrać większy rozmiar lub krótsze wideo.",
         "remuxed": "Metadane usunięto, wideo pozostało nienaruszone",
+        "share": "Udostępnij",
+        "smaller": "{{percent}}% mniejszy",
         "untouched": "Pozostawiono bez zmian, nie ma czego zmniejszać",
         "webcodecs": "WebCodecs, przyspieszenie sprzętowe",
         "webcodecsSoftware": "WebCodecs, koder programowy"
