@@ -47,7 +47,7 @@
         "restarted": "Aplikacja została zamknięta w tle i konwersja została utracona, więc uruchomiono ją ponownie."
     },
     "notify": {
-        "offer": "Powiadom mnie po zakończeniu",
+        "offer": "Powiadom mnie, gdy będzie gotowe",
         "title": "Twój film jest gotowy"
     },
     "privacy": {

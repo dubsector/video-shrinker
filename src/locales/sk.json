@@ -47,8 +47,8 @@
         "restarted": "Aplikácia bola zatvorená na pozadí a konverzia sa stratila, preto sa spustila znova."
     },
     "notify": {
-        "offer": "Upozorniť ma, keď to bude hotové",
-        "title": "Vaše video je hotové"
+        "offer": "Upozorni ma, keď bude hotovo",
+        "title": "Vaše video je pripravené"
     },
     "privacy": {
         "clean": "Žiadne účty, žiadna analytika, žiadne cookies.",

@@ -47,7 +47,7 @@
         "restarted": "L'application a été fermée en arrière-plan et la conversion a été perdue, elle a donc recommencé."
     },
     "notify": {
-        "offer": "Me prévenir à la fin",
+        "offer": "Me prévenir une fois terminé",
         "title": "Votre vidéo est prête"
     },
     "privacy": {

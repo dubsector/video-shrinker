@@ -47,8 +47,8 @@
         "restarted": "應用在後臺關閉，導致轉換中斷，因此已重新開始。"
     },
     "notify": {
-        "offer": "完成時通知我",
-        "title": "影片已準備好"
+        "offer": "完成後提醒我",
+        "title": "您的影片已就緒"
     },
     "privacy": {
         "clean": "無賬戶，無分析，無 Cookie。",

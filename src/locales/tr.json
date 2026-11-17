@@ -47,7 +47,7 @@
         "restarted": "Uygulama arka planda kapatıldı ve dönüştürme işlemi kayboldu, bu yüzden işlem yeniden başladı."
     },
     "notify": {
-        "offer": "Bitince bana haber ver",
+        "offer": "İşlem tamamlandığında beni uyar",
         "title": "Videonuz hazır"
     },
     "privacy": {

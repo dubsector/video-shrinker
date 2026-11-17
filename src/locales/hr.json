@@ -47,8 +47,8 @@
         "restarted": "Aplikacija je zatvorena u pozadini i pretvorba je izgubljena, stoga je ponovno započela."
     },
     "notify": {
-        "offer": "Obavijesti me kad bude gotovo",
-        "title": "Vaš videozapis je spreman"
+        "offer": "Obavijesti me kada bude gotovo",
+        "title": "Vaš je video spreman"
     },
     "privacy": {
         "clean": "Bez računa, bez analitike, bez kolačića.",
