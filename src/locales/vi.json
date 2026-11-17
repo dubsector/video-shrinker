@@ -47,7 +47,7 @@
         "restarted": "Ứng dụng đã bị đóng trong nền và quá trình chuyển đổi bị mất, nên ứng dụng đã khởi động lại."
     },
     "notify": {
-        "offer": "Báo cho tôi khi xong",
+        "offer": "Thông báo cho tôi khi hoàn tất",
         "title": "Video của bạn đã sẵn sàng"
     },
     "privacy": {

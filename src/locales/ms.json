@@ -47,8 +47,8 @@
         "restarted": "Aplikasi ditutup di latar belakang dan penukaran telah hilang, jadi ia dimulakan semula."
     },
     "notify": {
-        "offer": "Maklumkan saya apabila siap",
-        "title": "Video anda sudah sedia"
+        "offer": "Beritahu saya apabila ia selesai",
+        "title": "Video anda sudah siap"
     },
     "privacy": {
         "clean": "Tiada akaun, tiada analitik, tiada kuki.",

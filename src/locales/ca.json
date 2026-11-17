@@ -47,8 +47,8 @@
         "restarted": "L'aplicació s'ha tancat en segon pla i la conversió s'ha perdut, així que s'ha iniciat de nou."
     },
     "notify": {
-        "offer": "Avisa'm quan acabi",
-        "title": "El vídeo ja està a punt"
+        "offer": "Avisa'm quan estigui fet",
+        "title": "El teu vídeo està a punt"
     },
     "privacy": {
         "clean": "Sense comptes, sense analítiques, sense cookies.",

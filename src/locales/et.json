@@ -47,7 +47,7 @@
         "restarted": "Rakendus suleti taustal ja teisendamine läks kaotsi, seega see käivitus uuesti."
     },
     "notify": {
-        "offer": "Teavita mind, kui valmis",
+        "offer": "Teavita mind, kui see on valmis",
         "title": "Sinu video on valmis"
     },
     "privacy": {

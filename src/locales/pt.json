@@ -47,8 +47,8 @@
         "restarted": "O aplicativo foi fechado em segundo plano e a conversão foi perdida, portanto, ela foi iniciada novamente."
     },
     "notify": {
-        "offer": "Avisar-me quando terminar",
-        "title": "O seu vídeo está pronto"
+        "offer": "Avise-me quando terminar",
+        "title": "Seu vídeo está pronto"
     },
     "privacy": {
         "clean": "Sem contas, sem análise, sem cookies.",
