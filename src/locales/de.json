@@ -46,6 +46,10 @@
         "interruptedAgain": "Die App wurde im Hintergrund erneut geschlossen, bevor die Konvertierung abgeschlossen war. Drücke auf \"Konvertieren\", um es erneut zu versuchen.",
         "restarted": "Die App wurde im Hintergrund geschlossen und die Konvertierung ging verloren, daher wurde sie neu gestartet."
     },
+    "notify": {
+        "offer": "Benachrichtigen, wenn fertig",
+        "title": "Dein Video ist fertig"
+    },
     "privacy": {
         "clean": "Keine Konten, kein Analytics, keine Cookies.",
         "installable": "Als App installierbar, funktioniert offline.",

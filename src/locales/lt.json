@@ -46,6 +46,10 @@
         "interruptedAgain": "Programėlė vėl buvo uždaryta fone, nebaigus konvertavimo. Paspauskite Convert, kad bandytumėte dar kartą.",
         "restarted": "Programėlė buvo uždaryta fone ir konvertavimas nutrūko, todėl jis prasidėjo iš naujo."
     },
+    "notify": {
+        "offer": "Pranešti, kai bus baigta",
+        "title": "Jūsų vaizdo įrašas paruoštas"
+    },
     "privacy": {
         "clean": "Jokių paskyrų, jokios analitikos, jokių slapukų.",
         "installable": "Galima įdiegti kaip programėlę, veikia neprisijungus.",

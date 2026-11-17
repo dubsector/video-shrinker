@@ -46,6 +46,10 @@
         "interruptedAgain": "Sovellus sulkeutui taustalla uudelleen ennen kuin muunnos valmistui. Paina Convert yrittääksesi uudelleen.",
         "restarted": "Sovellus sulkeutui taustalla ja muunnos keskeytyi, joten se on käynnistynyt uudelleen."
     },
+    "notify": {
+        "offer": "Ilmoita, kun valmis",
+        "title": "Videosi on valmis"
+    },
     "privacy": {
         "clean": "Ei tilejä, ei analytiikkaa, ei evästeitä.",
         "installable": "Asennettavissa sovelluksena, toimii offline-tilassa.",

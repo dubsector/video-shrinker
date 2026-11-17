@@ -46,6 +46,10 @@
         "interruptedAgain": "Ứng dụng lại bị đóng trong nền trước khi quá trình chuyển đổi hoàn tất. Nhấn Convert để thử lại.",
         "restarted": "Ứng dụng đã bị đóng trong nền và quá trình chuyển đổi bị mất, nên ứng dụng đã khởi động lại."
     },
+    "notify": {
+        "offer": "Báo cho tôi khi xong",
+        "title": "Video của bạn đã sẵn sàng"
+    },
     "privacy": {
         "clean": "Không tài khoản, không phân tích, không cookie.",
         "installable": "Có thể cài đặt như một ứng dụng, hoạt động ngoại tuyến.",

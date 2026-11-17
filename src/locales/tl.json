@@ -46,6 +46,10 @@
         "interruptedAgain": "Ang app ay naisara muli sa background bago matapos ang conversion. Pindutin ang Convert para sumubok muli.",
         "restarted": "Ang app ay naisara sa background at nawala ang conversion, kaya ito ay nagsimula muli."
     },
+    "notify": {
+        "offer": "Abisuhan ako kapag tapos na",
+        "title": "Handa na ang video mo"
+    },
     "privacy": {
         "clean": "Walang mga account, walang analytics, walang cookies.",
         "installable": "Maaaring i-install bilang app, gumagana nang offline.",

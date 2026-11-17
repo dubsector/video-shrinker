@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplikácia bola na pozadí opäť zatvorená skôr, než sa konverzia dokončila. Stlačte Convert, aby ste to skúsili znova.",
         "restarted": "Aplikácia bola zatvorená na pozadí a konverzia sa stratila, preto sa spustila znova."
     },
+    "notify": {
+        "offer": "Upozorniť ma, keď to bude hotové",
+        "title": "Vaše video je hotové"
+    },
     "privacy": {
         "clean": "Žiadne účty, žiadna analytika, žiadne cookies.",
         "installable": "Možno nainštalovať ako aplikáciu, funguje offline.",

@@ -46,6 +46,10 @@
         "interruptedAgain": "De app werd opnieuw op de achtergrond gesloten voordat de conversie was voltooid. Druk op Convert om het opnieuw te proberen.",
         "restarted": "De app werd op de achtergrond gesloten en de conversie is verloren gegaan, dus is deze opnieuw gestart."
     },
+    "notify": {
+        "offer": "Laat het me weten als het klaar is",
+        "title": "Je video is klaar"
+    },
     "privacy": {
         "clean": "Geen accounts, geen analytics, geen cookies.",
         "installable": "Installeerbaar als app, werkt offline.",

@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplikacija je ponovo zatvorena u pozadini pre završetka konverzije. Pritisnite Convert da pokušate ponovo.",
         "restarted": "Aplikacija je zatvorena u pozadini i konverzija je izgubljena, pa je ponovo pokrenuta."
     },
+    "notify": {
+        "offer": "Обавести ме када буде готово",
+        "title": "Ваш видео је спреман"
+    },
     "privacy": {
         "clean": "Bez naloga, bez analitike, bez kolačića.",
         "installable": "Može se instalirati kao aplikacija, radi van mreže.",

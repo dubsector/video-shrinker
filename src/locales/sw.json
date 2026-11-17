@@ -46,6 +46,10 @@
         "interruptedAgain": "Programu ilifungwa chinichini tena kabla ya ubadilishaji kukamilika. Bonyeza Convert ili ujaribu tena.",
         "restarted": "Programu ilifungwa chinichini na ubadilishaji ulipotea, kwa hivyo imeanza tena."
     },
+    "notify": {
+        "offer": "Nijulishe ikikamilika",
+        "title": "Video yako iko tayari"
+    },
     "privacy": {
         "clean": "Hakuna akaunti, hakuna takwimu, hakuna vidakuzi.",
         "installable": "Inaweza kusakinishwa kama programu, inafanya kazi nje ya mtandao.",

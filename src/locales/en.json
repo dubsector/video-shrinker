@@ -84,5 +84,9 @@
   "notice": {
     "restarted": "The app was closed in the background and the conversion was lost, so it has started again.",
     "interruptedAgain": "The app was closed in the background again before the conversion finished. Press Convert to try once more."
+  },
+  "notify": {
+    "offer": "Alert me when it's done",
+    "title": "Your video is ready"
   }
 }

@@ -46,6 +46,10 @@
         "interruptedAgain": "L'app è vegnida serrada puspè en il background avant che la conversiun è stada terminada. Stritga sin Convert per empruvar anc ina giada.",
         "restarted": "L'app è vegnida serrada en il background e la conversiun è ida a perder, perquai ha ella cumenzà da nov."
     },
+    "notify": {
+        "offer": "Ma avisar cura che quai è finì",
+        "title": "Tes video è pront"
+    },
     "privacy": {
         "clean": "Nagins quints, nagina analitica, nagins cookies.",
         "installable": "Installabel sco app, funcziuna offline.",

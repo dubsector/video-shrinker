@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplikacija je bila v ozadju znova zaprta, preden se je pretvorba končala. Pritisnite Convert za ponoven poskus.",
         "restarted": "Aplikacija je bila zaprta v ozadju in pretvorba je bila izgubljena, zato se je znova začela."
     },
+    "notify": {
+        "offer": "Obvesti me, ko bo končano",
+        "title": "Vaš videoposnetek je pripravljen"
+    },
     "privacy": {
         "clean": "Brez računov, brez analitike, brez piškotkov.",
         "installable": "Lahko se namesti kot aplikacija, deluje brez povezave.",

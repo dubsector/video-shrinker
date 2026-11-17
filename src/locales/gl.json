@@ -46,6 +46,10 @@
         "interruptedAgain": "A aplicación pechouse de novo en segundo plano antes de que rematase a conversión. Preme Convert para tentalo de novo.",
         "restarted": "A aplicación pechouse en segundo plano e a conversión perdeuse, polo que se iniciou de novo."
     },
+    "notify": {
+        "offer": "Avisarme ao rematar",
+        "title": "O teu vídeo está listo"
+    },
     "privacy": {
         "clean": "Sen contas, sen analíticas, sen cookies.",
         "installable": "Instalable como unha aplicación, funciona sen conexión.",

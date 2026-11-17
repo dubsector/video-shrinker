@@ -46,6 +46,10 @@
         "interruptedAgain": "L'application a été fermée en arrière-plan à nouveau avant la fin de la conversion. Appuyez sur Convertir pour réessayer.",
         "restarted": "L'application a été fermée en arrière-plan et la conversion a été perdue, elle a donc recommencé."
     },
+    "notify": {
+        "offer": "Me prévenir à la fin",
+        "title": "Votre vidéo est prête"
+    },
     "privacy": {
         "clean": "Aucun compte, aucune analyse, aucun cookie.",
         "installable": "Installable comme application, fonctionne hors ligne.",

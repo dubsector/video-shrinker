@@ -46,6 +46,10 @@
         "interruptedAgain": "Tətbiq çevrilmə bitməmiş yenidən fonda bağlandı. Yenidən cəhd etmək üçün \"Convert\" düyməsinə basın.",
         "restarted": "Tətbiq fonda bağlandı və çevrilmə itdi, buna görə də o, yenidən başladı."
     },
+    "notify": {
+        "offer": "Bitəndə mənə xəbər ver",
+        "title": "Videonuz hazırdır"
+    },
     "privacy": {
         "clean": "Hesab yoxdur, analitika yoxdur, kukilər yoxdur.",
         "installable": "Tətbiq kimi quraşdırıla bilər, oflayn işləyir.",
