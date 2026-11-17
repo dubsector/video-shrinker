@@ -46,6 +46,10 @@
         "interruptedAgain": "Uhlelo lokusebenza luvaleke ngemuva futhi ngaphambi kokuba ukuguqulwa kuqedwe. Cindezela u-Convert ukuze uzame futhi.",
         "restarted": "Uhlelo lokusebenza luvalwe ngemuva futhi ukuguqulwa kulahlekile, ngakho-ke kuqalise kabusha."
     },
+    "notify": {
+        "offer": "Ngazise uma sekuqediwe",
+        "title": "Ividiyo yakho isilungile"
+    },
     "privacy": {
         "clean": "Awekho ama-akhawunti, akukho ukuhlaziya, awekho amakhukhi.",
         "installable": "Ingafakwa njengohlelo lokusebenza, isebenza ungaxhumekile ku-inthanethi.",

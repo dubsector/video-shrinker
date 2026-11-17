@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplikasi ditutup di latar belakang sekali lagi sebelum penukaran selesai. Tekan Convert untuk cuba sekali lagi.",
         "restarted": "Aplikasi ditutup di latar belakang dan penukaran telah hilang, jadi ia dimulakan semula."
     },
+    "notify": {
+        "offer": "Maklumkan saya apabila siap",
+        "title": "Video anda sudah sedia"
+    },
     "privacy": {
         "clean": "Tiada akaun, tiada analitik, tiada kuki.",
         "installable": "Boleh dipasang sebagai aplikasi, berfungsi di luar talian.",

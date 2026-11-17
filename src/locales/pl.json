@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplikacja została ponownie zamknięta w tle przed zakończeniem konwersji. Naciśnij Convert, aby spróbować jeszcze raz.",
         "restarted": "Aplikacja została zamknięta w tle i konwersja została utracona, więc uruchomiono ją ponownie."
     },
+    "notify": {
+        "offer": "Powiadom mnie po zakończeniu",
+        "title": "Twój film jest gotowy"
+    },
     "privacy": {
         "clean": "Brak kont, brak analityki, brak plików cookie.",
         "installable": "Możliwość instalacji jako aplikacja, działa offline.",

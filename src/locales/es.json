@@ -46,6 +46,10 @@
         "interruptedAgain": "La aplicación se cerró de nuevo en segundo plano antes de que finalizara la conversión. Pulsa Convert para intentarlo de nuevo.",
         "restarted": "La aplicación se cerró en segundo plano y la conversión se perdió, por lo que se ha iniciado de nuevo."
     },
+    "notify": {
+        "offer": "Avisarme cuando termine",
+        "title": "Tu vídeo está listo"
+    },
     "privacy": {
         "clean": "Sin cuentas, sin analíticas, sin cookies.",
         "installable": "Se puede instalar como aplicación, funciona sin conexión.",

@@ -46,6 +46,10 @@
         "interruptedAgain": "Lietotne fonā atkal tika aizvērta, pirms konvertēšana bija pabeigta. Nospiediet Convert, lai mēģinātu vēlreiz.",
         "restarted": "Lietotne tika aizvērta fonā un konvertēšana tika pārtraukta, tāpēc tā sākās no jauna."
     },
+    "notify": {
+        "offer": "Paziņot, kad gatavs",
+        "title": "Jūsu video ir gatavs"
+    },
     "privacy": {
         "clean": "Nav kontu, nav analītikas, nav sīkfailu.",
         "installable": "Instalējams kā lietotne, darbojas bezsaistē.",

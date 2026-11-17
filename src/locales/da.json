@@ -46,6 +46,10 @@
         "interruptedAgain": "Appen blev lukket i baggrunden igen, før konverteringen var færdig. Tryk på Convert for at prøve igen.",
         "restarted": "Appen blev lukket i baggrunden, og konverteringen gik tabt, så den er startet igen."
     },
+    "notify": {
+        "offer": "Giv mig besked, når det er færdigt",
+        "title": "Din video er klar"
+    },
     "privacy": {
         "clean": "Ingen konti, ingen analyse, ingen cookies.",
         "installable": "Kan installeres som app, virker offline.",

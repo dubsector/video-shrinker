@@ -46,6 +46,10 @@
         "interruptedAgain": "L'app è stata chiusa di nuovo in background prima che la conversione terminasse. Premi Convert per riprovare.",
         "restarted": "L'app è stata chiusa in background e la conversione è andata perduta, quindi è ricominciata."
     },
+    "notify": {
+        "offer": "Avvisami quando ha finito",
+        "title": "Il tuo video è pronto"
+    },
     "privacy": {
         "clean": "Nessun account, nessuna analisi, nessun cookie.",
         "installable": "Installabile come app, funziona offline.",

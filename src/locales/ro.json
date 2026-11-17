@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplicația a fost închisă din nou în fundal înainte de finalizarea conversiei. Apăsați Convert pentru a încerca din nou.",
         "restarted": "Aplicația a fost închisă în fundal și conversia s-a pierdut, așa că a repornit."
     },
+    "notify": {
+        "offer": "Anunță-mă când e gata",
+        "title": "Videoclipul tău este gata"
+    },
     "privacy": {
         "clean": "Fără conturi, fără analitice, fără cookie-uri.",
         "installable": "Instalabil ca aplicație, funcționează offline.",

@@ -46,6 +46,10 @@
         "interruptedAgain": "Az alkalmazás a konvertálás befejezése előtt ismét bezárult a háttérben. Nyomja meg a Convert gombot az újrapróbálkozáshoz.",
         "restarted": "Az alkalmazás a háttérben bezárult, és a konvertálás megszakadt, ezért újraindult."
     },
+    "notify": {
+        "offer": "Értesíts, ha kész",
+        "title": "A videód elkészült"
+    },
     "privacy": {
         "clean": "Nincs fiók, nincs analitika, nincsenek sütik.",
         "installable": "Alkalmazásként telepíthető, offline is működik.",

@@ -46,6 +46,10 @@
         "interruptedAgain": "Aplikacioni u mbyll përsëri në sfond para se të përfundonte konvertimi. Shtypni Convert për të provuar përsëri.",
         "restarted": "Aplikacioni u mbyll në sfond dhe konvertimi humbi, kështu që ai filloi përsëri."
     },
+    "notify": {
+        "offer": "Më njofto kur të mbarojë",
+        "title": "Videoja juaj është gati"
+    },
     "privacy": {
         "clean": "Pa llogari, pa analitikë, pa cookies.",
         "installable": "Instalohet si aplikacion, punon jashtë linje.",

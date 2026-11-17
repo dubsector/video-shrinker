@@ -46,6 +46,10 @@
         "interruptedAgain": "Forritið var lokað í bakgrunni aftur áður en umbreytingunni lauk. Ýttu á Convert til að reyna aftur.",
         "restarted": "Forritið var lokað í bakgrunni og umbreytingin glataðist, svo hún er hafin aftur."
     },
+    "notify": {
+        "offer": "Láttu mig vita þegar þetta er búið",
+        "title": "Myndbandið þitt er tilbúið"
+    },
     "privacy": {
         "clean": "Engir reikningar, engin greining, engar vafrakökur.",
         "installable": "Hægt að setja upp sem forrit, virkar án nettengingar.",

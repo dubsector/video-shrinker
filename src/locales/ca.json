@@ -46,6 +46,10 @@
         "interruptedAgain": "L'aplicació s'ha tornat a tancar en segon pla abans que finalitzés la conversió. Prem Convert per tornar-ho a provar.",
         "restarted": "L'aplicació s'ha tancat en segon pla i la conversió s'ha perdut, així que s'ha iniciat de nou."
     },
+    "notify": {
+        "offer": "Avisa'm quan acabi",
+        "title": "El vídeo ja està a punt"
+    },
     "privacy": {
         "clean": "Sense comptes, sense analítiques, sense cookies.",
         "installable": "Es pot instal·lar com a aplicació, funciona fora de línia.",

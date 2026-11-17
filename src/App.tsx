@@ -4,6 +4,7 @@ import './App.css';
 import { setAppBusy } from './lib/appBusy';
 import type { ConversionPhase, ConvertResult } from './lib/convert';
 import { ConversionCancelledError, type ConversionHandle, prepareConverter, releaseOutputs, startConversion } from './lib/converter';
+import { type AlertPermission, askForDoneAlerts, clearDoneAlert, doneAlertPermission, notifyDone } from './lib/doneNotification';
 import { keepScreenOn } from './lib/keepScreenOn';
 import { clearJob, forgetResult, fromSavedResult, loadJob, saveFile, saveState, type SavedSettings, toSavedResult } from './lib/savedJob';
 
@@ -77,6 +78,9 @@ function App() {
   // True until the saved job has been looked for, so an update can't reload
   // the page in the moment before a restored video lands.
   const [restoring, setRestoring] = useState(true);
+  // Whether a "video is ready" alert can be shown, asked for from a button
+  // while a shrink runs rather than on launch.
+  const [alertPermission, setAlertPermission] = useState<AlertPermission>(doneAlertPermission);
   const [isDragging, setIsDragging] = useState(false);
   const [receivingShare, setReceivingShare] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -297,6 +301,8 @@ function App() {
       setNotice(null);
       // A nudge for someone who put the phone down to wait.
       navigator.vibrate?.(200);
+      // And an alert for someone who switched to another app meanwhile.
+      void notifyDone(t('notify.title'), `${formatBytes(file.size)} → ${formatBytes(converted.blob.size)}`);
       void saveState({ settings, converting: false, restarts: 0, result: toSavedResult(converted, file) });
     } catch (e) {
       if (e instanceof ConversionCancelledError) {
@@ -318,7 +324,7 @@ function App() {
       conversionRef.current = null;
       setPaused(false);
     }
-  }, [file, targetMb, hevcAvailable, forceH264, stripMetadata]);
+  }, [file, targetMb, hevcAvailable, forceH264, stripMetadata, t]);
 
   // Brings back whatever the last page was holding when the browser threw it
   // away in the background: the video and settings, a result not yet
@@ -392,6 +398,22 @@ function App() {
     }
     setPaused(!paused);
   }, [paused]);
+
+  // Coming back to the app makes the alert redundant. The permission is
+  // read again too, since it can be changed in the system settings meanwhile.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      setAlertPermission(doneAlertPermission());
+      void clearDoneAlert();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
+
+  const offerDoneAlert = useCallback(() => {
+    void askForDoneAlerts().then(setAlertPermission);
+  }, []);
 
   const cancelConversion = useCallback(() => {
     conversionRef.current?.cancel();
@@ -611,6 +633,11 @@ function App() {
             </div>
             <div className="progress-footer">
               <span className="time-left">{!paused && timeLeft}</span>
+              {alertPermission === 'default' && (
+                <button type="button" className="link-button" onClick={offerDoneAlert}>
+                  {t('notify.offer')}
+                </button>
+              )}
               <button type="button" className="link-button" onClick={cancelConversion}>
                 {t('convert.cancel')}
               </button>

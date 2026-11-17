@@ -46,6 +46,10 @@
         "interruptedAgain": "Die toepassing is weer in die agtergrond gesluit voordat die omskakeling voltooi is. Druk Skakel om om weer te probeer.",
         "restarted": "Die toepassing is in die agtergrond gesluit en die omskakeling is verlore, dus het dit weer begin."
     },
+    "notify": {
+        "offer": "Laat weet my as dit klaar is",
+        "title": "Jou video is gereed"
+    },
     "privacy": {
         "clean": "Geen rekeninge, geen analise, geen koekies.",
         "installable": "Installeerbaar as 'n toepassing, werk vanlyn.",

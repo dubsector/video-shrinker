@@ -46,6 +46,10 @@
         "interruptedAgain": "Rakendus suleti taustal uuesti enne teisendamise lõpetamist. Vajutage teisendamiseks nuppu Convert, et uuesti proovida.",
         "restarted": "Rakendus suleti taustal ja teisendamine läks kaotsi, seega see käivitus uuesti."
     },
+    "notify": {
+        "offer": "Teavita mind, kui valmis",
+        "title": "Sinu video on valmis"
+    },
     "privacy": {
         "clean": "Kontosid, analüütikat ega küpsiseid ei kasutata.",
         "installable": "Paigaldatav rakendusena, töötab võrguühenduseta.",

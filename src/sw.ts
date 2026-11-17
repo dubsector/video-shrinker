@@ -34,6 +34,20 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
   event.waitUntil(caches.delete('share-target'))
 })
 
+// Tapping the "video is ready" alert brings the app back to the front, or
+// opens it if it was closed in the meantime.
+self.addEventListener('notificationclick', (event: NotificationEvent) => {
+  event.notification.close()
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      const open = windows.find((client) => client.url.startsWith(self.registration.scope))
+      if (open) await open.focus()
+      else await self.clients.openWindow(self.registration.scope)
+    })(),
+  )
+})
+
 const shareReadyResolvers: Array<(client: Client) => void> = []
 
 self.addEventListener('message', (event: ExtendableMessageEvent) => {

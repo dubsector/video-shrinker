@@ -46,6 +46,10 @@
         "interruptedAgain": "Uygulama, dönüştürme işlemi tamamlanmadan arka planda tekrar kapatıldı. Tekrar denemek için Convert düğmesine basın.",
         "restarted": "Uygulama arka planda kapatıldı ve dönüştürme işlemi kayboldu, bu yüzden işlem yeniden başladı."
     },
+    "notify": {
+        "offer": "Bitince bana haber ver",
+        "title": "Videonuz hazır"
+    },
     "privacy": {
         "clean": "Hesap yok, analiz yok, çerez yok.",
         "installable": "Uygulama olarak yüklenebilir, çevrimdışı çalışır.",
