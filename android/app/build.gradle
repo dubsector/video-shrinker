@@ -221,7 +221,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     
-        implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.3'
+        implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
     
 
     androidTestImplementation 'androidx.test:runner:1.7.0'
