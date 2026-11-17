@@ -1,5 +1,6 @@
 import { Conversion, type Input, type InputAudioTrack, Mp4OutputFormat, Output, Quality } from 'mediabunny';
 import type { OutputGeometry } from './bitrate';
+import { ensureAacEncoder } from './aacEncoder';
 import { pickWebCodecsCodec, supportsConstantBitrate } from './capabilities';
 import { createOutputFile } from './outputStorage';
 import type { PauseGate } from './pauseGate';
@@ -115,6 +116,9 @@ export async function convertWithWebCodecs(
   // ffmpeg.wasm CPU path. Leaving AVC at no-preference lets that same software
   // encoder actually run, matching what was probed.
   const hardwareAcceleration = codec === 'hevc' ? 'prefer-hardware' : 'no-preference';
+
+  // Re-encoding the sound needs an AAC encoder, which some browsers lack.
+  if (audioTrack && !options.copyAudio) await ensureAacEncoder();
 
   try {
     const conversion = await Conversion.init({
