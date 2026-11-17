@@ -620,7 +620,7 @@ function App() {
 
         {notice && <div className="message notice">{t(notice)}</div>}
 
-        {error && <div className="message error">{'key' in error ? t(error.key, error.params) : error.message}</div>}
+        {error && <div className="message error">{'key' in error ? t(error.key, error.params ?? {}) : error.message}</div>}
 
         {status === 'done' && result && resultUrl && (
           <div className={overTarget ? 'result over-target' : 'result'}>
