@@ -47,7 +47,7 @@
         "restarted": "Die App wurde im Hintergrund geschlossen und die Konvertierung ging verloren, daher wurde sie neu gestartet."
     },
     "notify": {
-        "offer": "Benachrichtigen, wenn fertig",
+        "offer": "Benachrichtige mich, wenn es fertig ist",
         "title": "Dein Video ist fertig"
     },
     "privacy": {

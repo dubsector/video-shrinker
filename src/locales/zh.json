@@ -47,8 +47,8 @@
         "restarted": "应用在后台关闭，导致转换中断，因此已重新开始。"
     },
     "notify": {
-        "offer": "完成时通知我",
-        "title": "视频已准备好"
+        "offer": "完成后提醒我",
+        "title": "您的视频已就绪"
     },
     "privacy": {
         "clean": "无账户，无分析，无 Cookie。",

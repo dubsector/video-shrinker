@@ -47,8 +47,8 @@
         "restarted": "Aplikazioa atzeko planoan itxi da eta bihurketa galdu egin da, beraz, berriro hasi da."
     },
     "notify": {
-        "offer": "Abisatu amaitzean",
-        "title": "Bideoa prest dago"
+        "offer": "Abisatu nazazu amaitutakoan",
+        "title": "Zure bideoa prest dago"
     },
     "privacy": {
         "clean": "Konturik ez, analitikaririk ez, cookierik ez.",

@@ -47,8 +47,8 @@
         "restarted": "Aplikace byla na pozadí uzavřena a převod byl ztracen, takže byl spuštěn znovu."
     },
     "notify": {
-        "offer": "Upozornit mě, až to bude hotové",
-        "title": "Vaše video je hotové"
+        "offer": "Upozornit mě, až bude hotovo",
+        "title": "Vaše video je připraveno"
     },
     "privacy": {
         "clean": "Žádné účty, žádná analytika, žádné cookies.",

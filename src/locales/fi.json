@@ -47,7 +47,7 @@
         "restarted": "Sovellus sulkeutui taustalla ja muunnos keskeytyi, joten se on käynnistynyt uudelleen."
     },
     "notify": {
-        "offer": "Ilmoita, kun valmis",
+        "offer": "Ilmoita minulle, kun se on valmis",
         "title": "Videosi on valmis"
     },
     "privacy": {

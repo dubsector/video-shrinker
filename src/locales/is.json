@@ -47,7 +47,7 @@
         "restarted": "Forritið var lokað í bakgrunni og umbreytingin glataðist, svo hún er hafin aftur."
     },
     "notify": {
-        "offer": "Láttu mig vita þegar þetta er búið",
+        "offer": "Láttu mig vita þegar þessu er lokið",
         "title": "Myndbandið þitt er tilbúið"
     },
     "privacy": {
